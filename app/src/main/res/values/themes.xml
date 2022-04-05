@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.RedHangman" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@color/system_ui_colors</item>
+        <item name="android:navigationBarColor">@color/system_ui_colors</item>
+    </style>
+
+</resources>
