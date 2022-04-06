@@ -6,10 +6,14 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.hangman.hangman.HangmanApp
+import com.hangman.hangman.repository.GameRepository
 
 @Composable
 fun HistoryScreen(
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    application: HangmanApp,
+    repository: GameRepository
 ) {
     Surface(
         color = MaterialTheme.colors.background

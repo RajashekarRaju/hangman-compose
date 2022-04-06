@@ -36,17 +36,20 @@ fun AppNavigation(
             AppDestinations.ONBOARDING_SCREEN_ROUTE
         ) {
             OnBoardingScreen(
-                actions.navigateToGameScreen,
-                actions.finishActivity(activity)
-            )
+                navigateToGameScreen = actions.navigateToGameScreen,
+                navigateToHistoryScreen = actions.navigateToHistoryScreen
+            ) {
+                actions.finishActivity(activity.finish())
+            }
         }
 
         composable(
             AppDestinations.GAME_SCREEN_ROUTE
         ) {
             GameScreen(
-                actions.navigateToHistoryScreen,
-                actions.navigateUp
+                actions.navigateUp,
+                application,
+                repository
             )
         }
 
@@ -54,7 +57,9 @@ fun AppNavigation(
             AppDestinations.HISTORY_SCREEN_ROUTE
         ) {
             HistoryScreen(
-                actions.navigateUp
+                actions.navigateUp,
+                application,
+                repository
             )
         }
     }
