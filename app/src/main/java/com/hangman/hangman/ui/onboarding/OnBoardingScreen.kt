@@ -1,6 +1,7 @@
 package com.hangman.hangman.ui.onboarding
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -8,6 +9,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -16,6 +19,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 @Composable
 fun OnBoardingScreen(
     navigateToGameScreen: () -> Unit,
+    navigateToHistoryScreen: () -> Unit,
     finishActivity: () -> Unit,
 ) {
     Surface(
@@ -23,7 +27,8 @@ fun OnBoardingScreen(
     ) {
         OnBoardingScreenContent(
             navigateToGameScreen = navigateToGameScreen,
-            finishActivity = finishActivity
+            finishActivity = finishActivity,
+            navigateToHistoryScreen = navigateToHistoryScreen
         )
     }
 }
@@ -31,12 +36,15 @@ fun OnBoardingScreen(
 @Composable
 private fun OnBoardingScreenContent(
     navigateToGameScreen: () -> Unit,
-    finishActivity: () -> Unit
+    finishActivity: () -> Unit,
+    navigateToHistoryScreen: () -> Unit,
 ) {
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
-        val (gameHeadlineText, gameStartButton, gameExitButton) = createRefs()
+        val (
+            gameHeadlineText, gameTaglineText, playGameButton, exitGameButton, gameHistoryText
+        ) = createRefs()
 
         Text(
             text = "Hangman",
@@ -46,6 +54,32 @@ private fun OnBoardingScreenContent(
                 centerHorizontallyTo(parent)
                 top.linkTo(parent.top, 28.dp)
             }
+        )
+
+        Text(
+            text = "Be Aware, Letters Can Demise You",
+            style = MaterialTheme.typography.subtitle2,
+            color = MaterialTheme.colors.primary.copy(0.75f),
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .constrainAs(gameTaglineText) {
+                    centerHorizontallyTo(parent)
+                    top.linkTo(gameHeadlineText.bottom, 20.dp)
+                }
+        )
+
+        Text(
+            text = "Score History",
+            textDecoration = TextDecoration.Underline,
+            style = MaterialTheme.typography.subtitle1,
+            color = MaterialTheme.colors.primary.copy(0.75f),
+            modifier = Modifier
+                .clickable { navigateToHistoryScreen() }
+                .constrainAs(gameHistoryText) {
+                    centerHorizontallyTo(parent)
+                    top.linkTo(gameTaglineText.bottom, 28.dp)
+                }
         )
 
         Button(
@@ -58,14 +92,14 @@ private fun OnBoardingScreenContent(
             ),
             modifier = Modifier
                 .width(120.dp)
-                .constrainAs(gameStartButton) {
+                .constrainAs(playGameButton) {
                     centerHorizontallyTo(parent)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                 }
         ) {
             Text(
-                text = "START",
+                text = "PLAY",
                 letterSpacing = 4.sp,
                 style = MaterialTheme.typography.button,
                 color = MaterialTheme.colors.primary.copy(0.75f),
@@ -83,9 +117,9 @@ private fun OnBoardingScreenContent(
             ),
             modifier = Modifier
                 .width(120.dp)
-                .constrainAs(gameExitButton) {
+                .constrainAs(exitGameButton) {
                     centerHorizontallyTo(parent)
-                    top.linkTo(gameStartButton.bottom, 8.dp)
+                    top.linkTo(playGameButton.bottom, 8.dp)
                 }
         ) {
             Text(
