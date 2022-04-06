@@ -1,7 +1,6 @@
 package com.hangman.hangman.navigation
 
 import androidx.navigation.NavHostController
-import com.hangman.hangman.MainActivity
 
 class AppActions(
     private val navController: NavHostController,
@@ -16,10 +15,8 @@ class AppActions(
     }
 
     fun finishActivity(
-        activity: MainActivity
-    ): () -> Unit = {
-        activity.finish()
-    }
+        finishActivity: Unit
+    ) = finishActivity
 
     // Navigates to previous screen from current screen.
     val navigateUp: () -> Unit = {
