@@ -9,8 +9,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hangman.hangman.modal.Alphabets
-import com.hangman.hangman.repository.GameRepository
-import com.hangman.hangman.repository.alphabetsList
+import com.hangman.hangman.repository.*
+import com.hangman.hangman.utils.GameDifficulty
+import com.hangman.hangman.utils.GameDifficultyPref
 import kotlinx.coroutines.launch
 
 
@@ -20,7 +21,7 @@ class GameViewModel(
 ) : AndroidViewModel(application) {
 
     // Determine whether player won or lost the game
-    private var gameSummary by mutableStateOf(false)
+    var playerWonTheGame by mutableStateOf(false)
 
     // To prevent player keep playing the game
     var gameOver by mutableStateOf(false)
@@ -34,7 +35,7 @@ class GameViewModel(
     // List of A-Z alphabets, let's user access alphabets in any order
     var alphabets by mutableStateOf(alphabetsList)
 
-    // Keep track of attempts to find out game is
+    // Keep track of attempts to find out whether or not to finish the game
     var attemptsLeft by mutableStateOf(5)
 
     // Number of points depend on length of the string for guessed word.
@@ -43,9 +44,16 @@ class GameViewModel(
     // Starting level with 1, last level is 5
     var currentPlayerLevel by mutableStateOf(1)
 
+    // Get shared preferences for value game difficulty.
+    private val gameDifficultyPref = GameDifficultyPref(application)
+
+    // Set default state game difficulty value to easy and update with latest changes.
+    var gameDifficulty: GameDifficulty by mutableStateOf(GameDifficulty.EASY)
+
     init {
         viewModelScope.launch {
-            guessingWord = repository.getRandomGuessingWord()
+            gameDifficulty = gameDifficultyPref.getGameDifficultyPref()
+            guessingWord = repository.getRandomGuessingWord(gameDifficulty)
         }
     }
 
@@ -63,13 +71,13 @@ class GameViewModel(
             }
 
             // if true, player won the game
-            gameSummary = guessingWord == trackGuessingWord
-            if (gameSummary) {
+            playerWonTheGame = guessingWord == trackGuessingWord
+            if (playerWonTheGame) {
 
                 pointsScoredPerWord = guessingWord.length
                 currentPlayerLevel += 1
                 attemptsLeft = 5
-                guessingWord = repository.getRandomGuessingWord()
+                guessingWord = repository.getRandomGuessingWord(gameDifficulty)
 
                 // Update game over to true immediately to prevent player keep guessing.
                 gameOver = true

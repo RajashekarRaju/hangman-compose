@@ -55,6 +55,22 @@ val Typography = Typography(
         letterSpacing = 8.sp
     ),
 
+    body1 = TextStyle(
+        fontFamily = Creepster,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        lineHeight = 28.sp,
+        letterSpacing = 6.sp
+    ),
+
+    body2 = TextStyle(
+        fontFamily = Creepster,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        lineHeight = 28.sp,
+        letterSpacing = 4.sp
+    ),
+
     button = TextStyle(
         fontFamily = Creepster,
         fontWeight = FontWeight.Normal,

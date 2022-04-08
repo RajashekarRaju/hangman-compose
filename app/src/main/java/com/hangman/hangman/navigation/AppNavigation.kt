@@ -37,7 +37,8 @@ fun AppNavigation(
         ) {
             OnBoardingScreen(
                 navigateToGameScreen = actions.navigateToGameScreen,
-                navigateToHistoryScreen = actions.navigateToHistoryScreen
+                navigateToHistoryScreen = actions.navigateToHistoryScreen,
+                application = application,
             ) {
                 actions.finishActivity(activity.finish())
             }

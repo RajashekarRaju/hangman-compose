@@ -11,12 +11,15 @@ import androidx.room.PrimaryKey
 data class HistoryEntity(
 
     @Stable
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "column_game_id")
     val gameId: Int,
 
     @ColumnInfo(name = "column_game_score")
     val gameScore: Int,
+
+    @ColumnInfo(name = "column_game_level")
+    val gameLevel: Int,
 
     @ColumnInfo(name = "column_game_difficulty")
     val gameDifficulty: Int,
