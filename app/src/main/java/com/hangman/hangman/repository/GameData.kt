@@ -1,19 +1,33 @@
 package com.hangman.hangman.repository
 
 import com.hangman.hangman.modal.Alphabets
-import com.hangman.hangman.repository.database.entity.WordsEntity
+import com.hangman.hangman.repository.database.entity.HistoryEntity
 
-fun words(): List<WordsEntity> {
 
-    val guessingWords = listOf("Blue", "Red", "Purple", "Pink")
+object GameData {
 
-    val wordsList = ArrayList<WordsEntity>()
-    guessingWords.forEach {
-        val wordsEntity = WordsEntity(wordName = it)
-        wordsList.add(wordsEntity)
-    }
+    val easyGuessingWords = listOf(
+        "india", "china", "sudan", "iran", "libya", "chad", "peru", "egypt", "mali", "chile",
+        "france", "kenya", "yemen", "spain", "iraq", "norway", "japan", "congo", "italy", "oman",
+        "ghana", "laos", "syria", "nepal", "cuba", "togo", "haiti", "fiji", "qatar", "tonga",
+        "malta", "nauru"
+    )
 
-    return wordsList
+    val mediumGuessingWords = listOf(
+        "russia", "canada", "brazil", "algeria", "mexico", "angola", "bolivia", "nigeria", "turkey",
+        "myanmar", "somalia", "ukraine", "morocco", "germany", "finland", "poland", "vietnam",
+        "guinea", "uganda", "romania", "guyana", "belarus", "uruguay", "tunisia", "iceland",
+        "jordan", "serbia", "austria", "ireland", "georgia", "panama", "ireland", "croatia",
+        "denmark", "bhutan", "taiwan", "latvia"
+    )
+
+    val hardGuessingWords = listOf(
+        "antarctica", "australia", "argentina", "indonesia", "mongolia", "pakistan", "thailand",
+        "cambodia", "bangladesh", "tajikistan", "guatemala", "portugal", "bulgaria", "azerbaijan",
+        "lithuania", "netherlands", "switzerland", "palestine", "luxembourg", "dominica", "singapore",
+        "barbados", "maldives", "kiribati", "mauritius", "slovenia", "honduras", "nicaragua",
+        "suriname", "kyrgyzstan", "zimbabwe", "botswana"
+    )
 }
 
 val alphabetsList = listOf(
@@ -43,4 +57,14 @@ val alphabetsList = listOf(
     Alphabets(24, "X"),
     Alphabets(25, "Y"),
     Alphabets(26, "Z")
+)
+
+val gameHistory = listOf(
+    HistoryEntity(1, 3, 1, 2, true),
+    HistoryEntity(2, 0, 1, 1, false),
+    HistoryEntity(3, 12, 4, 2, true),
+    HistoryEntity(4, 4, 2, 3, true),
+    HistoryEntity(5, 3, 1, 2, true),
+    HistoryEntity(6, 6, 2, 1, true),
+    HistoryEntity(7, 15, 5, 1, true),
 )
