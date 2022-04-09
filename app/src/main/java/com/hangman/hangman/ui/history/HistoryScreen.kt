@@ -6,11 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,6 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hangman.hangman.HangmanApp
 import com.hangman.hangman.repository.GameRepository
 import com.hangman.hangman.repository.database.entity.HistoryEntity
+import com.hangman.hangman.utils.GameDifficulty
 
 @Composable
 fun HistoryScreen(
@@ -39,23 +37,58 @@ fun HistoryScreen(
         Scaffold(
             topBar = { HistoryAppBar(navigateUp) }
         ) {
-            val gameHistoryList = viewModel.history
-            HistoryScreenContent(gameHistoryList)
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                val gameHistoryList = viewModel.history
+                HistoryScreenContent(gameHistoryList, viewModel)
+                if (gameHistoryList.isEmpty()) {
+                    ShowEmptyHistoryMessage()
+                }
+            }
         }
     }
 }
 
 @Composable
+private fun ShowEmptyHistoryMessage() {
+    Text(
+        text = "Your recent game history will show up here. \n\nGo play the game.",
+        style = MaterialTheme.typography.h4,
+        textAlign = TextAlign.Center,
+        color = MaterialTheme.colors.onBackground.copy(0.75f),
+        modifier = Modifier.padding(horizontal = 24.dp, vertical = 48.dp)
+    )
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
 private fun HistoryScreenContent(
-    gameHistoryList: List<HistoryEntity>
+    gameHistoryList: List<HistoryEntity>,
+    viewModel: HistoryViewModel
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
+        reverseLayout = true,
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(gameHistoryList) { history ->
-            ItemGameHistory(history)
+
+            val dismissState = rememberDismissState(
+                confirmStateChange = {
+                    if (it == DismissValue.DismissedToStart) {
+                        viewModel.deleteSelectedGameHistory(history)
+                    }
+                    it != DismissValue.DismissedToStart
+                }
+            )
+            SwipeToDismiss(
+                state = dismissState,
+                background = { }
+            ) {
+                ItemGameHistory(history)
+            }
         }
     }
 }
@@ -67,10 +100,9 @@ private fun ItemGameHistory(
     val summary = if (history.gameSummary) "Won" else "Lost"
 
     val difficulty = when (history.gameDifficulty) {
-        1 -> "Easy"
-        2 -> "Medium"
-        3 -> "Hard"
-        else -> "N/A"
+        GameDifficulty.EASY -> GameDifficulty.EASY.name
+        GameDifficulty.MEDIUM -> GameDifficulty.EASY.name
+        GameDifficulty.HARD -> GameDifficulty.EASY.name
     }
 
     ConstraintLayout(
@@ -146,7 +178,7 @@ private fun ItemGameHistory(
         )
 
         Text(
-            text = "02:45 pm",
+            text = history.gamePlayedTime,
             style = MaterialTheme.typography.body1,
             color = MaterialTheme.colors.primary.copy(0.75f),
             modifier = Modifier.constrainAs(gamePlayedTimeText) {
@@ -156,7 +188,7 @@ private fun ItemGameHistory(
         )
 
         Text(
-            text = "07 apr",
+            text = history.gamePlayedDate,
             style = MaterialTheme.typography.body1,
             color = MaterialTheme.colors.primary.copy(0.75f),
             modifier = Modifier.constrainAs(gamePlayedDateText) {
