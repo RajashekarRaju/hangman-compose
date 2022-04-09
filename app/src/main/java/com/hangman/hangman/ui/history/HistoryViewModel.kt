@@ -11,9 +11,6 @@ import androidx.lifecycle.viewModelScope
 import com.hangman.hangman.repository.GameRepository
 import com.hangman.hangman.repository.database.entity.HistoryEntity
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
-
 
 class HistoryViewModel(
     application: Application,
@@ -21,17 +18,24 @@ class HistoryViewModel(
 ) : AndroidViewModel(application) {
 
     var history by mutableStateOf(emptyList<HistoryEntity>())
-    var date by mutableStateOf("")
-    var time by mutableStateOf("")
 
     init {
         viewModelScope.launch {
             history = repository.getCompleteGameHistory()
+        }
+    }
 
-            val dateAndTimeFormat = SimpleDateFormat("dd MMM,hh:mm a", Locale.getDefault())
-            val dateAndTime: String = dateAndTimeFormat.format(Calendar.getInstance().time)
-            date = dateAndTime.substringBefore(delimiter = ",")
-            time = dateAndTime.substringAfter(delimiter = ",")
+    fun deleteSelectedGameHistory(
+        history: HistoryEntity
+    ) {
+        viewModelScope.launch {
+            repository.deleteSelectedSingleGameHistory(history)
+        }
+    }
+
+    fun deleteAllGameHistoryData() {
+        viewModelScope.launch {
+            repository.deleteCompleteGamesHistory()
         }
     }
 
