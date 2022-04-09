@@ -4,16 +4,15 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -26,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hangman.hangman.HangmanApp
 import com.hangman.hangman.modal.Alphabets
 import com.hangman.hangman.repository.GameRepository
+import com.hangman.hangman.utils.ApplyAnimatedVisibility
 import kotlinx.coroutines.launch
 
 
@@ -76,12 +76,6 @@ fun GameScreen(
 private fun GameScreenContent(
     viewModel: GameViewModel
 ) {
-    val randomGuessingWord = viewModel.guessingWord
-    val alphabets = viewModel.alphabets
-    val attemptsCount = viewModel.attemptsLeft
-    val pointsScored = viewModel.pointsScoredPerWord
-    val currentLevel = viewModel.currentPlayerLevel
-
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -91,7 +85,7 @@ private fun GameScreenContent(
         ) = createRefs()
 
         Text(
-            text = "Points : $pointsScored",
+            text = "Points : ${viewModel.pointsScoredPerWord}",
             style = MaterialTheme.typography.h4,
             color = MaterialTheme.colors.primary,
             modifier = Modifier.constrainAs(pointsScoredText) {
@@ -101,7 +95,7 @@ private fun GameScreenContent(
         )
 
         Text(
-            text = "Level : $currentLevel/5",
+            text = "Level : ${viewModel.currentPlayerLevel + 1}/5",
             style = MaterialTheme.typography.h4,
             color = MaterialTheme.colors.primary,
             modifier = Modifier.constrainAs(currentLevelText) {
@@ -120,16 +114,46 @@ private fun GameScreenContent(
             }
         )
 
-        Text(
-            text = randomGuessingWord,
-            style = MaterialTheme.typography.h3,
-            color = MaterialTheme.colors.primary,
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.constrainAs(randomWordText) {
-                centerHorizontallyTo(parent)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
                 top.linkTo(gameDifficultyText.bottom)
                 bottom.linkTo(attemptsHintText.top)
             }
-        )
+        ) {
+            items(
+                items = viewModel.updateGuessesByPlayer.updateGuess
+            ) { validGuess ->
+
+                ConstraintLayout {
+
+                    val (alphabet, box) = createRefs()
+
+                    Text(
+                        text = validGuess.toString(),
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.primary,
+                        modifier = Modifier.constrainAs(alphabet) {
+                            centerTo(parent)
+                        }
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colors.primary.copy(0.10f))
+                            .padding(20.dp)
+                            .constrainAs(box) {
+                                centerTo(parent)
+                            }
+                    )
+                }
+            }
+        }
 
         Text(
             text = "attempts left",
@@ -142,7 +166,7 @@ private fun GameScreenContent(
         )
 
         Text(
-            text = "$attemptsCount/5",
+            text = "${viewModel.attemptsLeftToGuess}/6",
             style = MaterialTheme.typography.h3,
             color = Color.White,
             modifier = Modifier.constrainAs(attemptsLeftText) {
@@ -150,8 +174,6 @@ private fun GameScreenContent(
                 bottom.linkTo(alphabetsGridItems.top, 24.dp)
             }
         )
-
-        val playerWon = viewModel.playerWonTheGame
 
         Box(
             modifier = Modifier
@@ -164,20 +186,17 @@ private fun GameScreenContent(
                 }
         ) {
 
-            if (playerWon) {
+            // Text(
+            //     text = "Moving Next Level",
+            //     style = MaterialTheme.typography.h3,
+            //     color = MaterialTheme.colors.primary,
+            //     modifier = Modifier
+            //         .fillMaxWidth()
+            //         .align(alignment = Alignment.TopCenter),
+            //     textAlign = TextAlign.Center,
+            // )
 
-                Text(
-                    text = "Moving Next Level",
-                    style = MaterialTheme.typography.h3,
-                    color = MaterialTheme.colors.primary,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(alignment = Alignment.TopCenter),
-                    textAlign = TextAlign.Center,
-                )
-
-            } else {
-
+            ApplyAnimatedVisibility {
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(40.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -186,7 +205,7 @@ private fun GameScreenContent(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     items(
-                        items = alphabets,
+                        items = viewModel.alphabets,
                         key = { it.alphabetId }
                     ) { alphabet ->
                         ItemAlphabetText(alphabet, viewModel)

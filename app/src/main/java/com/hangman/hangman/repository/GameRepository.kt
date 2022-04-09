@@ -11,7 +11,7 @@ class GameRepository(
     private val database: GameDatabase
 ) {
 
-    private suspend fun getAllGuessingWords(
+    suspend fun getRandomGuessingWord(
         gameDifficulty: GameDifficulty
     ): List<WordsEntity> {
         val guessingWords: List<WordsEntity>
@@ -20,12 +20,6 @@ class GameRepository(
         }
 
         return guessingWords
-    }
-
-    suspend fun getRandomGuessingWord(
-        gameDifficulty: GameDifficulty
-    ): String {
-        return getAllGuessingWords(gameDifficulty).random().wordName
     }
 
     suspend fun saveCurrentGameToHistory(
