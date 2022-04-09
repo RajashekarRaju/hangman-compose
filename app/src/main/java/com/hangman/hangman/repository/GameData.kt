@@ -1,16 +1,14 @@
 package com.hangman.hangman.repository
 
 import com.hangman.hangman.modal.Alphabets
-import com.hangman.hangman.repository.database.entity.HistoryEntity
 
 
 object GameData {
 
     val easyGuessingWords = listOf(
         "india", "china", "sudan", "iran", "libya", "chad", "peru", "egypt", "mali", "chile",
-        "france", "kenya", "yemen", "spain", "iraq", "norway", "japan", "congo", "italy", "oman",
-        "ghana", "laos", "syria", "nepal", "cuba", "togo", "haiti", "fiji", "qatar", "tonga",
-        "malta", "nauru"
+        "kenya", "yemen", "spain", "iraq", "japan", "congo", "italy", "oman", "malta", "nauru",
+        "ghana", "laos", "syria", "nepal", "cuba", "togo", "haiti", "fiji", "qatar", "tonga"
     )
 
     val mediumGuessingWords = listOf(
@@ -18,7 +16,7 @@ object GameData {
         "myanmar", "somalia", "ukraine", "morocco", "germany", "finland", "poland", "vietnam",
         "guinea", "uganda", "romania", "guyana", "belarus", "uruguay", "tunisia", "iceland",
         "jordan", "serbia", "austria", "ireland", "georgia", "panama", "ireland", "croatia",
-        "denmark", "bhutan", "taiwan", "latvia"
+        "denmark", "bhutan", "taiwan", "latvia", "norway", "france"
     )
 
     val hardGuessingWords = listOf(
@@ -57,14 +55,4 @@ val alphabetsList = listOf(
     Alphabets(24, "X"),
     Alphabets(25, "Y"),
     Alphabets(26, "Z")
-)
-
-val gameHistory = listOf(
-    HistoryEntity(1, 3, 1, 2, true),
-    HistoryEntity(2, 0, 1, 1, false),
-    HistoryEntity(3, 12, 4, 2, true),
-    HistoryEntity(4, 4, 2, 3, true),
-    HistoryEntity(5, 3, 1, 2, true),
-    HistoryEntity(6, 6, 2, 1, true),
-    HistoryEntity(7, 15, 5, 1, true),
 )
