@@ -12,6 +12,7 @@ import com.hangman.hangman.repository.database.entity.WordsEntity
 import com.hangman.hangman.utils.GameDifficulty
 import com.hangman.hangman.utils.GameDifficultyPref
 import com.hangman.hangman.utils.getDateAndTime
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
@@ -38,20 +39,29 @@ class GameViewModel(
     // Determine whether player won or lost the game
     private var playerWonTheCurrentLevel by mutableStateOf(false)
 
-    // To prevent player keep playing the game
-    var gameOver by mutableStateOf(false)
+    // To prevent player keep playing the current game level.
+    var gameOverByNoAttemptsLeft by mutableStateOf(false)
+
+    // Player has completed all 5 levels and won the game.
+    var gameOverByWinning by mutableStateOf(false)
 
     // Generated a random country word to guess from database.
-    private var wordToGuess by mutableStateOf("")
+    var wordToGuess by mutableStateOf("")
 
     // List of A-Z alphabets, let's player access alphabets in any order
-    val alphabets by mutableStateOf(alphabetsList)
+    var alphabets by mutableStateOf(GameData.alphabetsList())
 
     // Keep track of attempts to find out whether or not to finish the game
-    var attemptsLeftToGuess by mutableStateOf(6)
+    var attemptsLeftToGuess by mutableStateOf(8)
+
+    // Reveal the word if player lost the game at any level.
+    var revealGuessingWord by mutableStateOf(false)
 
     // Number of points depend on length of the string for guessed word.
-    var pointsScoredPerWord by mutableStateOf(0)
+    private var pointsScoredPerWord by mutableStateOf(0)
+
+    // Keeps track of all points scored in each level.
+    var pointsScoredOverall by mutableStateOf(0)
 
     // Starting level with 0, last level is 5
     var currentPlayerLevel by mutableStateOf(0)
@@ -64,6 +74,9 @@ class GameViewModel(
 
     // Contains 5 words in a list for current game, 1 for each level.
     private var guessingWordsForCurrentGame by mutableStateOf(listOf<WordsEntity>())
+
+    // 5 is the last level player needs to reach. At the point do not increment level
+    private val maxLevelReached = 5
 
     init {
         viewModelScope.launch {
@@ -106,7 +119,8 @@ class GameViewModel(
                     // When none of the characters from word to guess contains empty character,
                     // player has won the current level, but not the whole game.
                     playerWonTheCurrentLevel = true
-                    gameOver = false
+                    gameOverByNoAttemptsLeft = false
+                    revealGuessingWord = gameOverByNoAttemptsLeft
                 }
             } else {
                 // When match wasn't successful, this will be executed.
@@ -115,23 +129,56 @@ class GameViewModel(
 
             // if true, player won the level, now move to next level
             if (playerWonTheCurrentLevel) {
+
                 // Reward points for level by length of guessed word.
                 pointsScoredPerWord = wordToGuess.length
                 // If level is reset/new, reset the attempts left to default.
-                attemptsLeftToGuess = 6
+                attemptsLeftToGuess = 8
+
                 // Everytime player clears the level, update to new level by +1.
-                currentPlayerLevel += 1
-                // Get new word from saved guessing list by updated level.
-                wordToGuess = guessingWordsForCurrentGame[currentPlayerLevel].wordName
-                // Reset guesses, update new word indices for next level word.
-                updateOrResetWordToGuess()
+                if (currentPlayerLevel < maxLevelReached) {
+                    currentPlayerLevel += 1
+                }
+
+                if (currentPlayerLevel < maxLevelReached) {
+                    // Get new word from saved guessing list by updated level.
+                    wordToGuess = guessingWordsForCurrentGame[currentPlayerLevel].wordName
+                }
                 // Game isn't over, but level is. For clarity update this game isn't over.
-                gameOver = false
-                // Saves the game to history, needs couple of changes yet.
-                saveCurrentGameToHistory()
-                Timber.e(wordToGuess)
+                gameOverByNoAttemptsLeft = false
+
+                // Reset guesses, update new word indices for next level word.
+                kotlin.run {
+                    delay(500)
+                    updateOrResetWordToGuess()
+                }
+                Timber.e("Level 2 ==> $wordToGuess")
+
+                alphabets = GameData.alphabetsList()
+
+                if (playerWonTheCurrentLevel && currentPlayerLevel == 5) {
+                    gameOverByWinning = true
+                    // Saves the game to history, needs couple of changes yet.
+                    saveCurrentGameToHistory()
+                }
+
+                playerWonTheCurrentLevel = false
             }
+
+            calculateOverallPointsSCoredEachLevel()
         }
+    }
+
+    private fun calculateOverallPointsSCoredEachLevel() {
+        val pointsScoredInEachLevel = arrayListOf(0, 0, 0, 0, 0)
+        when (currentPlayerLevel) {
+            1 -> pointsScoredInEachLevel[0] = pointsScoredPerWord
+            2 -> pointsScoredInEachLevel[1] = pointsScoredPerWord
+            3 -> pointsScoredInEachLevel[2] = pointsScoredPerWord
+            4 -> pointsScoredInEachLevel[3] = pointsScoredPerWord
+            5 -> pointsScoredInEachLevel[4] = pointsScoredPerWord
+        }
+        pointsScoredOverall = pointsScoredInEachLevel.sum()
     }
 
     // Everytime player chooses the alphabet, reduce the attempt by 1.
@@ -139,7 +186,14 @@ class GameViewModel(
     private fun minimizeAttempt() {
         if (attemptsLeftToGuess > 0) {
             attemptsLeftToGuess -= 1
-            gameOver = attemptsLeftToGuess == 0
+            gameOverByNoAttemptsLeft = attemptsLeftToGuess == 0
+            revealGuessingWord = gameOverByNoAttemptsLeft
+            if (gameOverByNoAttemptsLeft) {
+                // Saves the game to history, needs couple of changes yet.
+                viewModelScope.launch {
+                    saveCurrentGameToHistory()
+                }
+            }
         }
     }
 
@@ -160,9 +214,9 @@ class GameViewModel(
         repository.saveCurrentGameToHistory(
             HistoryEntity(
                 gameId = UUID.randomUUID().toString(),
-                gameScore = pointsScoredPerWord,
+                gameScore = pointsScoredOverall,
                 gameLevel = currentPlayerLevel,
-                gameSummary = gameOver,
+                gameSummary = gameOverByWinning,
                 gameDifficulty = gameDifficulty,
                 gamePlayedTime = time,
                 gamePlayedDate = date

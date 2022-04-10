@@ -1,5 +1,6 @@
 package com.hangman.hangman.ui.history
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -11,11 +12,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hangman.hangman.HangmanApp
+import com.hangman.hangman.R
 import com.hangman.hangman.repository.GameRepository
 import com.hangman.hangman.repository.database.entity.HistoryEntity
 import com.hangman.hangman.utils.GameDifficulty
@@ -40,6 +44,14 @@ fun HistoryScreen(
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
+                Image(
+                    painter = painterResource(id = R.drawable.bg_dodge),
+                    contentDescription = "",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    alpha = 0.20f
+                )
+
                 val gameHistoryList = viewModel.history
                 HistoryScreenContent(gameHistoryList, viewModel)
                 if (gameHistoryList.isEmpty()) {
@@ -68,12 +80,18 @@ private fun HistoryScreenContent(
     viewModel: HistoryViewModel
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        reverseLayout = true,
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsPadding(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(gameHistoryList) { history ->
+        items(
+            items = gameHistoryList.reversed(),
+            key = {
+                it.gameId
+            }
+        ) { history ->
 
             val dismissState = rememberDismissState(
                 confirmStateChange = {

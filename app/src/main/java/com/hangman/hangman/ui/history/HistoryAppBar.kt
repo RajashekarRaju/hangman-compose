@@ -1,6 +1,7 @@
 package com.hangman.hangman.ui.history
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -13,7 +14,9 @@ fun HistoryAppBar(
 ) {
     TopAppBar(
         backgroundColor = MaterialTheme.colors.background,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding(),
         title = {
             Text(
                 text = "Game History",
