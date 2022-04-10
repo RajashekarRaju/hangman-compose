@@ -12,7 +12,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -26,6 +29,7 @@ import com.hangman.hangman.HangmanApp
 import com.hangman.hangman.modal.Alphabets
 import com.hangman.hangman.repository.GameRepository
 import com.hangman.hangman.utils.ApplyAnimatedVisibility
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
@@ -66,26 +70,63 @@ fun GameScreen(
             },
         ) {
             GameScreenContent(
-                viewModel = viewModel
+                viewModel = viewModel,
+                modalSheetState = modalSheetState
             )
+
+            if (viewModel.revealGuessingWord) {
+                ShowPopupWhenGameLost(viewModel, navigateUp)
+            }
+
+            if (viewModel.gameOverByWinning) {
+                ShowDialogWhenGameWon(viewModel, navigateUp)
+            }
         }
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun GameScreenContent(
-    viewModel: GameViewModel
+    viewModel: GameViewModel,
+    modalSheetState: ModalBottomSheetState,
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
         val (
-            pointsScoredText, currentLevelText, randomWordText,
+            navigateBackIconButton, pointsScoredText, currentLevelText, randomWordText,
             alphabetsGridItems, attemptsLeftText, attemptsHintText, gameDifficultyText
         ) = createRefs()
 
+        IconButton(
+            onClick = {
+                coroutineScope.launch {
+                    modalSheetState.show()
+                }
+            },
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colors.primary.copy(0.06f),
+                    shape = CircleShape
+                )
+                .constrainAs(navigateBackIconButton) {
+                    start.linkTo(parent.start, 20.dp)
+                    top.linkTo(pointsScoredText.top)
+                    bottom.linkTo(pointsScoredText.bottom)
+                }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Clear,
+                contentDescription = "Close game icon",
+                tint = MaterialTheme.colors.primary,
+                modifier = Modifier.alpha(0.75f)
+            )
+        }
+
         Text(
-            text = "Points : ${viewModel.pointsScoredPerWord}",
+            text = "Points : ${viewModel.pointsScoredOverall}",
             style = MaterialTheme.typography.h4,
             color = MaterialTheme.colors.primary,
             modifier = Modifier.constrainAs(pointsScoredText) {
@@ -166,7 +207,7 @@ private fun GameScreenContent(
         )
 
         Text(
-            text = "${viewModel.attemptsLeftToGuess}/6",
+            text = "${viewModel.attemptsLeftToGuess}/8",
             style = MaterialTheme.typography.h3,
             color = Color.White,
             modifier = Modifier.constrainAs(attemptsLeftText) {
@@ -185,16 +226,6 @@ private fun GameScreenContent(
                     bottom.linkTo(parent.bottom)
                 }
         ) {
-
-            // Text(
-            //     text = "Moving Next Level",
-            //     style = MaterialTheme.typography.h3,
-            //     color = MaterialTheme.colors.primary,
-            //     modifier = Modifier
-            //         .fillMaxWidth()
-            //         .align(alignment = Alignment.TopCenter),
-            //     textAlign = TextAlign.Center,
-            // )
 
             ApplyAnimatedVisibility {
                 LazyVerticalGrid(
@@ -221,21 +252,20 @@ private fun ItemAlphabetText(
     alphabet: Alphabets,
     viewModel: GameViewModel
 ) {
-    val showAlphabet = remember { mutableStateOf(true) }
-    val isGameOver = viewModel.gameOver
+    val isGameOver = viewModel.gameOverByNoAttemptsLeft
 
     ConstraintLayout(
         modifier = Modifier
-            .alpha(if (showAlphabet.value) 1f else 0.25f)
+            .alpha(if (!alphabet.isAlphabetGuessed) 1f else 0.25f)
             .clip(CircleShape)
             .size(40.dp)
             .background(color = MaterialTheme.colors.primary.copy(0.12f))
             .clickable(
-                enabled = showAlphabet.value,
+                enabled = !alphabet.isAlphabetGuessed,
                 onClick = {
                     if (!isGameOver) {
                         viewModel.checkIfLetterMatches(alphabet)
-                        showAlphabet.value = !showAlphabet.value
+                        alphabet.isAlphabetGuessed = true
                     }
                 }
             )
