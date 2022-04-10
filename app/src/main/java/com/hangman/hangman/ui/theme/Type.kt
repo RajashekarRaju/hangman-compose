@@ -40,6 +40,13 @@ val Typography = Typography(
         letterSpacing = 4.sp
     ),
 
+    h6 = TextStyle(
+        fontFamily = Creepster,
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp,
+        letterSpacing = 4.sp
+    ),
+
     subtitle1 = TextStyle(
         fontFamily = Creepster,
         fontWeight = FontWeight.Normal,
