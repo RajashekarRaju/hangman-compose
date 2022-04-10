@@ -63,7 +63,7 @@ class GameViewModel(
     // Keeps track of all points scored in each level.
     var pointsScoredOverall by mutableStateOf(0)
 
-    // Starting level with 0, last level is 5
+    // Starting level with 1, last level is 5
     var currentPlayerLevel by mutableStateOf(0)
 
     // Get shared preferences for value game difficulty.
@@ -76,7 +76,10 @@ class GameViewModel(
     private var guessingWordsForCurrentGame by mutableStateOf(listOf<WordsEntity>())
 
     // 5 is the last level player needs to reach. At the point do not increment level
-    private val maxLevelReached = 5
+    val maxLevelReached = 5
+
+    // Keeps track of player score from each level.
+    private val pointsScoredInEachLevel = arrayListOf(0, 0, 0, 0, 0)
 
     init {
         viewModelScope.launch {
@@ -170,7 +173,6 @@ class GameViewModel(
     }
 
     private fun calculateOverallPointsSCoredEachLevel() {
-        val pointsScoredInEachLevel = arrayListOf(0, 0, 0, 0, 0)
         when (currentPlayerLevel) {
             1 -> pointsScoredInEachLevel[0] = pointsScoredPerWord
             2 -> pointsScoredInEachLevel[1] = pointsScoredPerWord

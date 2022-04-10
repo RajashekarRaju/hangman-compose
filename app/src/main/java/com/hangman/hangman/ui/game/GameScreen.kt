@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -21,8 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hangman.hangman.HangmanApp
@@ -85,6 +91,21 @@ fun GameScreen(
     }
 }
 
+@Composable
+private fun CreateCircularProgressIndicator(
+    currentProgress: Float,
+    strokeWidth: Dp = 8.dp,
+    progressColor: Color = MaterialTheme.colors.primary,
+    indicatorSize: Dp
+) {
+    CircularProgressIndicator(
+        progress = currentProgress,
+        strokeWidth = strokeWidth,
+        color = progressColor,
+        modifier = Modifier.size(size = indicatorSize)
+    )
+}
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun GameScreenContent(
@@ -96,8 +117,8 @@ private fun GameScreenContent(
         modifier = Modifier.fillMaxSize()
     ) {
         val (
-            navigateBackIconButton, pointsScoredText, currentLevelText, randomWordText,
-            alphabetsGridItems, attemptsLeftText, attemptsHintText, gameDifficultyText
+            navigateBackIconButton, instructionsIconButton, gameProgressInfo, randomWordText,
+            alphabetsGridItems, attemptsLeftText, attemptsHintText
         ) = createRefs()
 
         IconButton(
@@ -113,8 +134,7 @@ private fun GameScreenContent(
                 )
                 .constrainAs(navigateBackIconButton) {
                     start.linkTo(parent.start, 20.dp)
-                    top.linkTo(pointsScoredText.top)
-                    bottom.linkTo(pointsScoredText.bottom)
+                    top.linkTo(parent.top, 20.dp)
                 }
         ) {
             Icon(
@@ -125,35 +145,123 @@ private fun GameScreenContent(
             )
         }
 
-        Text(
-            text = "Points : ${viewModel.pointsScoredOverall}",
-            style = MaterialTheme.typography.h4,
-            color = MaterialTheme.colors.primary,
-            modifier = Modifier.constrainAs(pointsScoredText) {
-                centerHorizontallyTo(parent)
-                top.linkTo(parent.top, 24.dp)
-            }
-        )
+        IconButton(
+            onClick = { },
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colors.primary.copy(0.06f),
+                    shape = CircleShape
+                )
+                .constrainAs(instructionsIconButton) {
+                    end.linkTo(parent.end, 20.dp)
+                    top.linkTo(parent.top, 20.dp)
+                }
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                contentDescription = "Game instructions icon",
+                tint = MaterialTheme.colors.primary,
+                modifier = Modifier.alpha(0.75f)
+            )
+        }
 
-        Text(
-            text = "Level : ${viewModel.currentPlayerLevel + 1}/5",
-            style = MaterialTheme.typography.h4,
-            color = MaterialTheme.colors.primary,
-            modifier = Modifier.constrainAs(currentLevelText) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.constrainAs(gameProgressInfo) {
                 centerHorizontallyTo(parent)
-                top.linkTo(pointsScoredText.bottom, 16.dp)
+                top.linkTo(parent.top, 40.dp)
             }
-        )
+        ) {
+            CreateCircularProgressIndicator(
+                currentProgress = animateCurrentLevelProgress(viewModel.currentPlayerLevel),
+                indicatorSize = 200.dp
+            )
 
-        Text(
-            text = "Difficulty : ${viewModel.gameDifficulty}",
-            style = MaterialTheme.typography.h4,
-            color = MaterialTheme.colors.primary,
-            modifier = Modifier.constrainAs(gameDifficultyText) {
-                centerHorizontallyTo(parent)
-                top.linkTo(currentLevelText.bottom, 16.dp)
+            CreateCircularProgressIndicator(
+                currentProgress = 1f,
+                progressColor = MaterialTheme.colors.primary.copy(0.25f),
+                indicatorSize = 200.dp
+            )
+
+            CreateCircularProgressIndicator(
+                currentProgress = animateAttemptsLeftProgress(viewModel.attemptsLeftToGuess),
+                strokeWidth = 10.dp,
+                indicatorSize = 240.dp,
+                progressColor = Color.Red.copy(0.95f)
+            )
+
+            CreateCircularProgressIndicator(
+                currentProgress = 1f,
+                strokeWidth = 10.dp,
+                progressColor = Color.Green.copy(0.25f),
+                indicatorSize = 240.dp
+            )
+
+            var incrementLevelBy = 0
+            val lastGameLevel = viewModel.maxLevelReached
+            if (viewModel.currentPlayerLevel < lastGameLevel) {
+                incrementLevelBy = 1
             }
-        )
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = buildAnnotatedString {
+                        append("Level\n")
+                        withStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colors.primary,
+                                fontSize = 28.sp
+                            )
+                        ) {
+                            append(
+                                "${viewModel.currentPlayerLevel + incrementLevelBy}/$lastGameLevel"
+                            )
+                        }
+                    },
+                    style = MaterialTheme.typography.h6,
+                    color = MaterialTheme.colors.primary.copy(0.50f),
+                    textAlign = TextAlign.Center,
+                )
+
+                Divider(
+                    modifier = Modifier
+                        .width(width = 100.dp)
+                        .padding(vertical = 8.dp)
+                        .clip(MaterialTheme.shapes.small),
+                    color = MaterialTheme.colors.primary.copy(0.25f),
+                    thickness = 2.dp
+                )
+
+                Text(
+                    text = buildAnnotatedString {
+                        append("Points\n")
+                        withStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colors.primary,
+                                fontSize = 28.sp
+                            )
+                        ) {
+                            append(viewModel.pointsScoredOverall.toString())
+                        }
+                    },
+                    style = MaterialTheme.typography.h6,
+                    color = MaterialTheme.colors.primary.copy(0.50f),
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
+
+//        Text(
+//            text = "Difficulty : ${viewModel.gameDifficulty}",
+//            style = MaterialTheme.typography.h4,
+//            color = MaterialTheme.colors.primary,
+//            modifier = Modifier.constrainAs(gameDifficultyText) {
+//                centerHorizontallyTo(parent)
+//                top.linkTo(currentLevelText.bottom, 16.dp)
+//            }
+//        )
 
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
@@ -162,7 +270,7 @@ private fun GameScreenContent(
             modifier = Modifier.constrainAs(randomWordText) {
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
-                top.linkTo(gameDifficultyText.bottom)
+                top.linkTo(gameProgressInfo.bottom)
                 bottom.linkTo(attemptsHintText.top)
             }
         ) {
