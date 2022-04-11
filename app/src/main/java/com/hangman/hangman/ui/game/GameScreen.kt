@@ -117,7 +117,7 @@ private fun GameScreenContent(
     ) {
         val (
             navigateBackIconButton, instructionsIconButton, gameProgressInfo, randomWordText,
-            alphabetsGridItems, attemptsLeftText, attemptsHintText
+            alphabetsGridItems
         ) = createRefs()
 
         IconButton(
@@ -173,84 +173,12 @@ private fun GameScreenContent(
                 top.linkTo(parent.top, 40.dp)
             }
         ) {
-            CreateCircularProgressIndicator(
-                currentProgress = animateCurrentLevelProgress(viewModel.currentPlayerLevel),
-                indicatorSize = 200.dp
-            )
-
-            CreateCircularProgressIndicator(
-                currentProgress = 1f,
-                progressColor = MaterialTheme.colors.primary.copy(0.25f),
-                indicatorSize = 200.dp
-            )
-
-            CreateCircularProgressIndicator(
-                currentProgress = animateAttemptsLeftProgress(viewModel.attemptsLeftToGuess),
-                strokeWidth = 10.dp,
-                indicatorSize = 240.dp,
-                progressColor = Color.Red.copy(0.95f)
-            )
-
-            CreateCircularProgressIndicator(
-                currentProgress = 1f,
-                strokeWidth = 10.dp,
-                progressColor = Color.Green.copy(0.25f),
-                indicatorSize = 240.dp
-            )
-
-            var incrementLevelBy = 0
-            val lastGameLevel = viewModel.maxLevelReached
-            if (viewModel.currentPlayerLevel < lastGameLevel) {
-                incrementLevelBy = 1
-            }
+            AttemptsLeftAndLevelProgressBars(viewModel)
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = buildAnnotatedString {
-                        append("Level\n")
-                        withStyle(
-                            style = SpanStyle(
-                                color = MaterialTheme.colors.primary,
-                                fontSize = 28.sp
-                            )
-                        ) {
-                            append(
-                                "${viewModel.currentPlayerLevel + incrementLevelBy}/$lastGameLevel"
-                            )
-                        }
-                    },
-                    style = MaterialTheme.typography.h6,
-                    color = MaterialTheme.colors.primary.copy(0.50f),
-                    textAlign = TextAlign.Center,
-                )
-
-                Divider(
-                    modifier = Modifier
-                        .width(width = 100.dp)
-                        .padding(vertical = 8.dp)
-                        .clip(MaterialTheme.shapes.small),
-                    color = MaterialTheme.colors.primary.copy(0.25f),
-                    thickness = 2.dp
-                )
-
-                Text(
-                    text = buildAnnotatedString {
-                        append("Points\n")
-                        withStyle(
-                            style = SpanStyle(
-                                color = MaterialTheme.colors.primary,
-                                fontSize = 28.sp
-                            )
-                        ) {
-                            append(viewModel.pointsScoredOverall.toString())
-                        }
-                    },
-                    style = MaterialTheme.typography.h6,
-                    color = MaterialTheme.colors.primary.copy(0.50f),
-                    textAlign = TextAlign.Center,
-                )
+                AttemptsLeftAndLevelText(viewModel)
             }
         }
 
@@ -261,59 +189,16 @@ private fun GameScreenContent(
             modifier = Modifier.constrainAs(randomWordText) {
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
-                top.linkTo(gameProgressInfo.bottom)
-                bottom.linkTo(attemptsHintText.top)
+                top.linkTo(gameProgressInfo.bottom, 16.dp)
+                bottom.linkTo(alphabetsGridItems.top, 16.dp)
             }
         ) {
             items(
                 items = viewModel.updateGuessesByPlayer.updateGuess
             ) { validGuess ->
-
-                ConstraintLayout {
-
-                    val (alphabet, box) = createRefs()
-
-                    Text(
-                        text = validGuess.toString(),
-                        style = MaterialTheme.typography.h5,
-                        color = MaterialTheme.colors.primary,
-                        modifier = Modifier.constrainAs(alphabet) {
-                            centerTo(parent)
-                        }
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(MaterialTheme.colors.primary.copy(0.10f))
-                            .padding(20.dp)
-                            .constrainAs(box) {
-                                centerTo(parent)
-                            }
-                    )
-                }
+                ItemGuessingAlphabetContainer(validGuess)
             }
         }
-
-        Text(
-            text = "attempts left",
-            style = MaterialTheme.typography.subtitle2,
-            color = Color.White.copy(0.50f),
-            modifier = Modifier.constrainAs(attemptsHintText) {
-                centerHorizontallyTo(parent)
-                bottom.linkTo(attemptsLeftText.top, 16.dp)
-            }
-        )
-
-        Text(
-            text = "${viewModel.attemptsLeftToGuess}/8",
-            style = MaterialTheme.typography.h3,
-            color = Color.White,
-            modifier = Modifier.constrainAs(attemptsLeftText) {
-                centerHorizontallyTo(parent)
-                bottom.linkTo(alphabetsGridItems.top, 24.dp)
-            }
-        )
 
         Box(
             modifier = Modifier
@@ -325,24 +210,141 @@ private fun GameScreenContent(
                     bottom.linkTo(parent.bottom)
                 }
         ) {
-
-            ApplyAnimatedVisibility {
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(40.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(20.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    items(
-                        items = viewModel.alphabets,
-                        key = { it.alphabetId }
-                    ) { alphabet ->
-                        ItemAlphabetText(alphabet, viewModel)
+            ApplyAnimatedVisibility(
+                densityValue = 400.dp,
+                content = {
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(40.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(20.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(
+                            items = viewModel.alphabets,
+                            key = { it.alphabetId }
+                        ) { alphabet ->
+                            ItemAlphabetText(alphabet, viewModel)
+                        }
                     }
                 }
-            }
+            )
         }
+    }
+}
+
+@Composable
+private fun AttemptsLeftAndLevelText(
+    viewModel: GameViewModel
+) {
+    var incrementLevelBy = 0
+    val lastGameLevel = viewModel.maxLevelReached
+    if (viewModel.currentPlayerLevel < lastGameLevel) {
+        incrementLevelBy = 1
+    }
+
+    Text(
+        text = buildAnnotatedString {
+            append("Level\n")
+            withStyle(
+                style = SpanStyle(
+                    color = MaterialTheme.colors.primary,
+                    fontSize = 28.sp
+                )
+            ) {
+                append(
+                    "${viewModel.currentPlayerLevel + incrementLevelBy}/$lastGameLevel"
+                )
+            }
+        },
+        style = MaterialTheme.typography.h6,
+        color = MaterialTheme.colors.primary.copy(0.50f),
+        textAlign = TextAlign.Center,
+    )
+
+    Divider(
+        modifier = Modifier
+            .width(width = 100.dp)
+            .padding(vertical = 8.dp)
+            .clip(MaterialTheme.shapes.small),
+        color = MaterialTheme.colors.primary.copy(0.25f),
+        thickness = 2.dp
+    )
+
+    Text(
+        text = buildAnnotatedString {
+            append("Points\n")
+            withStyle(
+                style = SpanStyle(
+                    color = MaterialTheme.colors.primary,
+                    fontSize = 28.sp
+                )
+            ) {
+                append(viewModel.pointsScoredOverall.toString())
+            }
+        },
+        style = MaterialTheme.typography.h6,
+        color = MaterialTheme.colors.primary.copy(0.50f),
+        textAlign = TextAlign.Center,
+    )
+}
+
+@Composable
+private fun AttemptsLeftAndLevelProgressBars(
+    viewModel: GameViewModel
+) {
+    CreateCircularProgressIndicator(
+        currentProgress = animateCurrentLevelProgress(viewModel.currentPlayerLevel),
+        indicatorSize = 200.dp
+    )
+
+    CreateCircularProgressIndicator(
+        currentProgress = 1f,
+        progressColor = MaterialTheme.colors.primary.copy(0.25f),
+        indicatorSize = 200.dp
+    )
+
+    CreateCircularProgressIndicator(
+        currentProgress = animateAttemptsLeftProgress(viewModel.attemptsLeftToGuess),
+        strokeWidth = 10.dp,
+        indicatorSize = 240.dp,
+        progressColor = Color.Red.copy(0.95f)
+    )
+
+    CreateCircularProgressIndicator(
+        currentProgress = 1f,
+        strokeWidth = 10.dp,
+        progressColor = Color.Green.copy(0.25f),
+        indicatorSize = 240.dp
+    )
+}
+
+@Composable
+private fun ItemGuessingAlphabetContainer(
+    validGuess: Char
+) {
+    ConstraintLayout {
+
+        val (alphabet, box) = createRefs()
+
+        Text(
+            text = validGuess.toString(),
+            style = MaterialTheme.typography.h5,
+            color = MaterialTheme.colors.onBackground,
+            modifier = Modifier.constrainAs(alphabet) {
+                centerTo(parent)
+            }
+        )
+
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colors.primary.copy(0.10f))
+                .padding(20.dp)
+                .constrainAs(box) {
+                    centerTo(parent)
+                }
+        )
     }
 }
 
@@ -351,8 +353,6 @@ private fun ItemAlphabetText(
     alphabet: Alphabets,
     viewModel: GameViewModel
 ) {
-    val isGameOver = viewModel.gameOverByNoAttemptsLeft
-
     ConstraintLayout(
         modifier = Modifier
             .alpha(if (!alphabet.isAlphabetGuessed) 1f else 0.25f)
@@ -362,7 +362,7 @@ private fun ItemAlphabetText(
             .clickable(
                 enabled = !alphabet.isAlphabetGuessed,
                 onClick = {
-                    if (!isGameOver) {
+                    if (!viewModel.gameOverByNoAttemptsLeft) {
                         viewModel.checkIfLetterMatches(alphabet)
                         alphabet.isAlphabetGuessed = true
                     }

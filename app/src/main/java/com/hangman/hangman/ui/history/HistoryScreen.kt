@@ -35,14 +35,23 @@ fun HistoryScreen(
         modelClass = HistoryViewModel::class.java
     )
 
+    val gameHistoryList = viewModel.gameHistoryList
+    val showDeleteIconInAppBar = gameHistoryList.isNotEmpty()
+
     Surface(
         color = MaterialTheme.colors.background
     ) {
         Scaffold(
-            topBar = { HistoryAppBar(navigateUp) }
-        ) {
+            topBar = {
+                HistoryAppBar(navigateUp, showDeleteIconInAppBar) {
+                    viewModel.deleteAllGameHistoryData()
+                }
+            }
+        ) { paddingValues ->
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.bg_dodge),
@@ -52,7 +61,6 @@ fun HistoryScreen(
                     alpha = 0.20f
                 )
 
-                val gameHistoryList = viewModel.history
                 HistoryScreenContent(gameHistoryList, viewModel)
                 if (gameHistoryList.isEmpty()) {
                     ShowEmptyHistoryMessage()

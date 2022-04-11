@@ -1,22 +1,22 @@
 package com.hangman.hangman.ui.history
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
 fun HistoryAppBar(
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    showDeleteIconInAppBar: Boolean,
+    deleteAllGameHistoryData: () -> Unit,
 ) {
     TopAppBar(
         backgroundColor = MaterialTheme.colors.background,
-        modifier = Modifier
-            .fillMaxWidth()
-            .statusBarsPadding(),
+        modifier = Modifier.fillMaxWidth(),
         title = {
             Text(
                 text = "Game History",
@@ -30,9 +30,22 @@ fun HistoryAppBar(
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "",
+                    contentDescription = "Navigate to previous screen",
                     tint = MaterialTheme.colors.primary
                 )
+            }
+        },
+        actions = {
+            if (showDeleteIconInAppBar) {
+                IconButton(
+                    onClick = { deleteAllGameHistoryData() }
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Delete,
+                        contentDescription = "Delete all game history",
+                        tint = MaterialTheme.colors.primary
+                    )
+                }
             }
         }
     )
