@@ -17,11 +17,11 @@ class HistoryViewModel(
     private val repository: GameRepository
 ) : AndroidViewModel(application) {
 
-    var history by mutableStateOf(emptyList<HistoryEntity>())
+    var gameHistoryList by mutableStateOf(emptyList<HistoryEntity>())
 
     init {
         viewModelScope.launch {
-            history = repository.getCompleteGameHistory()
+            gameHistoryList = repository.getCompleteGameHistory()
         }
     }
 
@@ -30,12 +30,14 @@ class HistoryViewModel(
     ) {
         viewModelScope.launch {
             repository.deleteSelectedSingleGameHistory(history)
+            gameHistoryList = repository.getCompleteGameHistory()
         }
     }
 
     fun deleteAllGameHistoryData() {
         viewModelScope.launch {
             repository.deleteCompleteGamesHistory()
+            gameHistoryList = repository.getCompleteGameHistory()
         }
     }
 
