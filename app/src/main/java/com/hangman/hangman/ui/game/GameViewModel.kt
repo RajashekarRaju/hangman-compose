@@ -1,10 +1,12 @@
 package com.hangman.hangman.ui.game
 
 import android.app.Application
+import android.media.MediaPlayer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.*
+import com.hangman.hangman.R
 import com.hangman.hangman.modal.Alphabets
 import com.hangman.hangman.repository.*
 import com.hangman.hangman.repository.database.entity.HistoryEntity
@@ -81,6 +83,9 @@ class GameViewModel(
     // Keeps track of player score from each level.
     private val pointsScoredInEachLevel = arrayListOf(0, 0, 0, 0, 0)
 
+    // Everytime initializes and plays the game sound.
+    private lateinit var mediaPlayer: MediaPlayer
+
     init {
         viewModelScope.launch {
             // Get player saved game difficulty level from preferences.
@@ -96,6 +101,8 @@ class GameViewModel(
 
             Timber.e(wordToGuess)
         }
+
+        playCurrentGameSoundBased(R.raw.level_won)
     }
 
     // Called everytime when player chosen any word from list of alphabets.
@@ -161,18 +168,28 @@ class GameViewModel(
 
                 if (playerWonTheCurrentLevel && currentPlayerLevel == 5) {
                     gameOverByWinning = true
+                    playCurrentGameSoundBased(R.raw.game_won)
                     // Saves the game to history, needs couple of changes yet.
                     saveCurrentGameToHistory()
                 }
 
+                // Prevents media player from playing game won sound instead of level won sound.
+                if (playerWonTheCurrentLevel && currentPlayerLevel < 5) {
+                    playCurrentGameSoundBased(R.raw.level_won)
+                }
+
+                // This needs to reset player current level to false for next level to begin.
                 playerWonTheCurrentLevel = false
             }
 
-            calculateOverallPointsSCoredEachLevel()
+            calculateOverallPointsScoredEachLevel()
         }
+
+        // Play alphabet tap game sound.
+        playCurrentGameSoundBased(R.raw.alphabet_tap)
     }
 
-    private fun calculateOverallPointsSCoredEachLevel() {
+    private fun calculateOverallPointsScoredEachLevel() {
         when (currentPlayerLevel) {
             1 -> pointsScoredInEachLevel[0] = pointsScoredPerWord
             2 -> pointsScoredInEachLevel[1] = pointsScoredPerWord
@@ -193,6 +210,7 @@ class GameViewModel(
             if (gameOverByNoAttemptsLeft) {
                 // Saves the game to history, needs couple of changes yet.
                 viewModelScope.launch {
+                    playCurrentGameSoundBased(R.raw.game_lost)
                     saveCurrentGameToHistory()
                 }
             }
@@ -210,6 +228,8 @@ class GameViewModel(
         }
     }
 
+    // When this function triggered, we will save the existing game progress to the database,
+    // irrespective of player wins or loses the game.
     private suspend fun saveCurrentGameToHistory() {
         val (date, time) = getDateAndTime()
 
@@ -224,6 +244,23 @@ class GameViewModel(
                 gamePlayedDate = date
             )
         )
+    }
+
+    // Re-initializes media player everytime this function called with different game sound.
+    private fun playCurrentGameSoundBased(
+        audio: Int
+    ) {
+        viewModelScope.launch {
+            mediaPlayer = MediaPlayer.create(getApplication(), audio)
+            if (!mediaPlayer.isPlaying) {
+                mediaPlayer.start()
+            }
+        }
+    }
+
+    // Stop the game sound once ViewModel destroyed.
+    override fun onCleared() {
+        mediaPlayer.release()
     }
 
     companion object {
@@ -245,6 +282,7 @@ class GameViewModel(
     }
 }
 
+// Holds data for current changes happening in the screen for guessing word.
 data class UpdateWordGuessState(
     val updateGuess: ArrayList<Char>
 )

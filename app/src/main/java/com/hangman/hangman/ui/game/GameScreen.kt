@@ -16,7 +16,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -75,9 +78,12 @@ fun GameScreen(
                 ShowExitGameModalSheet(navigateUp, modalSheetState)
             },
         ) {
+            val openGameInstructionsDialog = rememberSaveable { mutableStateOf(false) }
+
             GameScreenContent(
                 viewModel = viewModel,
-                modalSheetState = modalSheetState
+                modalSheetState = modalSheetState,
+                openGameInstructionsDialog = openGameInstructionsDialog
             )
 
             if (viewModel.revealGuessingWord) {
@@ -87,23 +93,15 @@ fun GameScreen(
             if (viewModel.gameOverByWinning) {
                 ShowDialogWhenGameWon(viewModel, navigateUp)
             }
+
+            if (openGameInstructionsDialog.value) {
+                GameInstructionsInfoDialog(
+                    viewModel.gameDifficulty,
+                    openGameInstructionsDialog
+                )
+            }
         }
     }
-}
-
-@Composable
-private fun CreateCircularProgressIndicator(
-    currentProgress: Float,
-    strokeWidth: Dp = 8.dp,
-    progressColor: Color = MaterialTheme.colors.primary,
-    indicatorSize: Dp
-) {
-    CircularProgressIndicator(
-        progress = currentProgress,
-        strokeWidth = strokeWidth,
-        color = progressColor,
-        modifier = Modifier.size(size = indicatorSize)
-    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -111,7 +109,8 @@ private fun CreateCircularProgressIndicator(
 private fun GameScreenContent(
     viewModel: GameViewModel,
     modalSheetState: ModalBottomSheetState,
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    openGameInstructionsDialog: MutableState<Boolean>
 ) {
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
@@ -146,7 +145,9 @@ private fun GameScreenContent(
         }
 
         IconButton(
-            onClick = { },
+            onClick = {
+                openGameInstructionsDialog.value = !openGameInstructionsDialog.value
+            },
             modifier = Modifier
                 .background(
                     color = MaterialTheme.colors.primary.copy(0.06f),
@@ -159,7 +160,7 @@ private fun GameScreenContent(
         ) {
             Icon(
                 imageVector = Icons.Outlined.Info,
-                contentDescription = "Game instructions icon",
+                contentDescription = "Game instructions",
                 tint = MaterialTheme.colors.primary,
                 modifier = Modifier.alpha(0.75f)
             )
@@ -252,16 +253,6 @@ private fun GameScreenContent(
                 )
             }
         }
-
-//        Text(
-//            text = "Difficulty : ${viewModel.gameDifficulty}",
-//            style = MaterialTheme.typography.h4,
-//            color = MaterialTheme.colors.primary,
-//            modifier = Modifier.constrainAs(gameDifficultyText) {
-//                centerHorizontallyTo(parent)
-//                top.linkTo(currentLevelText.bottom, 16.dp)
-//            }
-//        )
 
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
@@ -390,4 +381,19 @@ private fun ItemAlphabetText(
             }
         )
     }
+}
+
+@Composable
+private fun CreateCircularProgressIndicator(
+    currentProgress: Float,
+    strokeWidth: Dp = 8.dp,
+    progressColor: Color = MaterialTheme.colors.primary,
+    indicatorSize: Dp
+) {
+    CircularProgressIndicator(
+        progress = currentProgress,
+        strokeWidth = strokeWidth,
+        color = progressColor,
+        modifier = Modifier.size(size = indicatorSize)
+    )
 }
