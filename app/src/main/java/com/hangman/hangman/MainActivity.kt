@@ -4,7 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.hangman.hangman.navigation.AppNavigation
 import com.hangman.hangman.ui.theme.RedHangmanTheme
 
@@ -17,12 +18,22 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             // Let game run in immersive fullscreen mode.
-            val systemUiController = rememberSystemUiController()
-            systemUiController.isSystemBarsVisible = false
+            hideSystemBars()
 
             RedHangmanTheme {
                 AppNavigation(activity = this)
             }
+        }
+    }
+
+    private fun hideSystemBars() {
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+        // Configure the behavior of the hidden system bars
+        if (windowInsetsController != null) {
+            windowInsetsController.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            // Hide both the status bar and the navigation bar
+            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
         }
     }
 }
