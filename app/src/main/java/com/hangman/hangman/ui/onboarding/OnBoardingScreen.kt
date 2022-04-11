@@ -78,6 +78,8 @@ private fun OnBoardingScreenContent(
     navigateToHistoryScreen: () -> Unit,
     viewModel: OnBoardingViewModel,
 ) {
+    val highScore = viewModel.getLatestHighScore()
+
     val openGameDifficultyDialog = rememberSaveable { mutableStateOf(false) }
     if (openGameDifficultyDialog.value) {
         AdjustGameDifficultyDialog(viewModel, openGameDifficultyDialog)
@@ -91,180 +93,186 @@ private fun OnBoardingScreenContent(
         )
     }
 
-    LazyColumn(
+    Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .navigationBarsPadding()
+        modifier = Modifier.fillMaxSize()
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.rope_with_title),
+            contentDescription = "Hangman game",
+            modifier = Modifier.size(220.dp)
+        )
 
-        stickyHeader {
-            Image(
-                painter = painterResource(id = R.drawable.rope_with_title),
-                contentDescription = "Hangman game",
-                modifier = Modifier.size(220.dp)
-            )
-        }
+        Text(
+            text = "Be Aware. Letters Can Demise You",
+            style = MaterialTheme.typography.subtitle2,
+            color = MaterialTheme.colors.primary.copy(0.75f),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 28.dp, vertical = 20.dp)
+        )
 
-        item {
+        Spacer(modifier = Modifier.height(12.dp))
 
-            Text(
-                text = "Be Aware. Letters Can Demise You",
-                style = MaterialTheme.typography.subtitle2,
-                color = MaterialTheme.colors.primary.copy(0.75f),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 28.dp, vertical = 20.dp)
-            )
+        Text(
+            text = buildAnnotatedString {
+                append("Highest Score - ")
+                withStyle(
+                    style = SpanStyle(
+                        color = MaterialTheme.colors.onSurface,
+                        fontSize = 18.sp,
+                        textDecoration = TextDecoration.Underline
+                    )
+                ) {
+                    append(if (highScore == "null") "0" else highScore)
+                }
+            },
+            textDecoration = TextDecoration.Underline,
+            style = MaterialTheme.typography.subtitle1,
+            color = MaterialTheme.colors.primary.copy(0.75f),
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
-            Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = buildAnnotatedString {
-                    append("Highest Score - ")
-                    withStyle(
-                        style = SpanStyle(
-                            color = MaterialTheme.colors.onSurface,
-                            fontSize = 18.sp,
-                            textDecoration = TextDecoration.Underline
-                        )
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+            item {
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    modifier = Modifier.width(160.dp),
+                    shape = MaterialTheme.shapes.medium,
+                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
+                    border = BorderStroke(
+                        width = 2.dp,
+                        color = MaterialTheme.colors.primary.copy(0.5f)
+                    ),
+                    onClick = {
+                        viewModel.releaseBackgroundMusic()
+                        navigateToGameScreen()
+                    },
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.skull),
+                        contentDescription = "Play game",
+                        modifier = Modifier.size(20.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    OnBoardingButtonText(buttonName = "Play")
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    modifier = Modifier.width(160.dp),
+                    shape = MaterialTheme.shapes.medium,
+                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
+                    onClick = {
+                        viewModel.gameDifficultyPreferences.updateGameDifficultyPref(GameDifficulty.EASY)
+                        finishActivity()
+                    },
+                    border = BorderStroke(
+                        width = 2.dp,
+                        color = MaterialTheme.colors.primary.copy(0.5f)
+                    )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.demon),
+                        contentDescription = "Exit game",
+                        modifier = Modifier.size(28.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    OnBoardingButtonText(buttonName = "Exit")
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    modifier = Modifier.width(160.dp),
+                    onClick = { navigateToHistoryScreen() },
+                    shape = MaterialTheme.shapes.medium,
+                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
+                    border = BorderStroke(
+                        width = 2.dp,
+                        color = MaterialTheme.colors.primary.copy(0.5f)
+                    ),
+                ) {
+                    OnBoardingButtonText(buttonName = "History")
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    modifier = Modifier.width(160.dp),
+                    onClick = { openGameDifficultyDialog.value = !openGameDifficultyDialog.value },
+                    shape = MaterialTheme.shapes.medium,
+                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
+                    border = BorderStroke(
+                        width = 2.dp,
+                        color = MaterialTheme.colors.primary.copy(0.5f)
+                    )
+                ) {
+                    OnBoardingButtonText(buttonName = "Difficulty")
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row {
+                    IconButton(
+                        onClick = {
+                            openGameInstructionsDialog.value = !openGameInstructionsDialog.value
+                        },
+                        modifier = Modifier
+                            .background(
+                                color = MaterialTheme.colors.primary.copy(0.15f),
+                                shape = CircleShape
+                            )
                     ) {
-                        append("${viewModel.highestScore}")
+                        Icon(
+                            imageVector = Icons.Outlined.Info,
+                            contentDescription = "Read instructions",
+                            tint = MaterialTheme.colors.primary,
+                        )
                     }
-                },
-                textDecoration = TextDecoration.Underline,
-                style = MaterialTheme.typography.subtitle1,
-                color = MaterialTheme.colors.primary.copy(0.75f),
-            )
 
-            Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.width(16.dp))
 
-            Button(
-                modifier = Modifier.width(160.dp),
-                shape = MaterialTheme.shapes.medium,
-                colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
-                border = BorderStroke(
-                    width = 2.dp,
-                    color = MaterialTheme.colors.primary.copy(0.5f)
-                ),
-                onClick = {
-                    viewModel.releaseBackgroundMusic()
-                    navigateToGameScreen()
-                },
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.skull),
-                    contentDescription = "Play game",
-                    modifier = Modifier.size(20.dp)
-                )
+                    var volumeIcon = R.drawable.ic_volume_enabled
+                    if (!viewModel.isBackgroundMusicPlaying) {
+                        volumeIcon = R.drawable.ic_volume_disabled
+                    }
 
-                Spacer(modifier = Modifier.width(16.dp))
-
-                OnBoardingButtonText(buttonName = "Play")
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(
-                modifier = Modifier.width(160.dp),
-                shape = MaterialTheme.shapes.medium,
-                colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
-                onClick = {
-                    viewModel.gameDifficultyPreferences.updateGameDifficultyPref(GameDifficulty.EASY)
-                    finishActivity()
-                },
-                border = BorderStroke(
-                    width = 2.dp,
-                    color = MaterialTheme.colors.primary.copy(0.5f)
-                )
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.demon),
-                    contentDescription = "Exit game",
-                    modifier = Modifier.size(28.dp)
-                )
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                OnBoardingButtonText(buttonName = "Exit")
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(
-                modifier = Modifier.width(160.dp),
-                onClick = { navigateToHistoryScreen() },
-                shape = MaterialTheme.shapes.medium,
-                colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
-                border = BorderStroke(
-                    width = 2.dp,
-                    color = MaterialTheme.colors.primary.copy(0.5f)
-                ),
-            ) {
-                OnBoardingButtonText(buttonName = "History")
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(
-                modifier = Modifier.width(160.dp),
-                onClick = { openGameDifficultyDialog.value = !openGameDifficultyDialog.value },
-                shape = MaterialTheme.shapes.medium,
-                colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
-                border = BorderStroke(
-                    width = 2.dp,
-                    color = MaterialTheme.colors.primary.copy(0.5f)
-                )
-            ) {
-                OnBoardingButtonText(buttonName = "Difficulty")
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row {
-                IconButton(
-                    onClick = {
-                        openGameInstructionsDialog.value = !openGameInstructionsDialog.value
-                    },
-                    modifier = Modifier
-                        .background(
-                            color = MaterialTheme.colors.primary.copy(0.15f),
-                            shape = CircleShape
+                    IconButton(
+                        onClick = {
+                            if (!viewModel.isBackgroundMusicPlaying) {
+                                viewModel.playGameBackgroundMusicOnStart()
+                            } else {
+                                viewModel.releaseBackgroundMusic()
+                            }
+                        },
+                        modifier = Modifier
+                            .background(
+                                color = MaterialTheme.colors.primary.copy(0.15f),
+                                shape = CircleShape
+                            )
+                    ) {
+                        Icon(
+                            painter = painterResource(id = volumeIcon),
+                            contentDescription = "Game sound on",
+                            tint = MaterialTheme.colors.primary,
                         )
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Info,
-                        contentDescription = "Read instructions",
-                        tint = MaterialTheme.colors.primary,
-                    )
+                    }
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
-
-                var volumeIcon = R.drawable.ic_volume_enabled
-                if (!viewModel.isBackgroundMusicPlaying) {
-                    volumeIcon = R.drawable.ic_volume_disabled
-                }
-
-                IconButton(
-                    onClick = {
-                        if (!viewModel.isBackgroundMusicPlaying) {
-                            viewModel.playGameBackgroundMusicOnStart()
-                        } else {
-                            viewModel.releaseBackgroundMusic()
-                        }
-                    },
-                    modifier = Modifier
-                        .background(
-                            color = MaterialTheme.colors.primary.copy(0.15f),
-                            shape = CircleShape
-                        )
-                ) {
-                    Icon(
-                        painter = painterResource(id = volumeIcon),
-                        contentDescription = "Game sound on",
-                        tint = MaterialTheme.colors.primary,
-                    )
-                }
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }

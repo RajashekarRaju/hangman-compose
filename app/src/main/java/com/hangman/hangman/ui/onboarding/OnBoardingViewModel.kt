@@ -21,22 +21,33 @@ class OnBoardingViewModel(
     private val repository: GameRepository
 ) : AndroidViewModel(application) {
 
-    var difficultyValueText by mutableStateOf(GameDifficulty.EASY)
-    val gameDifficultyPreferences = GameDifficultyPref(application)
-    var isBackgroundMusicPlaying by mutableStateOf(false)
-    var highestScore: Int? by mutableStateOf(0)
+    // Keeps track of highest score from the game history.
+    private var highestScore by mutableStateOf("0")
 
+    // From slider position updates the current difficulty text value.
+    var difficultyValueText by mutableStateOf(GameDifficulty.EASY)
+
+    // Updates the preferences with game difficulty slider position.
+    val gameDifficultyPreferences = GameDifficultyPref(application)
+
+    // Tracks media player current play/pause/release state.
+    var isBackgroundMusicPlaying by mutableStateOf(false)
     private lateinit var mediaPlayer: MediaPlayer
 
     init {
+        getLatestHighScore()
+        playGameBackgroundMusicOnStart()
+    }
+
+    fun getLatestHighScore(): String {
         viewModelScope.launch {
             val gameHistoryList = repository.getCompleteGameHistory()
             highestScore = gameHistoryList.maxByOrNull {
                 it.gameScore
-            }?.gameScore
+            }?.gameScore.toString()
         }
 
-        playGameBackgroundMusicOnStart()
+        return highestScore
     }
 
     fun playGameBackgroundMusicOnStart() {
