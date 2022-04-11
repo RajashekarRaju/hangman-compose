@@ -2,13 +2,11 @@ package com.hangman.hangman.navigation
 
 import android.app.Application
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hangman.hangman.HangmanApp
 import com.hangman.hangman.MainActivity
 import com.hangman.hangman.ui.game.GameScreen
@@ -29,8 +27,6 @@ fun AppNavigation(
     val application = LocalContext.current.applicationContext as Application
     val repository = (application as HangmanApp).repository
 
-    val systemUiController = rememberSystemUiController()
-
     NavHost(
         navController = navController,
         startDestination = startDestination
@@ -39,13 +35,11 @@ fun AppNavigation(
         composable(
             AppDestinations.ONBOARDING_SCREEN_ROUTE
         ) {
-            SideEffect {
-                systemUiController.isSystemBarsVisible = false
-            }
             OnBoardingScreen(
                 navigateToGameScreen = actions.navigateToGameScreen,
                 navigateToHistoryScreen = actions.navigateToHistoryScreen,
                 application = application,
+                repository = repository
             ) {
                 actions.finishActivity(activity.finish())
             }
@@ -54,9 +48,6 @@ fun AppNavigation(
         composable(
             AppDestinations.GAME_SCREEN_ROUTE
         ) {
-            SideEffect {
-                systemUiController.isSystemBarsVisible = false
-            }
             GameScreen(
                 actions.navigateUp,
                 application,
@@ -67,10 +58,6 @@ fun AppNavigation(
         composable(
             AppDestinations.HISTORY_SCREEN_ROUTE
         ) {
-            SideEffect {
-                systemUiController.isStatusBarVisible = true
-                systemUiController.isNavigationBarVisible = false
-            }
             HistoryScreen(
                 actions.navigateUp,
                 application,
