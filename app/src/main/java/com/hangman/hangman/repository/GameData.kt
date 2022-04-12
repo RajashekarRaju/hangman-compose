@@ -1,8 +1,5 @@
 package com.hangman.hangman.repository
 
-import androidx.compose.runtime.mutableStateOf
-import com.hangman.hangman.modal.Alphabets
-
 
 object GameData {
 
@@ -28,26 +25,13 @@ object GameData {
         "suriname", "kyrgyzstan"
     )
 
-    /**
-     * The return type should be immutable since it's result is used in GameViewModel.
-     * Creating a [mutableStateOf] object with a mutable collection type isn't possible, so
-     * at the end instead of returning array object, transform those to list.
-     */
-    fun alphabetsList(): List<Alphabets> {
-        val alphabet = ('A'..'Z').toList()
-        val alphabetId = (1..26).toList()
-        val zipAlphabets = alphabetId zip alphabet
-
-        val alphabetList = arrayListOf<Alphabets>()
-        zipAlphabets.forEach { pair ->
-            alphabetList.add(
-                Alphabets(
-                    alphabetId = pair.first,
-                    alphabet = pair.second.toString()
-                )
-            )
-        }
-
-        return alphabetList.toList()
-    }
+    val instructionsList = listOf(
+        "1. Game has 5 levels, you will win only if you complete all of those.",
+        "2. Points per level will be allotted based on bigger the word is you guess.",
+        "3. You will be having 8 guessed by default for each level, will reset everytime.",
+        "4. For each wrong letter you guess, a attempt will be reduced from 8 guesses.",
+        "5. For each correct letter you guess, attempt will not be reduced.",
+        "6. You can check all your previous game scoring history in history screen.",
+        "7. You have 3 types of difficulties to play the game such as easy, medium, hard. You"
+    )
 }
