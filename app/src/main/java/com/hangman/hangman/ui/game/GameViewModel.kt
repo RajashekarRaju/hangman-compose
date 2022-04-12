@@ -13,6 +13,7 @@ import com.hangman.hangman.repository.database.entity.HistoryEntity
 import com.hangman.hangman.repository.database.entity.WordsEntity
 import com.hangman.hangman.utils.GameDifficulty
 import com.hangman.hangman.utils.GameDifficultyPref
+import com.hangman.hangman.utils.alphabetsList
 import com.hangman.hangman.utils.getDateAndTime
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -20,6 +21,10 @@ import timber.log.Timber
 import java.util.*
 import kotlin.collections.ArrayList
 
+/**
+ * ViewModel for screen [GameScreen].
+ * Initialized with koin.
+ */
 class GameViewModel(
     private val application: Application,
     private val repository: GameRepository
@@ -51,7 +56,7 @@ class GameViewModel(
     var wordToGuess by mutableStateOf("")
 
     // List of A-Z alphabets, let's player access alphabets in any order
-    var alphabets by mutableStateOf(GameData.alphabetsList())
+    var alphabets by mutableStateOf(alphabetsList())
 
     // Keep track of attempts to find out whether or not to finish the game
     var attemptsLeftToGuess by mutableStateOf(8)
@@ -164,7 +169,7 @@ class GameViewModel(
                 }
                 Timber.e("Level 2 ==> $wordToGuess")
 
-                alphabets = GameData.alphabetsList()
+                alphabets = alphabetsList()
 
                 if (playerWonTheCurrentLevel && currentPlayerLevel == 5) {
                     gameOverByWinning = true

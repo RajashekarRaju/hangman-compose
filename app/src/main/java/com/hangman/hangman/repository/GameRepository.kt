@@ -7,10 +7,16 @@ import com.hangman.hangman.utils.GameDifficulty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+/**
+ * Instance is created by Koin.
+ */
 class GameRepository(
     private val database: GameDatabase
 ) {
 
+    /**
+     * Returns the list of country name guessing words from database by difficulty.
+     */
     suspend fun getRandomGuessingWord(
         gameDifficulty: GameDifficulty
     ): List<WordsEntity> {
@@ -22,6 +28,9 @@ class GameRepository(
         return guessingWords
     }
 
+    /**
+     * Saves the single game history to database.
+     */
     suspend fun saveCurrentGameToHistory(
         historyEntity: HistoryEntity
     ) {
@@ -30,6 +39,9 @@ class GameRepository(
         }
     }
 
+    /**
+     * Returns the completed game history.
+     */
     suspend fun getCompleteGameHistory(): List<HistoryEntity> {
         val gameHistoryEntityList: List<HistoryEntity>
         withContext(Dispatchers.IO) {
@@ -39,6 +51,9 @@ class GameRepository(
         return gameHistoryEntityList
     }
 
+    /**
+     * Delete the single game history item.
+     */
     suspend fun deleteSelectedSingleGameHistory(
         historyEntity: HistoryEntity
     ) {
@@ -47,6 +62,9 @@ class GameRepository(
         }
     }
 
+    /**
+     * Deletes the completed game history.
+     */
     suspend fun deleteCompleteGamesHistory() {
         withContext(Dispatchers.IO) {
             database.historyDao.deleteAllGamesHistory()

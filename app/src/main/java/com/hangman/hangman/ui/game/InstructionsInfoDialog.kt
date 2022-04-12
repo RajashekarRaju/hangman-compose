@@ -12,12 +12,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.hangman.hangman.R
+import com.hangman.hangman.repository.GameData
 import com.hangman.hangman.utils.GameDifficulty
 
-
+/**
+ * Dialog with game instructions information.
+ * This dialog is used in GameScreen OnBoardingScreen.
+ */
 @Composable
 fun GameInstructionsInfoDialog(
     gameDifficulty: GameDifficulty,
@@ -37,7 +43,7 @@ fun GameInstructionsInfoDialog(
                 .padding(horizontal = 16.dp, vertical = 28.dp)
         ) {
             Text(
-                text = "Instructions",
+                text = stringResource(R.string.dialog_game_instructions_title),
                 style = MaterialTheme.typography.h6,
                 color = MaterialTheme.colors.onSurface,
             )
@@ -61,7 +67,7 @@ fun GameInstructionsInfoDialog(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Guess the name of the countries.",
+                text = stringResource(R.string.dialog_game_instructions_subtitle),
                 style = MaterialTheme.typography.h5,
                 color = MaterialTheme.colors.primary.copy(0.75f),
                 textAlign = TextAlign.Center
@@ -84,7 +90,7 @@ fun GameInstructionsInfoDialog(
                     .background(MaterialTheme.colors.surface, RoundedCornerShape(16.dp))
             ) {
                 items(
-                    instructionsList
+                    items = GameData.instructionsList
                 ) { item ->
                     Text(
                         text = item,
@@ -98,13 +104,3 @@ fun GameInstructionsInfoDialog(
         }
     }
 }
-
-val instructionsList = listOf(
-    "1. Game has 5 levels, you will win only if you complete all of those.",
-    "2. Points per level will be allotted based on bigger the word is you guess.",
-    "3. You will be having 8 guessed by default for each level, will reset everytime.",
-    "4. For each wrong letter you guess, a attempt will be reduced from 8 guesses.",
-    "5. For each correct letter you guess, attempt will not be reduced.",
-    "6. You can check all your previous game scoring history in history screen.",
-    "7. You have 3 types of difficulties to play the game such as easy, medium, hard. You"
-)

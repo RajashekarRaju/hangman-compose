@@ -13,7 +13,10 @@ import com.hangman.hangman.utils.GameDifficulty
 import com.hangman.hangman.utils.GameDifficultyPref
 import kotlinx.coroutines.launch
 
-
+/**
+ * ViewModel for screen [OnBoardingScreen].
+ * Initialized with koin.
+ */
 class OnBoardingViewModel(
     private val application: Application,
     private val repository: GameRepository
@@ -33,10 +36,13 @@ class OnBoardingViewModel(
     private lateinit var mediaPlayer: MediaPlayer
 
     init {
+        // Fetch latest game score.
         getLatestHighScore()
+        // Start game sound on screen launch.
         playGameBackgroundMusicOnStart()
     }
 
+    // Launches a coroutine and fetches the highest score from the game history database.
     fun getLatestHighScore(): String {
         viewModelScope.launch {
             val gameHistoryList = repository.getCompleteGameHistory()
@@ -45,25 +51,33 @@ class OnBoardingViewModel(
             }?.gameScore.toString()
         }
 
+        // Updates the previous highest score saved in highestScore with new one.
         return highestScore
     }
 
+    // Initialize the media player and manage the play/release state.
+    // Updates the isBackgroundMusicPlaying values for screen elements to change.
     fun playGameBackgroundMusicOnStart() {
         viewModelScope.launch {
             mediaPlayer =
                 MediaPlayer.create(application.applicationContext, R.raw.game_background_music)
-            if (!mediaPlayer.isPlaying) {
+            isBackgroundMusicPlaying = if (!mediaPlayer.isPlaying) {
                 mediaPlayer.start()
-                isBackgroundMusicPlaying = true
+                true
+            } else {
+                mediaPlayer.release()
+                false
             }
         }
     }
 
+    // Releases media player and stop current playing sound.
     fun releaseBackgroundMusic() {
         mediaPlayer.release()
         isBackgroundMusicPlaying = false
     }
 
+    // Once user makes changes to slider position this function will be triggered.
     fun updatePlayerChosenDifficulty(
         sliderPosition: Float
     ) {
@@ -74,6 +88,7 @@ class OnBoardingViewModel(
             else -> GameDifficulty.EASY
         }
 
+        // Update the value in preferences with latest player chosen game difficulty mode.
         gameDifficultyPreferences.updateGameDifficultyPref(difficultyValueText)
     }
 }

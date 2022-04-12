@@ -8,25 +8,30 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hangman.hangman.R
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
+/**
+ * Modal sheet shows up when hits up navigation button.
+ */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ShowExitGameModalSheet(
     navigateUp: () -> Unit,
-    modalSheetState: ModalBottomSheetState
+    modalSheetState: ModalBottomSheetState,
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
-    val coroutineScope = rememberCoroutineScope()
-
     Column(
         modifier = Modifier.padding(horizontal = 40.dp, vertical = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Exit Game ?",
+            text = stringResource(R.string.modal_sheet_exit_game_title),
             style = MaterialTheme.typography.h5,
             color = MaterialTheme.colors.primary.copy(0.75f),
         )
@@ -49,7 +54,7 @@ fun ShowExitGameModalSheet(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Exit",
+                text = stringResource(R.string.modal_sheet_positive_title),
                 letterSpacing = 4.sp,
                 style = MaterialTheme.typography.button,
                 color = MaterialTheme.colors.primary.copy(0.75f),
@@ -70,7 +75,7 @@ fun ShowExitGameModalSheet(
             },
         ) {
             Text(
-                text = "Keep Playing",
+                text = stringResource(id = R.string.modal_sheet_negative_title),
                 letterSpacing = 2.sp,
                 style = MaterialTheme.typography.button,
                 color = MaterialTheme.colors.primary.copy(0.75f),

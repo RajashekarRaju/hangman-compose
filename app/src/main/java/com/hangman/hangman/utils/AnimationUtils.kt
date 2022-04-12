@@ -8,7 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 
-
+// Manages the state for animations state.
 @Composable
 private fun applyTransitionState() = remember {
     MutableTransitionState(false).apply {
@@ -17,6 +17,7 @@ private fun applyTransitionState() = remember {
     }
 }
 
+// Animation to slide any element vertically from it's density.
 @Composable
 fun ApplyAnimatedVisibility(
     content: @Composable () -> Unit,
