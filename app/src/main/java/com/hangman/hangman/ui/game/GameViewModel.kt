@@ -21,9 +21,9 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class GameViewModel(
-    application: Application,
+    private val application: Application,
     private val repository: GameRepository
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     /**
      * Since creating a [mutableStateOf] object with a mutable collection type wasn't possible,
@@ -251,7 +251,7 @@ class GameViewModel(
         audio: Int
     ) {
         viewModelScope.launch {
-            mediaPlayer = MediaPlayer.create(getApplication(), audio)
+            mediaPlayer = MediaPlayer.create(application.applicationContext, audio)
             if (!mediaPlayer.isPlaying) {
                 mediaPlayer.start()
             }
@@ -261,24 +261,6 @@ class GameViewModel(
     // Stop the game sound once ViewModel destroyed.
     override fun onCleared() {
         mediaPlayer.release()
-    }
-
-    companion object {
-
-        fun provideFactory(
-            application: Application,
-            repository: GameRepository,
-        ): ViewModelProvider.AndroidViewModelFactory {
-            return object : ViewModelProvider.AndroidViewModelFactory(application) {
-                @Suppress("unchecked_cast")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    if (modelClass.isAssignableFrom(GameViewModel::class.java)) {
-                        return GameViewModel(application, repository) as T
-                    }
-                    throw IllegalArgumentException("Cannot create Instance for GameViewModel class")
-                }
-            }
-        }
     }
 }
 

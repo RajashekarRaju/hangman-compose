@@ -5,9 +5,7 @@ import android.media.MediaPlayer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hangman.hangman.R
 import com.hangman.hangman.repository.GameRepository
@@ -17,9 +15,9 @@ import kotlinx.coroutines.launch
 
 
 class OnBoardingViewModel(
-    application: Application,
+    private val application: Application,
     private val repository: GameRepository
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     // Keeps track of highest score from the game history.
     private var highestScore by mutableStateOf("0")
@@ -52,7 +50,8 @@ class OnBoardingViewModel(
 
     fun playGameBackgroundMusicOnStart() {
         viewModelScope.launch {
-            mediaPlayer = MediaPlayer.create(getApplication(), R.raw.game_background_music)
+            mediaPlayer =
+                MediaPlayer.create(application.applicationContext, R.raw.game_background_music)
             if (!mediaPlayer.isPlaying) {
                 mediaPlayer.start()
                 isBackgroundMusicPlaying = true
@@ -76,23 +75,5 @@ class OnBoardingViewModel(
         }
 
         gameDifficultyPreferences.updateGameDifficultyPref(difficultyValueText)
-    }
-
-    companion object {
-
-        fun provideFactory(
-            application: Application,
-            repository: GameRepository
-        ): ViewModelProvider.AndroidViewModelFactory {
-            return object : ViewModelProvider.AndroidViewModelFactory(application) {
-                @Suppress("unchecked_cast")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    if (modelClass.isAssignableFrom(OnBoardingViewModel::class.java)) {
-                        return OnBoardingViewModel(application, repository) as T
-                    }
-                    throw IllegalArgumentException("Cannot create Instance for OnBoardingViewModel class")
-                }
-            }
-        }
     }
 }

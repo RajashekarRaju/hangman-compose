@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,23 +17,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.hangman.hangman.HangmanApp
 import com.hangman.hangman.R
-import com.hangman.hangman.repository.GameRepository
 import com.hangman.hangman.repository.database.entity.HistoryEntity
 import com.hangman.hangman.utils.GameDifficulty
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun HistoryScreen(
-    navigateUp: () -> Unit,
-    application: HangmanApp,
-    repository: GameRepository
+    navigateUp: () -> Unit
 ) {
-    val viewModel = viewModel(
-        factory = HistoryViewModel.provideFactory(application, repository),
-        modelClass = HistoryViewModel::class.java
-    )
+    val viewModel = getViewModel<HistoryViewModel>()
 
     val gameHistoryList = viewModel.gameHistoryList
     val showDeleteIconInAppBar = gameHistoryList.isNotEmpty()

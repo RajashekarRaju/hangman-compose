@@ -25,26 +25,19 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.hangman.hangman.HangmanApp
 import com.hangman.hangman.R
-import com.hangman.hangman.repository.GameRepository
 import com.hangman.hangman.ui.game.GameInstructionsInfoDialog
 import com.hangman.hangman.utils.GameDifficulty
+import org.koin.androidx.compose.getViewModel
 
 
 @Composable
 fun OnBoardingScreen(
     navigateToGameScreen: () -> Unit,
     navigateToHistoryScreen: () -> Unit,
-    application: HangmanApp,
-    repository: GameRepository,
     finishActivity: () -> Unit,
 ) {
-    val viewModel = viewModel(
-        factory = OnBoardingViewModel.provideFactory(application, repository),
-        modelClass = OnBoardingViewModel::class.java
-    )
+    val viewModel = getViewModel<OnBoardingViewModel>()
 
     Surface(
         color = MaterialTheme.colors.background,

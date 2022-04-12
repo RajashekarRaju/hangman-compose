@@ -33,26 +33,19 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.hangman.hangman.HangmanApp
 import com.hangman.hangman.modal.Alphabets
-import com.hangman.hangman.repository.GameRepository
 import com.hangman.hangman.utils.ApplyAnimatedVisibility
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun GameScreen(
-    navigateUp: () -> Unit,
-    application: HangmanApp,
-    repository: GameRepository
+    navigateUp: () -> Unit
 ) {
-    val viewModel = viewModel(
-        factory = GameViewModel.provideFactory(application, repository),
-        modelClass = GameViewModel::class.java
-    )
+    val viewModel = getViewModel<GameViewModel>()
 
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
