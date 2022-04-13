@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -21,6 +22,9 @@ import androidx.compose.ui.window.Dialog
 import com.hangman.hangman.R
 import com.hangman.hangman.utils.ApplyAnimatedVisibility
 
+/**
+ * Dialog shown when player wins the game.
+ */
 @Composable
 fun ShowDialogWhenGameWon(
     viewModel: GameViewModel,
@@ -32,10 +36,14 @@ fun ShowDialogWhenGameWon(
         Box(
             Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colors.surface, RoundedCornerShape(16.dp))
+                .background(
+                    color = MaterialTheme.colors.surface,
+                    shape = RoundedCornerShape(16.dp)
+                )
         ) {
             Text(
                 text = buildAnnotatedString {
+
                     withStyle(
                         style = SpanStyle(
                             color = MaterialTheme.colors.primary,
@@ -43,9 +51,11 @@ fun ShowDialogWhenGameWon(
                             textDecoration = TextDecoration.Underline
                         )
                     ) {
-                        append("You Have Won !\n\n")
+                        append(stringResource(id = R.string.dialog_game_won_title))
                     }
-                    append("Points you have scored\n\n")
+
+                    append(stringResource(id = R.string.dialog_game_won_points))
+
                     withStyle(
                         style = SpanStyle(
                             color = MaterialTheme.colors.primary,
@@ -54,7 +64,9 @@ fun ShowDialogWhenGameWon(
                     ) {
                         append(viewModel.pointsScoredOverall.toString())
                     }
-                    append("\n\nDifficulty Mode\n")
+
+                    append(stringResource(id = R.string.dialog_game_won_difficulty))
+
                     withStyle(
                         style = SpanStyle(
                             color = MaterialTheme.colors.primary,
@@ -66,17 +78,19 @@ fun ShowDialogWhenGameWon(
                 },
                 style = MaterialTheme.typography.h5,
                 color = MaterialTheme.colors.primary.copy(0.75f),
+                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(horizontal = 40.dp, vertical = 60.dp)
                     .fillMaxWidth()
                     .align(alignment = Alignment.Center),
-                textAlign = TextAlign.Center,
             )
         }
     }
 }
 
-
+/**
+ * Dialog shown when player loses the game.
+ */
 @Composable
 fun ShowPopupWhenGameLost(
     viewModel: GameViewModel,
@@ -88,7 +102,10 @@ fun ShowPopupWhenGameLost(
         Box(
             Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colors.surface, RoundedCornerShape(16.dp))
+                .background(
+                    color = MaterialTheme.colors.surface,
+                    shape = RoundedCornerShape(16.dp)
+                )
         ) {
 
             ApplyAnimatedVisibility(
@@ -96,19 +113,19 @@ fun ShowPopupWhenGameLost(
                 content = {
                     Image(
                         painter = painterResource(id = R.drawable.rope_empty_title),
-                        contentDescription = "Hangman rope image",
+                        contentDescription = stringResource(R.string.cd_game_lost_hangman_image),
+                        alpha = 0.75f,
+                        alignment = Alignment.TopCenter,
                         modifier = Modifier
                             .fillMaxWidth()
                             .align(alignment = Alignment.TopCenter),
-                        alpha = 0.75f,
-                        alignment = Alignment.TopCenter
                     )
                 }
             )
 
             Image(
                 painter = painterResource(id = R.drawable.evil_hand),
-                contentDescription = "",
+                contentDescription = stringResource(R.string.cd_game_lost_hangman_image),
                 modifier = Modifier.align(alignment = Alignment.BottomCenter),
                 alpha = 0.25f
             )
@@ -122,9 +139,11 @@ fun ShowPopupWhenGameLost(
                             textDecoration = TextDecoration.Underline
                         )
                     ) {
-                        append("\n\n\nYou Lost\n\n")
+                        append(stringResource(id = R.string.dialog_game_lost_title))
                     }
-                    append("The word you didn't guess was\n\n")
+
+                    append(stringResource(id = R.string.dialog_game_lost_word))
+
                     withStyle(
                         style = SpanStyle(
                             color = MaterialTheme.colors.primary,
@@ -136,11 +155,11 @@ fun ShowPopupWhenGameLost(
                 },
                 style = MaterialTheme.typography.h5,
                 color = MaterialTheme.colors.primary.copy(0.75f),
+                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(horizontal = 40.dp, vertical = 60.dp)
                     .fillMaxWidth()
                     .align(alignment = Alignment.Center),
-                textAlign = TextAlign.Center,
             )
         }
     }

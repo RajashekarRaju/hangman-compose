@@ -1,3 +1,45 @@
 <resources>
     <string name="app_name">Hangman</string>
+
+    <!--  OnBoarding Screen  -->
+    <string name="button_title_play">Play</string>
+    <string name="button_title_exit">Exit</string>
+    <string name="button_title_history">History</string>
+    <string name="button_title_difficulty">Difficulty</string>
+    <string name="game_difficulty_dialog_title">Difficulty</string>
+    <string name="game_tagline">Be Aware. Letters Can Demise You</string>
+    <string name="highest_score_header">Highest Score - </string>
+    <string name="cd_game_banner">Hangman game banner</string>
+    <string name="cd_play_game_button">Play game</string>
+    <string name="cd_exit_game">Exit game</string>
+    <string name="cd_game_sound_play_pause">Play or pause background game sound.</string>
+
+    <!--  Game Screen  -->
+    <string name="current_level_header">Level\n</string>
+    <string name="current_points_header">Points\n</string>
+    <string name="modal_sheet_exit_game_title">Exit Game ?</string>
+    <string name="modal_sheet_positive_title">Exit Game ?</string>
+    <string name="modal_sheet_negative_title">Keep Playing</string>
+    <string name="dialog_game_won_title">You Have Won !\n\n</string>
+    <string name="dialog_game_won_points">Points you have scored\n\n</string>
+    <string name="dialog_game_won_difficulty">\n\nDifficulty Mode\n</string>
+    <string name="dialog_game_lost_title">\n\nYou Lost\n\n</string>
+    <string name="dialog_game_lost_word">The word you didn\'t guess was\n\n</string>
+    <string name="dialog_game_instructions_title">Instructions</string>
+    <string name="dialog_game_instructions_subtitle">Guess the name of the countries.</string>
+    <string name="cd_game_lost_hangman_image">Hangman rope image</string>
+    <string name="cd_close_game_icon">Click to exit game.</string>
+
+    <!--  History Screen  -->
+    <string name="game_history_app_bar_title">Game History</string>
+    <string name="game_won_text">Won</string>
+    <string name="game_lost_text">Lost</string>
+    <string name="cd_navigate_up">Click to navigate to previous screen icon.</string>
+    <string name="cd_delete_icon">Click to delete all game history.</string>
+    <string name="cd_image_screen_bg">background image of the screen.</string>
+    <string name="cd_open_instructions_dialog">Open game instructions dialog.</string>
+    <string name="empty_history_state">
+        Your recent game history will show up here.\n\nGo play the game.
+    </string>
+
 </resources>

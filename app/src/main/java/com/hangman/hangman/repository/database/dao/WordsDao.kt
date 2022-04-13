@@ -10,7 +10,7 @@ import com.hangman.hangman.utils.getFilteredWordsByGameDifficulty
 interface WordsDao {
 
     @Query("SELECT * FROM words_table")
-    suspend fun getGuessingWordsByGameDifficulty(
+    fun getGuessingWordsByGameDifficulty(
         gameDifficulty: GameDifficulty
     ): List<WordsEntity> {
         return getFilteredWordsByGameDifficulty(gameDifficulty)

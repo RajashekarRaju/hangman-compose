@@ -8,42 +8,46 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.hangman.hangman.HangmanApp
 import com.hangman.hangman.R
-import com.hangman.hangman.repository.GameRepository
 import com.hangman.hangman.repository.database.entity.HistoryEntity
 import com.hangman.hangman.utils.GameDifficulty
+import org.koin.androidx.compose.getViewModel
 
+
+/**
+ * History screen, can be navigated from onboarding screen.
+ * This screen has it's own ViewModel [HistoryViewModel]
+ */
 @Composable
 fun HistoryScreen(
-    navigateUp: () -> Unit,
-    application: HangmanApp,
-    repository: GameRepository
+    navigateUp: () -> Unit
 ) {
-    val viewModel = viewModel(
-        factory = HistoryViewModel.provideFactory(application, repository),
-        modelClass = HistoryViewModel::class.java
-    )
-
-    val gameHistoryList = viewModel.gameHistoryList
-    val showDeleteIconInAppBar = gameHistoryList.isNotEmpty()
+    // Create ViewModel instance with koin.
+    val viewModel = getViewModel<HistoryViewModel>()
+    // Get all the game history list.
+    val gameHistoryList by viewModel.gameHistoryList.observeAsState(emptyList())
 
     Surface(
         color = MaterialTheme.colors.background
     ) {
         Scaffold(
             topBar = {
-                HistoryAppBar(navigateUp, showDeleteIconInAppBar) {
+                HistoryAppBar(
+                    navigateUp = navigateUp,
+                    showDeleteIconInAppBar = gameHistoryList.isNotEmpty()
+                ) {
                     viewModel.deleteAllGameHistoryData()
                 }
             }
@@ -53,15 +57,16 @@ fun HistoryScreen(
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.bg_dodge),
-                    contentDescription = "",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                    alpha = 0.20f
+                // Display full screen background image.
+                FullScreenHistoryBackground()
+
+                // Game history list.
+                HistoryScreenContent(
+                    gameHistoryList = gameHistoryList,
+                    viewModel = viewModel
                 )
 
-                HistoryScreenContent(gameHistoryList, viewModel)
+                // Is no history of game is available show this text.
                 if (gameHistoryList.isEmpty()) {
                     ShowEmptyHistoryMessage()
                 }
@@ -71,16 +76,19 @@ fun HistoryScreen(
 }
 
 @Composable
-private fun ShowEmptyHistoryMessage() {
-    Text(
-        text = "Your recent game history will show up here. \n\nGo play the game.",
-        style = MaterialTheme.typography.h4,
-        textAlign = TextAlign.Center,
-        color = MaterialTheme.colors.onBackground.copy(0.75f),
-        modifier = Modifier.padding(horizontal = 24.dp, vertical = 48.dp)
+private fun FullScreenHistoryBackground() {
+    Image(
+        painter = painterResource(id = R.drawable.bg_dodge),
+        contentDescription = stringResource(id = R.string.cd_image_screen_bg),
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop,
+        alpha = 0.20f
     )
 }
 
+/**
+ * Main content for history screen with game history list.
+ */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun HistoryScreenContent(
@@ -95,12 +103,13 @@ private fun HistoryScreenContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(
+            // Show list in reverse so that player see last game history.
             items = gameHistoryList.reversed(),
-            key = {
-                it.gameId
-            }
+            // TO improve lazy list performance, database column id is unique for each game.
+            key = { it.gameId }
         ) { history ->
 
+            // Swipe to delete the game history any game history item.
             val dismissState = rememberDismissState(
                 confirmStateChange = {
                     if (it == DismissValue.DismissedToStart) {
@@ -119,12 +128,19 @@ private fun HistoryScreenContent(
     }
 }
 
+/**
+ * Each row item for game history.
+ */
 @Composable
 private fun ItemGameHistory(
     history: HistoryEntity
 ) {
-    val summary = if (history.gameSummary) "Won" else "Lost"
+    // Update text value with game summary win or lost.
+    val summary =
+        if (history.gameSummary) stringResource(R.string.game_won_text)
+        else stringResource(R.string.game_lost_text)
 
+    // Get the game difficulty type chosen at the time player completed the game.
     val difficulty = when (history.gameDifficulty) {
         GameDifficulty.EASY -> GameDifficulty.EASY.name
         GameDifficulty.MEDIUM -> GameDifficulty.EASY.name
@@ -140,8 +156,7 @@ private fun ItemGameHistory(
     ) {
 
         val (
-            gameScore, gameSummaryText, gameDifficultyText,
-            gamePlayedTimeText, gamePlayedDateText
+            gameScore, gameSummaryText, gameDifficultyText, gamePlayedTimeText, gamePlayedDateText
         ) = createRefs()
 
         Column(
@@ -223,4 +238,15 @@ private fun ItemGameHistory(
             }
         )
     }
+}
+
+@Composable
+private fun ShowEmptyHistoryMessage() {
+    Text(
+        text = stringResource(id = R.string.empty_history_state),
+        style = MaterialTheme.typography.h4,
+        textAlign = TextAlign.Center,
+        color = MaterialTheme.colors.onBackground.copy(0.75f),
+        modifier = Modifier.padding(horizontal = 24.dp, vertical = 48.dp)
+    )
 }

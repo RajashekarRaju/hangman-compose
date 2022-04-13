@@ -1,5 +1,6 @@
 package com.hangman.hangman.repository.database.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.hangman.hangman.repository.database.entity.HistoryEntity
 
@@ -7,14 +8,17 @@ import com.hangman.hangman.repository.database.entity.HistoryEntity
 interface HistoryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveNewGameToHistory(historyEntity: HistoryEntity)
+    fun saveNewGameToHistory(historyEntity: HistoryEntity)
 
     @Query("SELECT * FROM history_table")
-    suspend fun getCompleteGameHistory(): List<HistoryEntity>
+    fun getCompleteGameHistory(): LiveData<List<HistoryEntity>>
+
+    @Query("SELECT MAX(column_game_score) FROM history_table")
+    fun getHighestScoreFromHistory(): LiveData<Int?>
 
     @Delete
-    suspend fun deleteSingleGameHistory(historyEntity: HistoryEntity)
+    fun deleteSingleGameHistory(historyEntity: HistoryEntity)
 
     @Query("DELETE FROM history_table")
-    suspend fun deleteAllGamesHistory()
+    fun deleteAllGamesHistory()
 }

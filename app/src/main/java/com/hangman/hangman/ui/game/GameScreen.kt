@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -33,33 +34,35 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.hangman.hangman.HangmanApp
+import com.hangman.hangman.R
 import com.hangman.hangman.modal.Alphabets
-import com.hangman.hangman.repository.GameRepository
 import com.hangman.hangman.utils.ApplyAnimatedVisibility
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
 
 
+/**
+ * Game screen, can be navigated from onboarding screen.
+ * This screen has it's own ViewModel [GameViewModel]
+ */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun GameScreen(
     navigateUp: () -> Unit,
-    application: HangmanApp,
-    repository: GameRepository
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
-    val viewModel = viewModel(
-        factory = GameViewModel.provideFactory(application, repository),
-        modelClass = GameViewModel::class.java
-    )
+    // Create ViewModel instance with koin.
+    val viewModel = getViewModel<GameViewModel>()
 
+    // Modal sheet to ask player whether to quit playing the game, triggered while up navigation.
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true,
     )
 
-    val coroutineScope = rememberCoroutineScope()
+    // Take control of back button so that user cannot navigate back from the game in middle.
+    // First show the modal sheet and confirm to exit.
     BackHandler(enabled = true) {
         coroutineScope.launch {
             modalSheetState.show()
@@ -75,42 +78,59 @@ fun GameScreen(
             sheetBackgroundColor = MaterialTheme.colors.background,
             scrimColor = Color.Black.copy(0.90f),
             sheetContent = {
-                ShowExitGameModalSheet(navigateUp, modalSheetState)
+                ShowExitGameModalSheet(
+                    navigateUp = navigateUp,
+                    modalSheetState = modalSheetState
+                )
             },
         ) {
+            // State for showing game instructions dialog.
             val openGameInstructionsDialog = rememberSaveable { mutableStateOf(false) }
 
+            // Main content for this screen.
             GameScreenContent(
                 viewModel = viewModel,
                 modalSheetState = modalSheetState,
                 openGameInstructionsDialog = openGameInstructionsDialog
             )
 
+            // If true, a dialog will show up with player lost message.
             if (viewModel.revealGuessingWord) {
-                ShowPopupWhenGameLost(viewModel, navigateUp)
+                ShowPopupWhenGameLost(
+                    viewModel = viewModel,
+                    navigateUp = navigateUp
+                )
             }
 
+            // If true, a dialog will show up with player won message.
             if (viewModel.gameOverByWinning) {
-                ShowDialogWhenGameWon(viewModel, navigateUp)
+                ShowDialogWhenGameWon(
+                    viewModel = viewModel,
+                    navigateUp = navigateUp
+                )
             }
 
+            // If true, a dialog will show up with game instructions message.
             if (openGameInstructionsDialog.value) {
                 GameInstructionsInfoDialog(
-                    viewModel.gameDifficulty,
-                    openGameInstructionsDialog
+                    gameDifficulty = viewModel.gameDifficulty,
+                    openGameInstructionsDialog = openGameInstructionsDialog
                 )
             }
         }
     }
 }
 
+/**
+ * Contains all game screen contents.
+ */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun GameScreenContent(
     viewModel: GameViewModel,
     modalSheetState: ModalBottomSheetState,
+    openGameInstructionsDialog: MutableState<Boolean>,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    openGameInstructionsDialog: MutableState<Boolean>
 ) {
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
@@ -138,16 +158,14 @@ private fun GameScreenContent(
         ) {
             Icon(
                 imageVector = Icons.Default.Clear,
-                contentDescription = "Close game icon",
+                contentDescription = stringResource(R.string.cd_close_game_icon),
                 tint = MaterialTheme.colors.primary,
                 modifier = Modifier.alpha(0.75f)
             )
         }
 
         IconButton(
-            onClick = {
-                openGameInstructionsDialog.value = !openGameInstructionsDialog.value
-            },
+            onClick = { openGameInstructionsDialog.value = !openGameInstructionsDialog.value },
             modifier = Modifier
                 .background(
                     color = MaterialTheme.colors.primary.copy(0.06f),
@@ -160,12 +178,13 @@ private fun GameScreenContent(
         ) {
             Icon(
                 imageVector = Icons.Outlined.Info,
-                contentDescription = "Game instructions",
+                contentDescription = stringResource(R.string.cd_open_instructions_dialog),
                 tint = MaterialTheme.colors.primary,
                 modifier = Modifier.alpha(0.75f)
             )
         }
 
+        // Contains progress bars, points text information, game level information.
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.constrainAs(gameProgressInfo) {
@@ -173,8 +192,10 @@ private fun GameScreenContent(
                 top.linkTo(parent.top, 40.dp)
             }
         ) {
+            // Circular animated progress bars for attempts left and level streak.
             AttemptsLeftAndLevelProgressBars(viewModel)
 
+            // Text with points scored, levels completed.
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -194,6 +215,7 @@ private fun GameScreenContent(
             }
         ) {
             items(
+                // List contains current matched guessing words.
                 items = viewModel.updateGuessesByPlayer.updateGuess
             ) { validGuess ->
                 ItemGuessingAlphabetContainer(validGuess)
@@ -221,7 +243,9 @@ private fun GameScreenContent(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         items(
+                            // List of alphabets adjusted in lazy grid.
                             items = viewModel.alphabets,
+                            // Since all alphabets contains unique id's,
                             key = { it.alphabetId }
                         ) { alphabet ->
                             ItemAlphabetText(alphabet, viewModel)
@@ -233,10 +257,61 @@ private fun GameScreenContent(
     }
 }
 
+/**
+ * Item for each alphabet in the alphabets list.
+ */
+@Composable
+private fun ItemAlphabetText(
+    alphabet: Alphabets,
+    viewModel: GameViewModel
+) {
+    ConstraintLayout(
+        // If alphabet is correctly guessed,
+        // Reduce it's alpha, so that player know it's already used.
+        // Also disable the click for that specific alphabet.
+        modifier = Modifier
+            .alpha(if (!alphabet.isAlphabetGuessed) 1f else 0.25f)
+            .clip(CircleShape)
+            .size(40.dp)
+            .background(color = MaterialTheme.colors.primary.copy(0.12f))
+            .clickable(
+                enabled = !alphabet.isAlphabetGuessed,
+                onClick = {
+                    // Don't let player click items if game is over.
+                    if (!viewModel.gameOverByNoAttemptsLeft) {
+                        // For each guess check if match is correct from ViewModel.
+                        viewModel.checkIfLetterMatches(alphabet)
+                        // Immediately disable click and reduce alpha for this item.
+                        alphabet.isAlphabetGuessed = true
+                    }
+                }
+            )
+    ) {
+        val (alphabetText) = createRefs()
+
+        Text(
+            text = alphabet.alphabet,
+            style = MaterialTheme.typography.h5,
+            color = MaterialTheme.colors.primary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.constrainAs(alphabetText) {
+                centerTo(parent)
+            }
+        )
+    }
+}
+
+/**
+ * These elements will be inside the circular progress bars.
+ * Updates the current player game level to text.
+ *
+ */
 @Composable
 private fun AttemptsLeftAndLevelText(
     viewModel: GameViewModel
 ) {
+    // When player completes last level, the level value jumps to +1, to prevent that start level
+    // from 0 and make sure to never increment level if max level reached.
     var incrementLevelBy = 0
     val lastGameLevel = viewModel.maxLevelReached
     if (viewModel.currentPlayerLevel < lastGameLevel) {
@@ -245,16 +320,14 @@ private fun AttemptsLeftAndLevelText(
 
     Text(
         text = buildAnnotatedString {
-            append("Level\n")
+            append(stringResource(id = R.string.current_level_header))
             withStyle(
                 style = SpanStyle(
                     color = MaterialTheme.colors.primary,
                     fontSize = 28.sp
                 )
             ) {
-                append(
-                    "${viewModel.currentPlayerLevel + incrementLevelBy}/$lastGameLevel"
-                )
+                append("${viewModel.currentPlayerLevel + incrementLevelBy}/$lastGameLevel")
             }
         },
         style = MaterialTheme.typography.h6,
@@ -273,7 +346,7 @@ private fun AttemptsLeftAndLevelText(
 
     Text(
         text = buildAnnotatedString {
-            append("Points\n")
+            append(stringResource(id = R.string.current_points_header))
             withStyle(
                 style = SpanStyle(
                     color = MaterialTheme.colors.primary,
@@ -293,17 +366,22 @@ private fun AttemptsLeftAndLevelText(
 private fun AttemptsLeftAndLevelProgressBars(
     viewModel: GameViewModel
 ) {
+    // Animates and keeps track of current level player is in.
     CreateCircularProgressIndicator(
         currentProgress = animateCurrentLevelProgress(viewModel.currentPlayerLevel),
         indicatorSize = 200.dp
     )
 
+    // Doesn't animate level.
+    // Filled with light primary color for player to understand the total levels to win.
     CreateCircularProgressIndicator(
         currentProgress = 1f,
         progressColor = MaterialTheme.colors.primary.copy(0.25f),
         indicatorSize = 200.dp
     )
 
+    // Animates the current attempts completed in red color.
+    // For each wrong guess, red progress will be filled.
     CreateCircularProgressIndicator(
         currentProgress = animateAttemptsLeftProgress(viewModel.attemptsLeftToGuess),
         strokeWidth = 10.dp,
@@ -311,6 +389,8 @@ private fun AttemptsLeftAndLevelProgressBars(
         progressColor = Color.Red.copy(0.95f)
     )
 
+    // Doesn't animate attempts.
+    // Filled with green color for player to understand how many attempts he is left with.
     CreateCircularProgressIndicator(
         currentProgress = 1f,
         strokeWidth = 10.dp,
@@ -319,6 +399,10 @@ private fun AttemptsLeftAndLevelProgressBars(
     )
 }
 
+/**
+ * Actively places guessed alphabets in box.
+ * Once the level is completed, all the letters will be reset to empty.
+ */
 @Composable
 private fun ItemGuessingAlphabetContainer(
     validGuess: Char
@@ -348,41 +432,7 @@ private fun ItemGuessingAlphabetContainer(
     }
 }
 
-@Composable
-private fun ItemAlphabetText(
-    alphabet: Alphabets,
-    viewModel: GameViewModel
-) {
-    ConstraintLayout(
-        modifier = Modifier
-            .alpha(if (!alphabet.isAlphabetGuessed) 1f else 0.25f)
-            .clip(CircleShape)
-            .size(40.dp)
-            .background(color = MaterialTheme.colors.primary.copy(0.12f))
-            .clickable(
-                enabled = !alphabet.isAlphabetGuessed,
-                onClick = {
-                    if (!viewModel.gameOverByNoAttemptsLeft) {
-                        viewModel.checkIfLetterMatches(alphabet)
-                        alphabet.isAlphabetGuessed = true
-                    }
-                }
-            )
-    ) {
-        val (alphabetText) = createRefs()
-
-        Text(
-            text = alphabet.alphabet,
-            style = MaterialTheme.typography.h5,
-            color = MaterialTheme.colors.primary,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.constrainAs(alphabetText) {
-                centerTo(parent)
-            }
-        )
-    }
-}
-
+// Reusable composable for all 4 progress bars.
 @Composable
 private fun CreateCircularProgressIndicator(
     currentProgress: Float,

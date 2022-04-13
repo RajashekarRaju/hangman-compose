@@ -5,9 +5,8 @@ import android.media.MediaPlayer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.hangman.hangman.R
 import com.hangman.hangman.repository.GameRepository
@@ -15,56 +14,61 @@ import com.hangman.hangman.utils.GameDifficulty
 import com.hangman.hangman.utils.GameDifficultyPref
 import kotlinx.coroutines.launch
 
-
+/**
+ * ViewModel for screen [OnBoardingScreen].
+ * Initialized with koin.
+ */
 class OnBoardingViewModel(
-    application: Application,
-    private val repository: GameRepository
-) : AndroidViewModel(application) {
+    private val application: Application,
+    repository: GameRepository
+) : ViewModel() {
 
-    // Keeps track of highest score from the game history.
-    private var highestScore by mutableStateOf("0")
+    // Keeps track of the highest score from the game history database.
+    val highestScore: LiveData<Int?> = repository.getHighestScore()
 
     // From slider position updates the current difficulty text value.
     var difficultyValueText by mutableStateOf(GameDifficulty.EASY)
 
     // Updates the preferences with game difficulty slider position.
-    val gameDifficultyPreferences = GameDifficultyPref(application)
+    private val gameDifficultyPreferences = GameDifficultyPref(application)
 
     // Tracks media player current play/pause/release state.
     var isBackgroundMusicPlaying by mutableStateOf(false)
     private lateinit var mediaPlayer: MediaPlayer
 
     init {
-        getLatestHighScore()
+        // Start game sound on screen launch.
         playGameBackgroundMusicOnStart()
     }
 
-    fun getLatestHighScore(): String {
-        viewModelScope.launch {
-            val gameHistoryList = repository.getCompleteGameHistory()
-            highestScore = gameHistoryList.maxByOrNull {
-                it.gameScore
-            }?.gameScore.toString()
-        }
-
-        return highestScore
+    // Resets the game difficulty mode to easy.
+    fun resetGameDifficultyPreferences() {
+        gameDifficultyPreferences.updateGameDifficultyPref(GameDifficulty.EASY)
     }
 
+    // Initialize the media player and manage the play/release state.
+    // Updates the isBackgroundMusicPlaying values for screen elements to change.
     fun playGameBackgroundMusicOnStart() {
         viewModelScope.launch {
-            mediaPlayer = MediaPlayer.create(getApplication(), R.raw.game_background_music)
-            if (!mediaPlayer.isPlaying) {
+            mediaPlayer =
+                MediaPlayer.create(application.applicationContext, R.raw.game_background_music)
+            isBackgroundMusicPlaying = if (!mediaPlayer.isPlaying) {
                 mediaPlayer.start()
-                isBackgroundMusicPlaying = true
+                true
+            } else {
+                mediaPlayer.release()
+                false
             }
         }
     }
 
+    // Releases media player and stop current playing sound.
     fun releaseBackgroundMusic() {
         mediaPlayer.release()
         isBackgroundMusicPlaying = false
     }
 
+    // Once user makes changes to slider position this function will be triggered.
     fun updatePlayerChosenDifficulty(
         sliderPosition: Float
     ) {
@@ -75,24 +79,7 @@ class OnBoardingViewModel(
             else -> GameDifficulty.EASY
         }
 
+        // Update the value in preferences with latest player chosen game difficulty mode.
         gameDifficultyPreferences.updateGameDifficultyPref(difficultyValueText)
-    }
-
-    companion object {
-
-        fun provideFactory(
-            application: Application,
-            repository: GameRepository
-        ): ViewModelProvider.AndroidViewModelFactory {
-            return object : ViewModelProvider.AndroidViewModelFactory(application) {
-                @Suppress("unchecked_cast")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    if (modelClass.isAssignableFrom(OnBoardingViewModel::class.java)) {
-                        return OnBoardingViewModel(application, repository) as T
-                    }
-                    throw IllegalArgumentException("Cannot create Instance for OnBoardingViewModel class")
-                }
-            }
-        }
     }
 }

@@ -11,6 +11,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -18,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -25,26 +28,22 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.hangman.hangman.HangmanApp
 import com.hangman.hangman.R
-import com.hangman.hangman.repository.GameRepository
 import com.hangman.hangman.ui.game.GameInstructionsInfoDialog
-import com.hangman.hangman.utils.GameDifficulty
+import org.koin.androidx.compose.getViewModel
 
-
+/**
+ * Default screen first visible to the player.
+ * This screen has it's own ViewModel [OnBoardingViewModel]
+ */
 @Composable
 fun OnBoardingScreen(
     navigateToGameScreen: () -> Unit,
     navigateToHistoryScreen: () -> Unit,
-    application: HangmanApp,
-    repository: GameRepository,
     finishActivity: () -> Unit,
 ) {
-    val viewModel = viewModel(
-        factory = OnBoardingViewModel.provideFactory(application, repository),
-        modelClass = OnBoardingViewModel::class.java
-    )
+    // Create ViewModel instance with koin.
+    val viewModel = getViewModel<OnBoardingViewModel>()
 
     Surface(
         color = MaterialTheme.colors.background,
@@ -52,14 +51,15 @@ fun OnBoardingScreen(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-
+            // Full screen occupying background image.
             Image(
                 painter = painterResource(id = R.drawable.bg_dodge),
-                contentDescription = "background image",
+                contentDescription = stringResource(R.string.cd_image_screen_bg),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
             )
 
+            // Main screen content
             OnBoardingScreenContent(
                 navigateToGameScreen = navigateToGameScreen,
                 finishActivity = finishActivity,
@@ -70,6 +70,13 @@ fun OnBoardingScreen(
     }
 }
 
+/**
+ * Main content for this screen.
+ *
+ * @param navigateToGameScreen navigates to the game screen with button click.
+ * @param finishActivity triggers activity to finish.
+ * @param navigateToHistoryScreen navigates to history screen with button click.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun OnBoardingScreenContent(
@@ -78,62 +85,24 @@ private fun OnBoardingScreenContent(
     navigateToHistoryScreen: () -> Unit,
     viewModel: OnBoardingViewModel,
 ) {
-    val highScore = viewModel.getLatestHighScore()
-
-    val openGameDifficultyDialog = rememberSaveable { mutableStateOf(false) }
-    if (openGameDifficultyDialog.value) {
-        AdjustGameDifficultyDialog(viewModel, openGameDifficultyDialog)
-    }
-
-    val openGameInstructionsDialog = rememberSaveable { mutableStateOf(false) }
-    if (openGameInstructionsDialog.value) {
-        GameInstructionsInfoDialog(
-            viewModel.difficultyValueText,
-            openGameInstructionsDialog
-        )
-    }
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.rope_with_title),
-            contentDescription = "Hangman game",
-            modifier = Modifier.size(220.dp)
-        )
+        // Display full screen background image.
+        FullScreenGameBackground()
 
-        Text(
-            text = "Be Aware. Letters Can Demise You",
-            style = MaterialTheme.typography.subtitle2,
-            color = MaterialTheme.colors.primary.copy(0.75f),
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 28.dp, vertical = 20.dp)
-        )
+        // Tagline for the game.
+        GameTaglineText()
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Text(
-            text = buildAnnotatedString {
-                append("Highest Score - ")
-                withStyle(
-                    style = SpanStyle(
-                        color = MaterialTheme.colors.onSurface,
-                        fontSize = 18.sp,
-                        textDecoration = TextDecoration.Underline
-                    )
-                ) {
-                    append(if (highScore == "null") "0" else highScore)
-                }
-            },
-            textDecoration = TextDecoration.Underline,
-            style = MaterialTheme.typography.subtitle1,
-            color = MaterialTheme.colors.primary.copy(0.75f),
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        // Shows highest score.
+        HighestGameScoreName(viewModel)
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        // This content needs to be scrolled for small screen devices.
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
@@ -143,138 +112,257 @@ private fun OnBoardingScreenContent(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Button(
-                    modifier = Modifier.width(160.dp),
-                    shape = MaterialTheme.shapes.medium,
-                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
-                    border = BorderStroke(
-                        width = 2.dp,
-                        color = MaterialTheme.colors.primary.copy(0.5f)
-                    ),
-                    onClick = {
-                        viewModel.releaseBackgroundMusic()
-                        navigateToGameScreen()
-                    },
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.skull),
-                        contentDescription = "Play game",
-                        modifier = Modifier.size(20.dp)
-                    )
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    OnBoardingButtonText(buttonName = "Play")
+                // OnClick button, navigates to game screen.
+                PlayGameButton(navigateToGameScreen) {
+                    // Stop the background music once game screen opens.
+                    viewModel.releaseBackgroundMusic()
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Button(
-                    modifier = Modifier.width(160.dp),
-                    shape = MaterialTheme.shapes.medium,
-                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
-                    onClick = {
-                        viewModel.gameDifficultyPreferences.updateGameDifficultyPref(GameDifficulty.EASY)
-                        finishActivity()
-                    },
-                    border = BorderStroke(
-                        width = 2.dp,
-                        color = MaterialTheme.colors.primary.copy(0.5f)
-                    )
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.demon),
-                        contentDescription = "Exit game",
-                        modifier = Modifier.size(28.dp)
-                    )
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    OnBoardingButtonText(buttonName = "Exit")
+                // OnClick button, finishes the activity to close the app.
+                ExitGameButton(viewModel) {
+                    finishActivity()
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Button(
-                    modifier = Modifier.width(160.dp),
-                    onClick = { navigateToHistoryScreen() },
-                    shape = MaterialTheme.shapes.medium,
-                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
-                    border = BorderStroke(
-                        width = 2.dp,
-                        color = MaterialTheme.colors.primary.copy(0.5f)
-                    ),
-                ) {
-                    OnBoardingButtonText(buttonName = "History")
-                }
+                // OnClick button, navigates to history screen.
+                GameHistoryButton(navigateToHistoryScreen)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Button(
-                    modifier = Modifier.width(160.dp),
-                    onClick = { openGameDifficultyDialog.value = !openGameDifficultyDialog.value },
-                    shape = MaterialTheme.shapes.medium,
-                    colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
-                    border = BorderStroke(
-                        width = 2.dp,
-                        color = MaterialTheme.colors.primary.copy(0.5f)
-                    )
-                ) {
-                    OnBoardingButtonText(buttonName = "Difficulty")
-                }
+                // OnClick button, open the dialog with game difficulty adjustments.
+                GameDifficultyButton(viewModel)
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Row {
-                    IconButton(
-                        onClick = {
-                            openGameInstructionsDialog.value = !openGameInstructionsDialog.value
-                        },
-                        modifier = Modifier
-                            .background(
-                                color = MaterialTheme.colors.primary.copy(0.15f),
-                                shape = CircleShape
-                            )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Info,
-                            contentDescription = "Read instructions",
-                            tint = MaterialTheme.colors.primary,
-                        )
-                    }
+                    // OnClick icon, opens dialog with game instructions.
+                    GameInstructionIconButton(viewModel)
 
                     Spacer(modifier = Modifier.width(16.dp))
 
-                    var volumeIcon = R.drawable.ic_volume_enabled
-                    if (!viewModel.isBackgroundMusicPlaying) {
-                        volumeIcon = R.drawable.ic_volume_disabled
-                    }
-
-                    IconButton(
-                        onClick = {
-                            if (!viewModel.isBackgroundMusicPlaying) {
-                                viewModel.playGameBackgroundMusicOnStart()
-                            } else {
-                                viewModel.releaseBackgroundMusic()
-                            }
-                        },
-                        modifier = Modifier
-                            .background(
-                                color = MaterialTheme.colors.primary.copy(0.15f),
-                                shape = CircleShape
-                            )
-                    ) {
-                        Icon(
-                            painter = painterResource(id = volumeIcon),
-                            contentDescription = "Game sound on",
-                            tint = MaterialTheme.colors.primary,
-                        )
-                    }
+                    // OnClick icon, play/stops background music.
+                    BackgroundVolumeIconButton(viewModel)
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
+    }
+}
+
+@Composable
+private fun FullScreenGameBackground() {
+    Image(
+        painter = painterResource(id = R.drawable.rope_with_title),
+        contentDescription = stringResource(R.string.cd_game_banner),
+        modifier = Modifier.size(220.dp)
+    )
+}
+
+@Composable
+private fun GameTaglineText() {
+    Text(
+        text = stringResource(R.string.game_tagline),
+        style = MaterialTheme.typography.subtitle2,
+        color = MaterialTheme.colors.primary.copy(0.75f),
+        textAlign = TextAlign.Center,
+        modifier = Modifier.padding(horizontal = 28.dp, vertical = 20.dp)
+    )
+}
+
+@Composable
+private fun HighestGameScoreName(
+    viewModel: OnBoardingViewModel
+) {
+    val highScore by viewModel.highestScore.observeAsState(0)
+
+    Text(
+        text = buildAnnotatedString {
+            append(stringResource(R.string.highest_score_header))
+            withStyle(
+                style = SpanStyle(
+                    color = MaterialTheme.colors.onSurface,
+                    fontSize = 18.sp,
+                    textDecoration = TextDecoration.Underline
+                )
+            ) {
+                // To prevent text on screen to show 0 instead on 0 when no history is available.
+                append(if (highScore.toString() == "null") "0" else highScore.toString())
+            }
+        },
+        textDecoration = TextDecoration.Underline,
+        style = MaterialTheme.typography.subtitle1,
+        color = MaterialTheme.colors.primary.copy(0.75f),
+        modifier = Modifier.padding(bottom = 16.dp)
+    )
+}
+
+@Composable
+private fun PlayGameButton(
+    navigateToGameScreen: () -> Unit,
+    releaseBackgroundMusic: () -> Unit
+) {
+    Button(
+        modifier = Modifier.width(160.dp),
+        shape = MaterialTheme.shapes.medium,
+        colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
+        border = BorderStroke(
+            width = 2.dp,
+            color = MaterialTheme.colors.primary.copy(0.5f)
+        ),
+        onClick = {
+            releaseBackgroundMusic()
+            navigateToGameScreen()
+        },
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.skull),
+            contentDescription = stringResource(R.string.cd_play_game_button),
+            modifier = Modifier.size(20.dp)
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        OnBoardingButtonText(buttonName = stringResource(R.string.button_title_play))
+    }
+}
+
+@Composable
+private fun ExitGameButton(
+    viewModel: OnBoardingViewModel,
+    finishActivity: () -> Unit
+) {
+    Button(
+        modifier = Modifier.width(160.dp),
+        shape = MaterialTheme.shapes.medium,
+        colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
+        onClick = {
+            // Before closing the app reset teh game difficulty to default difficulty.
+            viewModel.resetGameDifficultyPreferences()
+            finishActivity()
+        },
+        border = BorderStroke(
+            width = 2.dp,
+            color = MaterialTheme.colors.primary.copy(0.5f)
+        )
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.demon),
+            contentDescription = stringResource(R.string.cd_exit_game),
+            modifier = Modifier.size(28.dp)
+        )
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        OnBoardingButtonText(buttonName = stringResource(R.string.button_title_exit))
+    }
+}
+
+@Composable
+private fun GameHistoryButton(
+    navigateToHistoryScreen: () -> Unit,
+) {
+    Button(
+        modifier = Modifier.width(160.dp),
+        onClick = { navigateToHistoryScreen() },
+        shape = MaterialTheme.shapes.medium,
+        colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
+        border = BorderStroke(
+            width = 2.dp,
+            color = MaterialTheme.colors.primary.copy(0.5f)
+        ),
+    ) {
+        OnBoardingButtonText(buttonName = stringResource(R.string.button_title_history))
+    }
+}
+
+@Composable
+fun GameDifficultyButton(
+    viewModel: OnBoardingViewModel,
+) {
+    // Change state value to open the dialog.
+    val openGameDifficultyDialog = rememberSaveable { mutableStateOf(false) }
+    if (openGameDifficultyDialog.value) {
+        AdjustGameDifficultyDialog(
+            viewModel = viewModel,
+            openGameDifficultyDialog = openGameDifficultyDialog
+        )
+    }
+
+    Button(
+        modifier = Modifier.width(160.dp),
+        onClick = { openGameDifficultyDialog.value = !openGameDifficultyDialog.value },
+        shape = MaterialTheme.shapes.medium,
+        colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
+        border = BorderStroke(
+            width = 2.dp,
+            color = MaterialTheme.colors.primary.copy(0.5f)
+        )
+    ) {
+        OnBoardingButtonText(buttonName = stringResource(R.string.button_title_difficulty))
+    }
+}
+
+@Composable
+private fun GameInstructionIconButton(
+    viewModel: OnBoardingViewModel,
+) {
+    // Change state value to open the dialog.
+    val openGameInstructionsDialog = rememberSaveable { mutableStateOf(false) }
+    if (openGameInstructionsDialog.value) {
+        GameInstructionsInfoDialog(
+            gameDifficulty = viewModel.difficultyValueText,
+            openGameInstructionsDialog = openGameInstructionsDialog
+        )
+    }
+
+    IconButton(
+        onClick = { openGameInstructionsDialog.value = !openGameInstructionsDialog.value },
+        modifier = Modifier.background(
+            color = MaterialTheme.colors.primary.copy(0.15f),
+            shape = CircleShape
+        )
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.Info,
+            contentDescription = stringResource(R.string.cd_open_instructions_dialog),
+            tint = MaterialTheme.colors.primary,
+        )
+    }
+}
+
+@Composable
+private fun BackgroundVolumeIconButton(
+    viewModel: OnBoardingViewModel
+) {
+    // Change the icon to match game sound play pause state.
+    var volumeIcon = R.drawable.ic_volume_enabled
+    if (!viewModel.isBackgroundMusicPlaying) {
+        volumeIcon = R.drawable.ic_volume_disabled
+    }
+
+    IconButton(
+        onClick = {
+            // Play or release the game sound.
+            if (!viewModel.isBackgroundMusicPlaying) {
+                viewModel.playGameBackgroundMusicOnStart()
+            } else {
+                viewModel.releaseBackgroundMusic()
+            }
+        },
+        modifier = Modifier.background(
+            color = MaterialTheme.colors.primary.copy(0.15f),
+            shape = CircleShape
+        )
+    ) {
+        Icon(
+            painter = painterResource(id = volumeIcon),
+            contentDescription = stringResource(R.string.cd_game_sound_play_pause),
+            tint = MaterialTheme.colors.primary,
+        )
     }
 }
 
