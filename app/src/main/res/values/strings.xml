@@ -16,7 +16,7 @@
 
     <!--  Game Screen  -->
     <string name="current_level_header">Level\n</string>
-    <string name="current_points_header">Level\n</string>
+    <string name="current_points_header">Points\n</string>
     <string name="modal_sheet_exit_game_title">Exit Game ?</string>
     <string name="modal_sheet_positive_title">Exit Game ?</string>
     <string name="modal_sheet_negative_title">Keep Playing</string>

@@ -5,6 +5,7 @@ import android.media.MediaPlayer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hangman.hangman.R
@@ -19,40 +20,30 @@ import kotlinx.coroutines.launch
  */
 class OnBoardingViewModel(
     private val application: Application,
-    private val repository: GameRepository
+    repository: GameRepository
 ) : ViewModel() {
 
-    // Keeps track of highest score from the game history.
-    private var highestScore by mutableStateOf("0")
+    // Keeps track of the highest score from the game history database.
+    val highestScore: LiveData<Int?> = repository.getHighestScore()
 
     // From slider position updates the current difficulty text value.
     var difficultyValueText by mutableStateOf(GameDifficulty.EASY)
 
     // Updates the preferences with game difficulty slider position.
-    val gameDifficultyPreferences = GameDifficultyPref(application)
+    private val gameDifficultyPreferences = GameDifficultyPref(application)
 
     // Tracks media player current play/pause/release state.
     var isBackgroundMusicPlaying by mutableStateOf(false)
     private lateinit var mediaPlayer: MediaPlayer
 
     init {
-        // Fetch latest game score.
-        getLatestHighScore()
         // Start game sound on screen launch.
         playGameBackgroundMusicOnStart()
     }
 
-    // Launches a coroutine and fetches the highest score from the game history database.
-    fun getLatestHighScore(): String {
-        viewModelScope.launch {
-            val gameHistoryList = repository.getCompleteGameHistory()
-            highestScore = gameHistoryList.maxByOrNull {
-                it.gameScore
-            }?.gameScore.toString()
-        }
-
-        // Updates the previous highest score saved in highestScore with new one.
-        return highestScore
+    // Resets the game difficulty mode to easy.
+    fun resetGameDifficultyPreferences() {
+        gameDifficultyPreferences.updateGameDifficultyPref(GameDifficulty.EASY)
     }
 
     // Initialize the media player and manage the play/release state.

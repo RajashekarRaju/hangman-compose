@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,7 +37,7 @@ fun HistoryScreen(
     // Create ViewModel instance with koin.
     val viewModel = getViewModel<HistoryViewModel>()
     // Get all the game history list.
-    val gameHistoryList = viewModel.gameHistoryList
+    val gameHistoryList by viewModel.gameHistoryList.observeAsState(emptyList())
 
     Surface(
         color = MaterialTheme.colors.background

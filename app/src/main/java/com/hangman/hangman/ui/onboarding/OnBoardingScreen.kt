@@ -11,6 +11,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -28,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hangman.hangman.R
 import com.hangman.hangman.ui.game.GameInstructionsInfoDialog
-import com.hangman.hangman.utils.GameDifficulty
 import org.koin.androidx.compose.getViewModel
 
 /**
@@ -176,7 +177,7 @@ private fun GameTaglineText() {
 private fun HighestGameScoreName(
     viewModel: OnBoardingViewModel
 ) {
-    val highScore = viewModel.getLatestHighScore()
+    val highScore by viewModel.highestScore.observeAsState(0)
 
     Text(
         text = buildAnnotatedString {
@@ -189,7 +190,7 @@ private fun HighestGameScoreName(
                 )
             ) {
                 // To prevent text on screen to show 0 instead on 0 when no history is available.
-                append(if (highScore == "null") "0" else highScore)
+                append(if (highScore.toString() == "null") "0" else highScore.toString())
             }
         },
         textDecoration = TextDecoration.Underline,
@@ -240,7 +241,7 @@ private fun ExitGameButton(
         colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
         onClick = {
             // Before closing the app reset teh game difficulty to default difficulty.
-            viewModel.gameDifficultyPreferences.updateGameDifficultyPref(GameDifficulty.EASY)
+            viewModel.resetGameDifficultyPreferences()
             finishActivity()
         },
         border = BorderStroke(
