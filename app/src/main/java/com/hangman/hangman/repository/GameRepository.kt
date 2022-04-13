@@ -1,5 +1,6 @@
 package com.hangman.hangman.repository
 
+import androidx.lifecycle.LiveData
 import com.hangman.hangman.repository.database.entity.HistoryEntity
 import com.hangman.hangman.repository.database.entity.WordsEntity
 import com.hangman.hangman.repository.database.GameDatabase
@@ -15,17 +16,12 @@ class GameRepository(
 ) {
 
     /**
-     * Returns the list of country name guessing words from database by difficulty.
+     * Returns the list of country name guessing words by difficulty.
      */
-    suspend fun getRandomGuessingWord(
+    fun getRandomGuessingWord(
         gameDifficulty: GameDifficulty
     ): List<WordsEntity> {
-        val guessingWords: List<WordsEntity>
-        withContext(Dispatchers.IO) {
-            guessingWords = database.wordsDao.getGuessingWordsByGameDifficulty(gameDifficulty)
-        }
-
-        return guessingWords
+        return database.wordsDao.getGuessingWordsByGameDifficulty(gameDifficulty)
     }
 
     /**
@@ -42,13 +38,15 @@ class GameRepository(
     /**
      * Returns the completed game history.
      */
-    suspend fun getCompleteGameHistory(): List<HistoryEntity> {
-        val gameHistoryEntityList: List<HistoryEntity>
-        withContext(Dispatchers.IO) {
-            gameHistoryEntityList = database.historyDao.getCompleteGameHistory()
-        }
+    fun getCompleteGameHistory(): LiveData<List<HistoryEntity>> {
+        return database.historyDao.getCompleteGameHistory()
+    }
 
-        return gameHistoryEntityList
+    /**
+     * Get maximum highest number from the game score column.
+     */
+    fun getHighestScore(): LiveData<Int?> {
+        return database.historyDao.getHighestScoreFromHistory()
     }
 
     /**

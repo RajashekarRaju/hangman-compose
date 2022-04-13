@@ -32,6 +32,6 @@ object GameData {
         "4. For each wrong letter you guess, a attempt will be reduced from 8 guesses.",
         "5. For each correct letter you guess, attempt will not be reduced.",
         "6. You can check all your previous game scoring history in history screen.",
-        "7. You have 3 types of difficulties to play the game such as easy, medium, hard. You"
+        "7. You have 3 types of difficulties to play the game such as easy, medium, hard."
     )
 }
