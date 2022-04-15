@@ -135,6 +135,11 @@ private fun OnBoardingScreenContent(
                 // OnClick button, open the dialog with game difficulty adjustments.
                 GameDifficultyButton(viewModel)
 
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // OnClick button, open the dialog with game category options.
+                GameCategoryButton(viewModel)
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Row {
@@ -307,6 +312,33 @@ fun GameDifficultyButton(
 }
 
 @Composable
+fun GameCategoryButton(
+    viewModel: OnBoardingViewModel,
+) {
+    // Change state value to open the dialog.
+    val openGameCategoryDialog = rememberSaveable { mutableStateOf(false) }
+    if (openGameCategoryDialog.value) {
+        ChooseGameCategoryDialog(
+            viewModel = viewModel,
+            openGameCategoryDialog = openGameCategoryDialog
+        )
+    }
+
+    Button(
+        modifier = Modifier.width(160.dp),
+        onClick = { openGameCategoryDialog.value = !openGameCategoryDialog.value },
+        shape = MaterialTheme.shapes.medium,
+        colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
+        border = BorderStroke(
+            width = 2.dp,
+            color = MaterialTheme.colors.primary.copy(0.5f)
+        )
+    ) {
+        OnBoardingButtonText(buttonName = stringResource(R.string.button_title_category))
+    }
+}
+
+@Composable
 private fun GameInstructionIconButton(
     viewModel: OnBoardingViewModel,
 ) {
@@ -314,7 +346,8 @@ private fun GameInstructionIconButton(
     val openGameInstructionsDialog = rememberSaveable { mutableStateOf(false) }
     if (openGameInstructionsDialog.value) {
         GameInstructionsInfoDialog(
-            gameDifficulty = viewModel.difficultyValueText,
+            gameDifficulty = viewModel.gameDifficulty,
+            gameCategory = viewModel.gameCategory,
             openGameInstructionsDialog = openGameInstructionsDialog
         )
     }

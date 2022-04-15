@@ -17,7 +17,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.hangman.hangman.R
-import com.hangman.hangman.repository.GameData
+import com.hangman.hangman.repository.instructionsList
+import com.hangman.hangman.utils.GameCategory
 import com.hangman.hangman.utils.GameDifficulty
 
 /**
@@ -27,6 +28,7 @@ import com.hangman.hangman.utils.GameDifficulty
 @Composable
 fun GameInstructionsInfoDialog(
     gameDifficulty: GameDifficulty,
+    gameCategory: GameCategory,
     openGameInstructionsDialog: MutableState<Boolean>
 ) {
     Dialog(
@@ -67,6 +69,14 @@ fun GameInstructionsInfoDialog(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
+                text = "Category : ${gameCategory.name}",
+                style = MaterialTheme.typography.h6,
+                color = MaterialTheme.colors.primary
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
                 text = stringResource(R.string.dialog_game_instructions_subtitle),
                 style = MaterialTheme.typography.h5,
                 color = MaterialTheme.colors.primary.copy(0.75f),
@@ -90,7 +100,7 @@ fun GameInstructionsInfoDialog(
                     .background(MaterialTheme.colors.surface, RoundedCornerShape(16.dp))
             ) {
                 items(
-                    items = GameData.instructionsList
+                    items = instructionsList
                 ) { item ->
                     Text(
                         text = item,

@@ -73,7 +73,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
 
     // Navigation
-    implementation "androidx.navigation:navigation-compose:2.4.1"
+    implementation "androidx.navigation:navigation-compose:2.4.2"
 
     // For persisting game difficulty, high score values.
     implementation 'androidx.preference:preference-ktx:1.2.0'
@@ -87,5 +87,5 @@ dependencies {
     kapt "androidx.room:room-compiler:2.4.2"
 
     // Koin - Jetpack Compose
-    implementation "io.insert-koin:koin-androidx-compose:3.1.6"
+    implementation "io.insert-koin:koin-androidx-compose:3.2.0-beta-1"
 }

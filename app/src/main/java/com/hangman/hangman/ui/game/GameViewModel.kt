@@ -10,16 +10,13 @@ import com.hangman.hangman.R
 import com.hangman.hangman.modal.Alphabets
 import com.hangman.hangman.repository.*
 import com.hangman.hangman.repository.database.entity.HistoryEntity
-import com.hangman.hangman.repository.database.entity.WordsEntity
-import com.hangman.hangman.utils.GameDifficulty
-import com.hangman.hangman.utils.GameDifficultyPref
-import com.hangman.hangman.utils.alphabetsList
-import com.hangman.hangman.utils.getDateAndTime
+import com.hangman.hangman.utils.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 import kotlin.collections.ArrayList
+
 
 /**
  * ViewModel for screen [GameScreen].
@@ -29,19 +26,6 @@ class GameViewModel(
     private val application: Application,
     private val repository: GameRepository
 ) : ViewModel() {
-
-    /**
-     * Since creating a [mutableStateOf] object with a mutable collection type wasn't possible,
-     * neither those values are reflecting as expected in UI, had to create extra data holder
-     * property [UpdateWordGuessState] which holds current guesses made by player.
-     * This state will be exposed to it's UI [GameScreen] to show player guesses.
-     */
-    var updateGuessesByPlayer by mutableStateOf(UpdateWordGuessState(arrayListOf()))
-        private set
-
-    // This acts like a mediator, makes sure indices are reset/updated.
-    // Helps us determine whether game should be finished by reading values in indices.
-    private val updatePlayerGuesses = arrayListOf<Char>()
 
     // Determine whether player won or lost the game
     private var playerWonTheCurrentLevel by mutableStateOf(false)
@@ -55,14 +39,13 @@ class GameViewModel(
     // Generated a random country word to guess from database.
     var wordToGuess by mutableStateOf("")
 
-    // List of A-Z alphabets, let's player access alphabets in any order
-    var alphabets by mutableStateOf(alphabetsList())
-
     // Keep track of attempts to find out whether or not to finish the game
     var attemptsLeftToGuess by mutableStateOf(8)
 
     // Reveal the word if player lost the game at any level.
-    var revealGuessingWord by mutableStateOf(false)
+    private var _revealGuessingWord = MutableLiveData(false)
+    val revealGuessingWord: LiveData<Boolean>
+        get() = _revealGuessingWord
 
     // Number of points depend on length of the string for guessed word.
     private var pointsScoredPerWord by mutableStateOf(0)
@@ -75,12 +58,14 @@ class GameViewModel(
 
     // Get shared preferences for value game difficulty.
     private val gameDifficultyPreferences = GameDifficultyPref(application)
+    private val gameCategoryPreferences = GameCategoryPref(application)
 
     // Set default state game difficulty value to easy and update with latest changes.
     var gameDifficulty: GameDifficulty by mutableStateOf(GameDifficulty.EASY)
+    var gameCategory: GameCategory by mutableStateOf(GameCategory.COUNTRIES)
 
     // Contains 5 words in a list for current game, 1 for each level.
-    private var guessingWordsForCurrentGame by mutableStateOf(listOf<WordsEntity>())
+    private var guessingWordsForCurrentGame by mutableStateOf(listOf<Words>())
 
     // 5 is the last level player needs to reach. At the point do not increment level
     val maxLevelReached = 5
@@ -91,12 +76,28 @@ class GameViewModel(
     // Everytime initializes and plays the game sound.
     private lateinit var mediaPlayer: MediaPlayer
 
+    // This acts like a mediator, makes sure indices are reset/updated.
+    // Helps us determine whether game should be finished by reading values in indices.
+    private val updatePlayerGuesses = arrayListOf<Char>()
+
+    private var _updateGuessesByPlayer = MutableLiveData(updatePlayerGuesses)
+    val updateGuessesByPlayer: LiveData<ArrayList<Char>>
+        get() = _updateGuessesByPlayer
+
+    // List of A-Z alphabets, let's player access alphabets in any order
+    private var _alphabets = MutableLiveData(alphabetsList())
+    val alphabets: LiveData<List<Alphabets>>
+        get() = _alphabets
+
     init {
         viewModelScope.launch {
             // Get player saved game difficulty level from preferences.
             gameDifficulty = gameDifficultyPreferences.getGameDifficultyPref()
+            gameCategory = gameCategoryPreferences.getGameCategoryPref()
+
             // Based on difficulty level, get 5 unique random words from database.
-            guessingWordsForCurrentGame = repository.getRandomGuessingWord(gameDifficulty)
+            guessingWordsForCurrentGame =
+                repository.getRandomGuessingWord(gameDifficulty, gameCategory)
             // From list of 5 words, starting from it's first index position sequentially return
             // a new word to guess for matching level.
             // If level is one first word will be returned, till level 5.
@@ -135,7 +136,7 @@ class GameViewModel(
                     // player has won the current level, but not the whole game.
                     playerWonTheCurrentLevel = true
                     gameOverByNoAttemptsLeft = false
-                    revealGuessingWord = gameOverByNoAttemptsLeft
+                    _revealGuessingWord.value = gameOverByNoAttemptsLeft
                 }
             } else {
                 // When match wasn't successful, this will be executed.
@@ -168,8 +169,6 @@ class GameViewModel(
                     updateOrResetWordToGuess()
                 }
                 Timber.e("Level 2 ==> $wordToGuess")
-
-                alphabets = alphabetsList()
 
                 if (playerWonTheCurrentLevel && currentPlayerLevel == 5) {
                     gameOverByWinning = true
@@ -211,7 +210,7 @@ class GameViewModel(
         if (attemptsLeftToGuess > 0) {
             attemptsLeftToGuess -= 1
             gameOverByNoAttemptsLeft = attemptsLeftToGuess == 0
-            revealGuessingWord = gameOverByNoAttemptsLeft
+            _revealGuessingWord.value = gameOverByNoAttemptsLeft
             if (gameOverByNoAttemptsLeft) {
                 // Saves the game to history, needs couple of changes yet.
                 viewModelScope.launch {
@@ -222,14 +221,15 @@ class GameViewModel(
         }
     }
 
+    //var updater by mutableStateOf(GuessHolder(guesses = updatePlayerGuesses))
+
     // Reset guesses, update new word indices for next level word.
     private fun updateOrResetWordToGuess() {
+        _alphabets.value = alphabetsList()
         updatePlayerGuesses.clear()
         for (i in wordToGuess.indices) {
             updatePlayerGuesses.add(' ')
-            updateGuessesByPlayer = UpdateWordGuessState(
-                updateGuess = updatePlayerGuesses
-            )
+            //GuessHolder(guesses = updatePlayerGuesses)
         }
     }
 
@@ -245,6 +245,7 @@ class GameViewModel(
                 gameLevel = currentPlayerLevel,
                 gameSummary = gameOverByWinning,
                 gameDifficulty = gameDifficulty,
+                gameCategory = gameCategory,
                 gamePlayedTime = time,
                 gamePlayedDate = date
             )
@@ -268,8 +269,3 @@ class GameViewModel(
         mediaPlayer.release()
     }
 }
-
-// Holds data for current changes happening in the screen for guessing word.
-data class UpdateWordGuessState(
-    val updateGuess: ArrayList<Char>
-)

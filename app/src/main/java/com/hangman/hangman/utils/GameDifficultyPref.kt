@@ -2,8 +2,8 @@ package com.hangman.hangman.utils
 
 import android.content.Context
 
-const val PREFERENCE_KEY_GAME_DIFFICULTY = "preference_game_difficulty_key"
-const val PREFERENCE_RESULT_GAME_DIFFICULTY = "game_difficulty_result"
+private const val PREFERENCE_KEY_GAME_DIFFICULTY = "preference_game_difficulty_key"
+private const val PREFERENCE_RESULT_GAME_DIFFICULTY = "game_difficulty_result"
 
 class GameDifficultyPref(
     context: Context

@@ -2,9 +2,11 @@ package com.hangman.hangman.repository
 
 import androidx.lifecycle.LiveData
 import com.hangman.hangman.repository.database.entity.HistoryEntity
-import com.hangman.hangman.repository.database.entity.WordsEntity
 import com.hangman.hangman.repository.database.GameDatabase
+import com.hangman.hangman.utils.GameCategory
 import com.hangman.hangman.utils.GameDifficulty
+import com.hangman.hangman.utils.Words
+import com.hangman.hangman.utils.getFilteredWordsByGameDifficulty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -19,9 +21,10 @@ class GameRepository(
      * Returns the list of country name guessing words by difficulty.
      */
     fun getRandomGuessingWord(
-        gameDifficulty: GameDifficulty
-    ): List<WordsEntity> {
-        return database.wordsDao.getGuessingWordsByGameDifficulty(gameDifficulty)
+        gameDifficulty: GameDifficulty,
+        gameCategory: GameCategory
+    ): List<Words> {
+        return getFilteredWordsByGameDifficulty(gameDifficulty, gameCategory)
     }
 
     /**

@@ -15,10 +15,8 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -95,7 +93,8 @@ fun GameScreen(
             )
 
             // If true, a dialog will show up with player lost message.
-            if (viewModel.revealGuessingWord) {
+            val shouldRevealWord by viewModel.revealGuessingWord.observeAsState(false)
+            if (shouldRevealWord) {
                 ShowPopupWhenGameLost(
                     viewModel = viewModel,
                     navigateUp = navigateUp
@@ -114,6 +113,7 @@ fun GameScreen(
             if (openGameInstructionsDialog.value) {
                 GameInstructionsInfoDialog(
                     gameDifficulty = viewModel.gameDifficulty,
+                    gameCategory = viewModel.gameCategory,
                     openGameInstructionsDialog = openGameInstructionsDialog
                 )
             }
@@ -132,6 +132,7 @@ private fun GameScreenContent(
     openGameInstructionsDialog: MutableState<Boolean>,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) {
+
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -216,11 +217,13 @@ private fun GameScreenContent(
         ) {
             items(
                 // List contains current matched guessing words.
-                items = viewModel.updateGuessesByPlayer.updateGuess
+                items = viewModel.updateGuessesByPlayer.value!!
             ) { validGuess ->
                 ItemGuessingAlphabetContainer(validGuess)
             }
         }
+
+        val alphabetsList by viewModel.alphabets.observeAsState(listOf())
 
         Box(
             modifier = Modifier
@@ -243,8 +246,7 @@ private fun GameScreenContent(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         items(
-                            // List of alphabets adjusted in lazy grid.
-                            items = viewModel.alphabets,
+                            items = alphabetsList,
                             // Since all alphabets contains unique id's,
                             key = { it.alphabetId }
                         ) { alphabet ->
@@ -265,10 +267,10 @@ private fun ItemAlphabetText(
     alphabet: Alphabets,
     viewModel: GameViewModel
 ) {
+    // If alphabet is correctly guessed,
+    // Reduce it's alpha, so that player know it's already used.
+    // Also disable the click for that specific alphabet.
     ConstraintLayout(
-        // If alphabet is correctly guessed,
-        // Reduce it's alpha, so that player know it's already used.
-        // Also disable the click for that specific alphabet.
         modifier = Modifier
             .alpha(if (!alphabet.isAlphabetGuessed) 1f else 0.25f)
             .clip(CircleShape)
@@ -405,7 +407,7 @@ private fun AttemptsLeftAndLevelProgressBars(
  */
 @Composable
 private fun ItemGuessingAlphabetContainer(
-    validGuess: Char
+    validGuess: Char,
 ) {
     ConstraintLayout {
 
@@ -434,7 +436,7 @@ private fun ItemGuessingAlphabetContainer(
 
 // Reusable composable for all 4 progress bars.
 @Composable
-private fun CreateCircularProgressIndicator(
+fun CreateCircularProgressIndicator(
     currentProgress: Float,
     strokeWidth: Dp = 8.dp,
     progressColor: Color = MaterialTheme.colors.primary,
