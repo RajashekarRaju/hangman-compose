@@ -2,11 +2,9 @@ package com.hangman.hangman.ui.history
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,10 +17,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.hangman.hangman.R
 import com.hangman.hangman.repository.database.entity.HistoryEntity
-import com.hangman.hangman.utils.GameDifficulty
+import com.hangman.hangman.ui.game.CreateCircularProgressIndicator
+import com.hangman.hangman.ui.game.animateCurrentLevelProgress
 import org.koin.androidx.compose.getViewModel
 
 
@@ -136,15 +136,10 @@ private fun ItemGameHistory(
     history: HistoryEntity
 ) {
     // Update text value with game summary win or lost.
-    val summary =
-        if (history.gameSummary) stringResource(R.string.game_won_text)
-        else stringResource(R.string.game_lost_text)
-
-    // Get the game difficulty type chosen at the time player completed the game.
-    val difficulty = when (history.gameDifficulty) {
-        GameDifficulty.EASY -> GameDifficulty.EASY.name
-        GameDifficulty.MEDIUM -> GameDifficulty.EASY.name
-        GameDifficulty.HARD -> GameDifficulty.EASY.name
+    val summary = if (history.gameSummary) {
+        stringResource(R.string.game_won_text)
+    } else {
+        stringResource(R.string.game_lost_text)
     }
 
     ConstraintLayout(
@@ -156,7 +151,8 @@ private fun ItemGameHistory(
     ) {
 
         val (
-            gameScore, gameSummaryText, gameDifficultyText, gamePlayedTimeText, gamePlayedDateText
+            gameScore, gameSummaryText, gameDifficultyText,
+            gameCategory, horDivider, gamePlayedTimeText, gamePlayedDateText
         ) = createRefs()
 
         Column(
@@ -166,17 +162,21 @@ private fun ItemGameHistory(
                 centerVerticallyTo(parent)
             }
         ) {
-            Box(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(40.dp)
-                    .background(color = MaterialTheme.colors.background)
-                    .border(
-                        width = 2.dp,
-                        color = MaterialTheme.colors.onBackground.copy(0.50f),
-                        shape = CircleShape
-                    )
-            ) {
+            Box {
+                CreateCircularProgressIndicator(
+                    currentProgress = animateCurrentLevelProgress(history.gameLevel),
+                    indicatorSize = 40.dp,
+                    strokeWidth = 2.dp,
+                    progressColor = MaterialTheme.colors.primary.copy(0.75f)
+                )
+
+                CreateCircularProgressIndicator(
+                    currentProgress = 1f,
+                    indicatorSize = 40.dp,
+                    strokeWidth = 2.dp,
+                    progressColor = MaterialTheme.colors.primary.copy(0.25f),
+                )
+
                 Text(
                     text = history.gameScore.toString(),
                     style = MaterialTheme.typography.h5,
@@ -208,7 +208,7 @@ private fun ItemGameHistory(
         )
 
         Text(
-            text = difficulty,
+            text = history.gameDifficulty.name,
             style = MaterialTheme.typography.subtitle2,
             color = MaterialTheme.colors.primary,
             modifier = Modifier.constrainAs(gameDifficultyText) {
@@ -219,12 +219,35 @@ private fun ItemGameHistory(
         )
 
         Text(
+            text = history.gameCategory.name,
+            style = MaterialTheme.typography.body1,
+            letterSpacing = 4.sp,
+            color = MaterialTheme.colors.primary,
+            modifier = Modifier.constrainAs(gameCategory) {
+                end.linkTo(parent.end, 4.dp)
+                top.linkTo(parent.top, 4.dp)
+            }
+        )
+
+        Divider(
+            color = MaterialTheme.colors.primary.copy(0.50f),
+            thickness = 1.dp,
+            modifier = Modifier
+                .clip(MaterialTheme.shapes.small)
+                .width(60.dp)
+                .constrainAs(horDivider) {
+                    end.linkTo(parent.end, 4.dp)
+                    top.linkTo(gameCategory.bottom, 6.dp)
+                }
+        )
+
+        Text(
             text = history.gamePlayedTime,
             style = MaterialTheme.typography.body1,
             color = MaterialTheme.colors.primary.copy(0.75f),
             modifier = Modifier.constrainAs(gamePlayedTimeText) {
                 end.linkTo(parent.end, 4.dp)
-                top.linkTo(parent.top, 4.dp)
+                top.linkTo(horDivider.bottom, 6.dp)
             }
         )
 
