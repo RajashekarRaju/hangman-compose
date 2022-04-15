@@ -17,7 +17,7 @@ import androidx.compose.ui.window.Dialog
 import com.hangman.hangman.R
 
 
-// Dialog for adjusting game difficulty from OnBoarding screem.
+// Dialog for adjusting game difficulty from OnBoarding screen.
 @Composable
 fun AdjustGameDifficultyDialog(
     viewModel: OnBoardingViewModel,
@@ -70,7 +70,7 @@ fun AdjustGameDifficultyDialog(
 
             // Updated the text value from previously player chosen game difficulty preferences.
             Text(
-                text = viewModel.difficultyValueText.name,
+                text = viewModel.gameDifficulty.name,
                 style = MaterialTheme.typography.h4,
                 color = MaterialTheme.colors.onSurface
             )

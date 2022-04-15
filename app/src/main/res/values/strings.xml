@@ -6,7 +6,9 @@
     <string name="button_title_exit">Exit</string>
     <string name="button_title_history">History</string>
     <string name="button_title_difficulty">Difficulty</string>
+    <string name="button_title_category">Category</string>
     <string name="game_difficulty_dialog_title">Difficulty</string>
+    <string name="game_category_dialog_title">Category</string>
     <string name="game_tagline">Be Aware. Letters Can Demise You</string>
     <string name="highest_score_header">Highest Score - </string>
     <string name="cd_game_banner">Hangman game banner</string>
@@ -18,7 +20,7 @@
     <string name="current_level_header">Level\n</string>
     <string name="current_points_header">Points\n</string>
     <string name="modal_sheet_exit_game_title">Exit Game ?</string>
-    <string name="modal_sheet_positive_title">Exit Game ?</string>
+    <string name="modal_sheet_positive_title">Exit</string>
     <string name="modal_sheet_negative_title">Keep Playing</string>
     <string name="dialog_game_won_title">You Have Won !\n\n</string>
     <string name="dialog_game_won_points">Points you have scored\n\n</string>
