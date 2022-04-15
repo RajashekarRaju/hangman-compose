@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hangman.hangman.R
 import com.hangman.hangman.repository.GameRepository
+import com.hangman.hangman.utils.GameCategory
+import com.hangman.hangman.utils.GameCategoryPref
 import com.hangman.hangman.utils.GameDifficulty
 import com.hangman.hangman.utils.GameDifficultyPref
 import kotlinx.coroutines.launch
@@ -26,11 +28,17 @@ class OnBoardingViewModel(
     // Keeps track of the highest score from the game history database.
     val highestScore: LiveData<Int?> = repository.getHighestScore()
 
-    // From slider position updates the current difficulty text value.
-    var difficultyValueText by mutableStateOf(GameDifficulty.EASY)
+    // Updated the slider position to current difficulty.
+    var gameDifficulty: GameDifficulty by mutableStateOf(GameDifficulty.EASY)
+
+    // Updates the radio button from saved player preferences for game category.
+    var gameCategory by mutableStateOf(GameCategory.COUNTRIES)
 
     // Updates the preferences with game difficulty slider position.
     private val gameDifficultyPreferences = GameDifficultyPref(application)
+
+    // Get shared preferences for value game category.
+    val gameCategoryPreferences = GameCategoryPref(application)
 
     // Tracks media player current play/pause/release state.
     var isBackgroundMusicPlaying by mutableStateOf(false)
@@ -72,7 +80,7 @@ class OnBoardingViewModel(
     fun updatePlayerChosenDifficulty(
         sliderPosition: Float
     ) {
-        difficultyValueText = when (sliderPosition) {
+        gameDifficulty = when (sliderPosition) {
             1.0f -> GameDifficulty.EASY
             2.0f -> GameDifficulty.MEDIUM
             3.0f -> GameDifficulty.HARD
@@ -80,6 +88,21 @@ class OnBoardingViewModel(
         }
 
         // Update the value in preferences with latest player chosen game difficulty mode.
-        gameDifficultyPreferences.updateGameDifficultyPref(difficultyValueText)
+        gameDifficultyPreferences.updateGameDifficultyPref(gameDifficulty)
+    }
+
+    // Once user makes changes to radio button this function will be triggered.
+    fun updatePlayerChosenCategory(
+        category: Int
+    ) {
+        gameCategory = when (category) {
+            0 -> GameCategory.COUNTRIES
+            1 -> GameCategory.LANGUAGES
+            2 -> GameCategory.COMPANIES
+            else -> GameCategory.COUNTRIES
+        }
+
+        // Update the value in preferences with latest player chosen game category mode.
+        gameCategoryPreferences.updateGameCategoryPref(gameCategory.ordinal)
     }
 }

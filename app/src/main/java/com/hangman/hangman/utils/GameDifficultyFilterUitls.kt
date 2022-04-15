@@ -1,7 +1,6 @@
 package com.hangman.hangman.utils
 
-import com.hangman.hangman.repository.GameData
-import com.hangman.hangman.repository.database.entity.WordsEntity
+import com.hangman.hangman.repository.*
 
 /**
  * [EASY] -> Filters words of length 4 & 5.
@@ -13,43 +12,61 @@ enum class GameDifficulty {
 }
 
 /**
- * Filter between three different guessing words lists based on [GameDifficulty].
+ * [COUNTRIES]
+ * [LANGUAGES]
+ * [COMPANIES]
+ */
+enum class GameCategory {
+    COUNTRIES, LANGUAGES, COMPANIES
+}
+
+// For adding list of 5 words to guessing list.
+data class Words(
+    val wordName: String
+)
+
+/**
+ * @param gameDifficulty filter between three different guessing words lists based on [GameDifficulty].
+ * @param gameCategory filter game category added to [GameCategory].
+ *
+ * Return only 5 words from the whole list of guessing words.
+ * Since we will be having 5 levels per each game, one word per level.
  */
 fun getFilteredWordsByGameDifficulty(
-    gameDifficulty: GameDifficulty
-): List<WordsEntity> {
-    val wordsList = ArrayList<WordsEntity>()
-    // First get the result list from difficulty and map those to WordsEntity.
-    with(filterWordsByDifficulty(gameDifficulty)) {
-        this.map { word ->
+    gameDifficulty: GameDifficulty,
+    gameCategory: GameCategory
+): List<Words> {
+    val wordsList = ArrayList<Words>()
+    // First get the result list by filtering category.
+    with(
+        when (gameCategory) {
+            GameCategory.COUNTRIES -> countryData()
+            GameCategory.LANGUAGES -> languageData()
+            GameCategory.COMPANIES -> companyData()
+        }
+    ) {
+        // From the selected category filter the result list to difficulty.
+        when (gameDifficulty) {
+            GameDifficulty.EASY -> this.filterWordsByLength(4..5)
+            GameDifficulty.MEDIUM -> this.filterWordsByLength(6..7)
+            GameDifficulty.HARD -> this.filterWordsByLength(8..10)
+        }.map { word ->
             wordsList.add(
-                WordsEntity(wordName = word)
+                Words(wordName = word)
             )
         }
     }
 
-    // Make sure to return only 5 shuffled words instead of whole list.
-    return getFiveUniqueGuessingWords(wordsList)
+    return wordsList
 }
 
 /**
  * Return only 5 words from the whole list of guessing words.
  * Since we will be having 5 levels per each game, one word per level.
  */
-private fun getFiveUniqueGuessingWords(
-    wordsList: ArrayList<WordsEntity>
-): List<WordsEntity> {
-    return wordsList.shuffled().take(5)
-}
-
-/**
- * Determine current difficulty to get correct list from the object [GameData].
- */
-private fun filterWordsByDifficulty(
-    gameDifficulty: GameDifficulty,
-    data: GameData = GameData
-) = when (gameDifficulty) {
-    GameDifficulty.EASY -> data.easyGuessingWords
-    GameDifficulty.MEDIUM -> data.mediumGuessingWords
-    GameDifficulty.HARD -> data.hardGuessingWords
+private fun List<String>.filterWordsByLength(
+    range: IntRange,
+    numberOfWords: Int = 5
+): List<String> {
+    return this.filter { it.length in range }.shuffled().take(numberOfWords)
 }

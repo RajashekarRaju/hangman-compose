@@ -5,6 +5,7 @@ import androidx.compose.runtime.Stable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.hangman.hangman.utils.GameCategory
 import com.hangman.hangman.utils.GameDifficulty
 
 @Entity(tableName = "history_table")
@@ -24,6 +25,9 @@ data class HistoryEntity(
 
     @ColumnInfo(name = "column_game_difficulty")
     val gameDifficulty: GameDifficulty,
+
+    @ColumnInfo(name = "column_game_category")
+    val gameCategory: GameCategory,
 
     @ColumnInfo(name = "column_game_summary")
     val gameSummary: Boolean,
