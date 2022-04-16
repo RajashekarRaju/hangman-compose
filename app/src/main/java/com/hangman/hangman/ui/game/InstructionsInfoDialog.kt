@@ -13,6 +13,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -77,7 +78,12 @@ fun GameInstructionsInfoDialog(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = stringResource(R.string.dialog_game_instructions_subtitle),
+                text = buildAnnotatedString {
+                    append(stringResource(R.string.dialog_game_instructions_subtitle))
+                    append(" ")
+                    append(gameCategory.name)
+                    append(".")
+                },
                 style = MaterialTheme.typography.h5,
                 color = MaterialTheme.colors.primary.copy(0.75f),
                 textAlign = TextAlign.Center

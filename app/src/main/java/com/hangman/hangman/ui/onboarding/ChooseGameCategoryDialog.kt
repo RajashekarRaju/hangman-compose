@@ -1,7 +1,6 @@
 package com.hangman.hangman.ui.onboarding
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
@@ -94,6 +93,9 @@ private fun ItemCategoryRow(
     onGameCategorySelected: (Int) -> Unit,
     viewModel: OnBoardingViewModel
 ) {
+    // Removed default ripple effect.
+    val interactionSource = remember { MutableInteractionSource() }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -102,6 +104,8 @@ private fun ItemCategoryRow(
             .selectable(
                 selected = gameCategory.categoryId == selectedGameCategory,
                 role = Role.RadioButton,
+                indication = null,
+                interactionSource = interactionSource,
                 onClick = {
                     // Selects player clicked radio button game category.
                     onGameCategorySelected(gameCategory.categoryId)
@@ -117,10 +121,6 @@ private fun ItemCategoryRow(
             colors = RadioButtonDefaults.colors(
                 unselectedColor = MaterialTheme.colors.primary.copy(0.50f),
                 selectedColor = MaterialTheme.colors.primary
-            ),
-            modifier = Modifier.indication(
-                interactionSource = MutableInteractionSource(),
-                indication = null
             )
         )
 

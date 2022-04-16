@@ -28,7 +28,7 @@
     <string name="dialog_game_lost_title">\n\nYou Lost\n\n</string>
     <string name="dialog_game_lost_word">The word you didn\'t guess was\n\n</string>
     <string name="dialog_game_instructions_title">Instructions</string>
-    <string name="dialog_game_instructions_subtitle">Guess the name of the countries.</string>
+    <string name="dialog_game_instructions_subtitle">Guess the name of the </string>
     <string name="cd_game_lost_hangman_image">Hangman rope image</string>
     <string name="cd_close_game_icon">Click to exit game.</string>
 

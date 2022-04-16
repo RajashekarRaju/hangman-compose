@@ -1,9 +1,6 @@
 package com.hangman.hangman.ui.onboarding
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -17,7 +14,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -30,7 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hangman.hangman.R
 import com.hangman.hangman.ui.game.GameInstructionsInfoDialog
-import org.koin.androidx.compose.getViewModel
+import com.hangman.hangman.utils.createInfiniteRepeatableRotateAnimation
+
 
 /**
  * Default screen first visible to the player.
@@ -40,11 +40,9 @@ import org.koin.androidx.compose.getViewModel
 fun OnBoardingScreen(
     navigateToGameScreen: () -> Unit,
     navigateToHistoryScreen: () -> Unit,
+    viewModel: OnBoardingViewModel,
     finishActivity: () -> Unit,
 ) {
-    // Create ViewModel instance with koin.
-    val viewModel = getViewModel<OnBoardingViewModel>()
-
     Surface(
         color = MaterialTheme.colors.background,
     ) {
@@ -53,10 +51,11 @@ fun OnBoardingScreen(
         ) {
             // Full screen occupying background image.
             Image(
-                painter = painterResource(id = R.drawable.bg_dodge),
+                painter = painterResource(id = R.drawable.game_background),
                 contentDescription = stringResource(R.string.cd_image_screen_bg),
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
+                alpha = 0.1f
             )
 
             // Main screen content
@@ -89,7 +88,7 @@ private fun OnBoardingScreenContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
-        // Display full screen background image.
+        // Displays hanging rope image on top of screen.
         FullScreenGameBackground()
 
         // Tagline for the game.
@@ -163,7 +162,8 @@ private fun FullScreenGameBackground() {
     Image(
         painter = painterResource(id = R.drawable.rope_with_title),
         contentDescription = stringResource(R.string.cd_game_banner),
-        modifier = Modifier.size(220.dp)
+        modifier = Modifier.size(220.dp),
+        colorFilter = ColorFilter.tint(color = MaterialTheme.colors.primary)
     )
 }
 
@@ -223,10 +223,13 @@ private fun PlayGameButton(
             navigateToGameScreen()
         },
     ) {
+
         Icon(
             painter = painterResource(id = R.drawable.skull),
             contentDescription = stringResource(R.string.cd_play_game_button),
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier
+                .size(20.dp)
+                .rotate(createInfiniteRepeatableRotateAnimation())
         )
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -257,7 +260,14 @@ private fun ExitGameButton(
         Icon(
             painter = painterResource(id = R.drawable.demon),
             contentDescription = stringResource(R.string.cd_exit_game),
-            modifier = Modifier.size(28.dp)
+            modifier = Modifier
+                .size(28.dp)
+                .rotate(
+                    createInfiniteRepeatableRotateAnimation(
+                        initialValue = 360f,
+                        targetValue = 0f
+                    )
+                )
         )
 
         Spacer(modifier = Modifier.width(16.dp))
