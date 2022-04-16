@@ -35,9 +35,9 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.hangman.hangman.R
 import com.hangman.hangman.modal.Alphabets
 import com.hangman.hangman.utils.ApplyAnimatedVisibility
+import com.hangman.hangman.utils.SparkAnimateGuessedLetter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
 
 
 /**
@@ -48,11 +48,9 @@ import org.koin.androidx.compose.getViewModel
 @Composable
 fun GameScreen(
     navigateUp: () -> Unit,
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    viewModel: GameViewModel
 ) {
-    // Create ViewModel instance with koin.
-    val viewModel = getViewModel<GameViewModel>()
-
     // Modal sheet to ask player whether to quit playing the game, triggered while up navigation.
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -204,6 +202,8 @@ private fun GameScreenContent(
             }
         }
 
+        val guessesList = viewModel.updateGuessesByPlayer.value
+
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -215,15 +215,17 @@ private fun GameScreenContent(
                 bottom.linkTo(alphabetsGridItems.top, 16.dp)
             }
         ) {
-            items(
-                // List contains current matched guessing words.
-                items = viewModel.updateGuessesByPlayer.value!!
-            ) { validGuess ->
-                ItemGuessingAlphabetContainer(validGuess)
+            if (guessesList != null) {
+                items(
+                    // List contains current matched guessing words.
+                    items = guessesList
+                ) { validGuess ->
+                    ItemGuessingAlphabetContainer(validGuess)
+                }
             }
         }
 
-        val alphabetsList by viewModel.alphabets.observeAsState(listOf())
+        val alphabetsList by viewModel.alphabetsList.observeAsState(listOf())
 
         Box(
             modifier = Modifier
@@ -289,7 +291,17 @@ private fun ItemAlphabetText(
                 }
             )
     ) {
-        val (alphabetText) = createRefs()
+        val (alphabetText, clickEffectAnim) = createRefs()
+
+        if (alphabet.isAlphabetGuessed) {
+            Box(
+                modifier = Modifier.constrainAs(clickEffectAnim) {
+                    centerTo(parent)
+                }
+            ) {
+                SparkAnimateGuessedLetter()
+            }
+        }
 
         Text(
             text = alphabet.alphabet,
@@ -407,14 +419,14 @@ private fun AttemptsLeftAndLevelProgressBars(
  */
 @Composable
 private fun ItemGuessingAlphabetContainer(
-    validGuess: Char,
+    validGuess: String,
 ) {
     ConstraintLayout {
 
         val (alphabet, box) = createRefs()
 
         Text(
-            text = validGuess.toString(),
+            text = validGuess,
             style = MaterialTheme.typography.h5,
             color = MaterialTheme.colors.onBackground,
             modifier = Modifier.constrainAs(alphabet) {

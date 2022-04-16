@@ -11,12 +11,13 @@ import java.util.*
  * Creating a [mutableStateOf] object with a mutable collection type isn't possible, so
  * at the end instead of returning array object, transform those to list.
  */
-fun alphabetsList(): List<Alphabets> {
+fun alphabetsList(): MutableList<Alphabets> {
     val alphabet = ('A'..'Z').toList()
     val alphabetId = (1..26).toList()
     val zipAlphabets = alphabetId zip alphabet
 
-    val alphabetList = arrayListOf<Alphabets>()
+    val alphabetList: MutableList<Alphabets> = mutableListOf()
+
     zipAlphabets.forEach { pair ->
         alphabetList.add(
             Alphabets(
@@ -26,7 +27,7 @@ fun alphabetsList(): List<Alphabets> {
         )
     }
 
-    return alphabetList.toList()
+    return alphabetList
 }
 
 /**

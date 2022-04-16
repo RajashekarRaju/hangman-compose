@@ -15,17 +15,46 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 /**
  * ViewModel for screen [GameScreen].
- * Initialized with koin.
+ * Instance created with koin..
  */
 class GameViewModel(
     private val application: Application,
     private val repository: GameRepository
 ) : ViewModel() {
+
+    /**
+     * This value always has latest guesses made by player to guess correct letters in word.
+     * Helps us determine whether game should be finished or not by reading values in indices.
+     * This value won't be used directly to update any composables in [GameScreen].
+     *
+     * If each value in indices is empty string after player runs out of attempts to guess, at that
+     * point player lost the game.
+     * To update the UI state player won, we will pass boolean to [playerWonTheCurrentLevel] true.
+     * And once for all 5 levels the value is true we will update [gameOverByWinning].
+     *
+     * If each value in indices is a valid string while player actively keeps guessing, at that
+     * point player won that level.
+     * To update the UI state player won, we will pass boolean to [gameOverByNoAttemptsLeft].
+     */
+    private val updatePlayerGuesses = mutableListOf<String>()
+
+    /**
+     * What ever latest changes are available in [updatePlayerGuesses] those will be updated
+     * to this [MutableLiveData] value [_updateGuessesByPlayer].
+     * This will update the UI state for all player guessing letters.
+     */
+    private var _updateGuessesByPlayer = MutableLiveData(updatePlayerGuesses)
+    val updateGuessesByPlayer: LiveData<MutableList<String>>
+        get() = _updateGuessesByPlayer
+
+    // List of A-Z alphabets, will let the player access alphabets in any order they want.
+    private var _alphabetsList = MutableLiveData<List<Alphabets>>()
+    val alphabetsList: LiveData<List<Alphabets>>
+        get() = _alphabetsList
 
     // Determine whether player won or lost the game
     private var playerWonTheCurrentLevel by mutableStateOf(false)
@@ -36,102 +65,93 @@ class GameViewModel(
     // Player has completed all 5 levels and won the game.
     var gameOverByWinning by mutableStateOf(false)
 
-    // Generated a random country word to guess from database.
-    var wordToGuess by mutableStateOf("")
+    // Contains the randomly generated guessing word.
+    // Random word will be assigned replacing empty string inside ViewModel init block.
+    var wordToGuess: String by mutableStateOf("")
 
-    // Keep track of attempts to find out whether or not to finish the game
-    var attemptsLeftToGuess by mutableStateOf(8)
+    // Keeps track of attempts left to find out whether or not to finish the game.
+    var attemptsLeftToGuess: Int by mutableStateOf(8)
 
     // Reveal the word if player lost the game at any level.
-    private var _revealGuessingWord = MutableLiveData(false)
+    private var _revealGuessingWord = MutableLiveData(gameOverByNoAttemptsLeft)
     val revealGuessingWord: LiveData<Boolean>
         get() = _revealGuessingWord
 
     // Number of points depend on length of the string for guessed word.
-    private var pointsScoredPerWord by mutableStateOf(0)
+    private var pointsScoredPerWord: Int by mutableStateOf(0)
 
     // Keeps track of all points scored in each level.
-    var pointsScoredOverall by mutableStateOf(0)
+    var pointsScoredOverall: Int by mutableStateOf(0)
 
     // Starting level with 1, last level is 5
-    var currentPlayerLevel by mutableStateOf(0)
+    var currentPlayerLevel: Int by mutableStateOf(0)
 
     // Get shared preferences for value game difficulty.
     private val gameDifficultyPreferences = GameDifficultyPref(application)
+
+    // Get shared preferences for value game category.
     private val gameCategoryPreferences = GameCategoryPref(application)
 
-    // Set default state game difficulty value to easy and update with latest changes.
+    // Set default state game difficulty value to easy mode.
     var gameDifficulty: GameDifficulty by mutableStateOf(GameDifficulty.EASY)
+
+    // Set default state game category value to countries.
     var gameCategory: GameCategory by mutableStateOf(GameCategory.COUNTRIES)
 
     // Contains 5 words in a list for current game, 1 for each level.
-    private var guessingWordsForCurrentGame by mutableStateOf(listOf<Words>())
+    private var guessingWordsForCurrentGame: List<Words> by mutableStateOf(listOf())
 
-    // 5 is the last level player needs to reach. At the point do not increment level
-    val maxLevelReached = 5
+    // 5 is the last level player needs to reach. At that point do not increment level.
+    val maxLevelReached: Int = 5
 
-    // Keeps track of player score from each level.
-    private val pointsScoredInEachLevel = arrayListOf(0, 0, 0, 0, 0)
+    // Keeps track of player scored from each level.
+    private val pointsScoredInEachLevel = mutableListOf(0, 0, 0, 0, 0)
 
-    // Everytime initializes and plays the game sound.
+    // Initialize media player for the game sound.
     private lateinit var mediaPlayer: MediaPlayer
-
-    // This acts like a mediator, makes sure indices are reset/updated.
-    // Helps us determine whether game should be finished by reading values in indices.
-    private val updatePlayerGuesses = arrayListOf<Char>()
-
-    private var _updateGuessesByPlayer = MutableLiveData(updatePlayerGuesses)
-    val updateGuessesByPlayer: LiveData<ArrayList<Char>>
-        get() = _updateGuessesByPlayer
-
-    // List of A-Z alphabets, let's player access alphabets in any order
-    private var _alphabets = MutableLiveData(alphabetsList())
-    val alphabets: LiveData<List<Alphabets>>
-        get() = _alphabets
 
     init {
         viewModelScope.launch {
             // Get player saved game difficulty level from preferences.
             gameDifficulty = gameDifficultyPreferences.getGameDifficultyPref()
+            // Get player saved game category from preferences.
             gameCategory = gameCategoryPreferences.getGameCategoryPref()
 
-            // Based on difficulty level, get 5 unique random words from database.
+            // Based on category and difficulty, get 5 unique random words from database.
             guessingWordsForCurrentGame =
                 repository.getRandomGuessingWord(gameDifficulty, gameCategory)
             // From list of 5 words, starting from it's first index position sequentially return
             // a new word to guess for matching level.
-            // If level is one first word will be returned, till level 5.
+            // If level is one -> first word will be returned, till level 5.
             wordToGuess = guessingWordsForCurrentGame[currentPlayerLevel].wordName
             // Reset guesses, update new word indices for current/next level word.
             updateOrResetWordToGuess()
-
-            Timber.e(wordToGuess)
         }
 
         playCurrentGameSoundBased(R.raw.level_won)
     }
 
-    // Called everytime when player chosen any word from list of alphabets.
+    // Called everytime when player chosen any letter from list of alphabets.
     fun checkIfLetterMatches(
         alphabet: Alphabets
     ) {
         viewModelScope.launch {
             // Make sure to compare valid strings/chars by keeping it same letter case.
-            val currentAlphabet = alphabet.alphabet.lowercase().first()
-            val currentGuessingWord = wordToGuess.lowercase()
+            val currentAlphabet: String = alphabet.alphabet.lowercase()
+            val currentGuessingWord: String = wordToGuess.lowercase()
 
             if (currentGuessingWord.contains(currentAlphabet)) {
                 // Since letter was a match, loop into indices range.
                 for (notI in currentGuessingWord.indices) {
                     // From the matched word, find at which position alphabet match took place.
-                    if (currentGuessingWord[notI] == currentAlphabet) {
+                    if (currentGuessingWord[notI].toString() == currentAlphabet) {
                         // For matched position, pass that alphabet to the position to reflect in UI.
                         updatePlayerGuesses[notI] = currentAlphabet
                     }
                 }
 
                 // Reaching at this point, word has been guessed correctly.
-                if (!updatePlayerGuesses.contains(' ')) {
+                if (!updatePlayerGuesses.contains(" ")) {
                     // When none of the characters from word to guess contains empty character,
                     // player has won the current level, but not the whole game.
                     playerWonTheCurrentLevel = true
@@ -139,7 +159,7 @@ class GameViewModel(
                     _revealGuessingWord.value = gameOverByNoAttemptsLeft
                 }
             } else {
-                // When match wasn't successful, this will be executed.
+                // When match wasn't successful, this will be executed to deduct attempts.
                 minimizeAttempt()
             }
 
@@ -160,32 +180,41 @@ class GameViewModel(
                     // Get new word from saved guessing list by updated level.
                     wordToGuess = guessingWordsForCurrentGame[currentPlayerLevel].wordName
                 }
-                // Game isn't over, but level is. For clarity update this game isn't over.
+                // Game isn't over, but level is. For clarity update this value to false.
                 gameOverByNoAttemptsLeft = false
 
                 // Reset guesses, update new word indices for next level word.
                 kotlin.run {
+                    // Delaying because, in UI progress animation takes 500 millis exactly.
+                    // Later delay will be removed by adding a callback which triggers when
+                    // animation is completed.
                     delay(500)
+                    // Reset alphabets, guessing word indices.
                     updateOrResetWordToGuess()
                 }
-                Timber.e("Level 2 ==> $wordToGuess")
 
+                // Only when player wins the last level change the gameOverByWinning to true.
                 if (playerWonTheCurrentLevel && currentPlayerLevel == 5) {
                     gameOverByWinning = true
                     playCurrentGameSoundBased(R.raw.game_won)
-                    // Saves the game to history, needs couple of changes yet.
-                    saveCurrentGameToHistory()
+                    viewModelScope.launch {
+                        // Delaying half-a-second to save the game to database history.
+                        // This time allows us to count the last level points scored.
+                        delay(500)
+                        saveCurrentGameToHistory()
+                    }
                 }
 
-                // Prevents media player from playing game won sound instead of level won sound.
+                // Prevents media player from playing game won sound, instead of level won sound.
                 if (playerWonTheCurrentLevel && currentPlayerLevel < 5) {
                     playCurrentGameSoundBased(R.raw.level_won)
                 }
 
-                // This needs to reset player current level to false for next level to begin.
+                // Reset player current level to false for next level to begin.
                 playerWonTheCurrentLevel = false
             }
 
+            // Keeps track of all level scores everytime player wins a level.
             calculateOverallPointsScoredEachLevel()
         }
 
@@ -193,6 +222,7 @@ class GameViewModel(
         playCurrentGameSoundBased(R.raw.alphabet_tap)
     }
 
+    // Called everytime a level has been completed to update overall score.
     private fun calculateOverallPointsScoredEachLevel() {
         when (currentPlayerLevel) {
             1 -> pointsScoredInEachLevel[0] = pointsScoredPerWord
@@ -210,9 +240,10 @@ class GameViewModel(
         if (attemptsLeftToGuess > 0) {
             attemptsLeftToGuess -= 1
             gameOverByNoAttemptsLeft = attemptsLeftToGuess == 0
+            // When player lost, change this value to true for dialog to appear in UI.
             _revealGuessingWord.value = gameOverByNoAttemptsLeft
             if (gameOverByNoAttemptsLeft) {
-                // Saves the game to history, needs couple of changes yet.
+                // Saves the game to history.
                 viewModelScope.launch {
                     playCurrentGameSoundBased(R.raw.game_lost)
                     saveCurrentGameToHistory()
@@ -221,20 +252,24 @@ class GameViewModel(
         }
     }
 
-    //var updater by mutableStateOf(GuessHolder(guesses = updatePlayerGuesses))
-
     // Reset guesses, update new word indices for next level word.
     private fun updateOrResetWordToGuess() {
-        _alphabets.value = alphabetsList()
+        // Once data has been reset in alphabets list, a property isAlphabetGuessed in list of
+        // every objects value needs to reset to false, so that player can choose same alphabets
+        // in next level.
+        _alphabetsList.value = alphabetsList()
+        // Clears the previously guessed word for new one to take place with empty string.
         updatePlayerGuesses.clear()
         for (i in wordToGuess.indices) {
-            updatePlayerGuesses.add(' ')
-            //GuessHolder(guesses = updatePlayerGuesses)
+            updatePlayerGuesses.add(" ")
         }
+        // This allows you to cheat.
+        Timber.e("Word to guess is $wordToGuess")
     }
 
     // When this function triggered, we will save the existing game progress to the database,
     // irrespective of player wins or loses the game.
+    // But we will not save the progress if player chooses to exit the game in the middle.
     private suspend fun saveCurrentGameToHistory() {
         val (date, time) = getDateAndTime()
 
