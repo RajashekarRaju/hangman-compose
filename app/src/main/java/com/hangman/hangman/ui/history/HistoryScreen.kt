@@ -1,7 +1,6 @@
 package com.hangman.hangman.ui.history
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,7 +22,6 @@ import com.hangman.hangman.R
 import com.hangman.hangman.repository.database.entity.HistoryEntity
 import com.hangman.hangman.ui.game.CreateCircularProgressIndicator
 import com.hangman.hangman.ui.game.animateCurrentLevelProgress
-import org.koin.androidx.compose.getViewModel
 
 
 /**
@@ -32,10 +30,10 @@ import org.koin.androidx.compose.getViewModel
  */
 @Composable
 fun HistoryScreen(
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    viewModel: HistoryViewModel
 ) {
     // Create ViewModel instance with koin.
-    val viewModel = getViewModel<HistoryViewModel>()
     // Get all the game history list.
     val gameHistoryList by viewModel.gameHistoryList.observeAsState(emptyList())
 
@@ -78,11 +76,11 @@ fun HistoryScreen(
 @Composable
 private fun FullScreenHistoryBackground() {
     Image(
-        painter = painterResource(id = R.drawable.bg_dodge),
+        painter = painterResource(id = R.drawable.game_background),
         contentDescription = stringResource(id = R.string.cd_image_screen_bg),
         modifier = Modifier.fillMaxSize(),
         contentScale = ContentScale.Crop,
-        alpha = 0.20f
+        alpha = 0.01f
     )
 }
 
@@ -142,124 +140,129 @@ private fun ItemGameHistory(
         stringResource(R.string.game_lost_text)
     }
 
-    ConstraintLayout(
-        modifier = Modifier
-            .fillMaxSize()
-            .clip(MaterialTheme.shapes.medium)
-            .background(color = MaterialTheme.colors.surface)
-            .padding(horizontal = 8.dp, vertical = 12.dp)
+    Card(
+        backgroundColor = MaterialTheme.colors.surface,
+        shape = MaterialTheme.shapes.medium,
+        modifier = Modifier.fillMaxSize()
     ) {
 
-        val (
-            gameScore, gameSummaryText, gameDifficultyText,
-            gameCategory, horDivider, gamePlayedTimeText, gamePlayedDateText
-        ) = createRefs()
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.constrainAs(gameScore) {
-                start.linkTo(parent.start, 12.dp)
-                centerVerticallyTo(parent)
-            }
+        ConstraintLayout(
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp)
         ) {
-            Box {
-                CreateCircularProgressIndicator(
-                    currentProgress = animateCurrentLevelProgress(history.gameLevel),
-                    indicatorSize = 40.dp,
-                    strokeWidth = 2.dp,
-                    progressColor = MaterialTheme.colors.primary.copy(0.75f)
-                )
 
-                CreateCircularProgressIndicator(
-                    currentProgress = 1f,
-                    indicatorSize = 40.dp,
-                    strokeWidth = 2.dp,
-                    progressColor = MaterialTheme.colors.primary.copy(0.25f),
-                )
+            val (
+                gameScore, gameSummaryText, gameDifficultyText,
+                gameCategory, horDivider, gamePlayedTimeText, gamePlayedDateText
+            ) = createRefs()
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .constrainAs(gameScore) {
+                        start.linkTo(parent.start, 12.dp)
+                        centerVerticallyTo(parent)
+                    }
+            ) {
+                Box {
+                    CreateCircularProgressIndicator(
+                        currentProgress = animateCurrentLevelProgress(history.gameLevel),
+                        indicatorSize = 40.dp,
+                        strokeWidth = 2.dp,
+                        progressColor = MaterialTheme.colors.primary.copy(0.75f)
+                    )
+
+                    CreateCircularProgressIndicator(
+                        currentProgress = 1f,
+                        indicatorSize = 40.dp,
+                        strokeWidth = 2.dp,
+                        progressColor = MaterialTheme.colors.primary.copy(0.25f),
+                    )
+
+                    Text(
+                        text = history.gameScore.toString(),
+                        style = MaterialTheme.typography.h5,
+                        color = MaterialTheme.colors.primary,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.align(alignment = Alignment.Center)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = history.gameScore.toString(),
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.primary,
+                    text = "Lvl ${history.gameLevel}",
+                    style = MaterialTheme.typography.body2,
+                    color = MaterialTheme.colors.primary.copy(0.75f),
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.align(alignment = Alignment.Center)
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = summary,
+                style = MaterialTheme.typography.h5,
+                color = MaterialTheme.colors.primary,
+                modifier = Modifier.constrainAs(gameSummaryText) {
+                    start.linkTo(gameScore.end, 28.dp)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(gameDifficultyText.top)
+                }
+            )
 
             Text(
-                text = "Lvl ${history.gameLevel}",
-                style = MaterialTheme.typography.body2,
+                text = history.gameDifficulty.name,
+                style = MaterialTheme.typography.subtitle2,
+                color = MaterialTheme.colors.primary,
+                modifier = Modifier.constrainAs(gameDifficultyText) {
+                    start.linkTo(gameScore.end, 28.dp)
+                    top.linkTo(gameSummaryText.bottom, 1.dp)
+                    bottom.linkTo(parent.bottom)
+                }
+            )
+
+            Text(
+                text = history.gameCategory.name,
+                style = MaterialTheme.typography.body1,
+                letterSpacing = 4.sp,
+                color = MaterialTheme.colors.primary,
+                modifier = Modifier.constrainAs(gameCategory) {
+                    end.linkTo(parent.end, 4.dp)
+                    top.linkTo(parent.top, 4.dp)
+                }
+            )
+
+            Divider(
+                color = MaterialTheme.colors.primary.copy(0.50f),
+                thickness = 1.dp,
+                modifier = Modifier
+                    .clip(MaterialTheme.shapes.small)
+                    .width(60.dp)
+                    .constrainAs(horDivider) {
+                        end.linkTo(parent.end, 4.dp)
+                        top.linkTo(gameCategory.bottom, 6.dp)
+                    }
+            )
+
+            Text(
+                text = history.gamePlayedTime,
+                style = MaterialTheme.typography.body1,
                 color = MaterialTheme.colors.primary.copy(0.75f),
-                textAlign = TextAlign.Center,
+                modifier = Modifier.constrainAs(gamePlayedTimeText) {
+                    end.linkTo(parent.end, 4.dp)
+                    top.linkTo(horDivider.bottom, 6.dp)
+                }
+            )
+
+            Text(
+                text = history.gamePlayedDate,
+                style = MaterialTheme.typography.body1,
+                color = MaterialTheme.colors.primary.copy(0.75f),
+                modifier = Modifier.constrainAs(gamePlayedDateText) {
+                    end.linkTo(parent.end, 4.dp)
+                    top.linkTo(gamePlayedTimeText.bottom, 4.dp)
+                }
             )
         }
 
-        Text(
-            text = summary,
-            style = MaterialTheme.typography.h5,
-            color = MaterialTheme.colors.primary,
-            modifier = Modifier.constrainAs(gameSummaryText) {
-                start.linkTo(gameScore.end, 28.dp)
-                top.linkTo(parent.top)
-                bottom.linkTo(gameDifficultyText.top)
-            }
-        )
-
-        Text(
-            text = history.gameDifficulty.name,
-            style = MaterialTheme.typography.subtitle2,
-            color = MaterialTheme.colors.primary,
-            modifier = Modifier.constrainAs(gameDifficultyText) {
-                start.linkTo(gameScore.end, 28.dp)
-                top.linkTo(gameSummaryText.bottom, 1.dp)
-                bottom.linkTo(parent.bottom)
-            }
-        )
-
-        Text(
-            text = history.gameCategory.name,
-            style = MaterialTheme.typography.body1,
-            letterSpacing = 4.sp,
-            color = MaterialTheme.colors.primary,
-            modifier = Modifier.constrainAs(gameCategory) {
-                end.linkTo(parent.end, 4.dp)
-                top.linkTo(parent.top, 4.dp)
-            }
-        )
-
-        Divider(
-            color = MaterialTheme.colors.primary.copy(0.50f),
-            thickness = 1.dp,
-            modifier = Modifier
-                .clip(MaterialTheme.shapes.small)
-                .width(60.dp)
-                .constrainAs(horDivider) {
-                    end.linkTo(parent.end, 4.dp)
-                    top.linkTo(gameCategory.bottom, 6.dp)
-                }
-        )
-
-        Text(
-            text = history.gamePlayedTime,
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.primary.copy(0.75f),
-            modifier = Modifier.constrainAs(gamePlayedTimeText) {
-                end.linkTo(parent.end, 4.dp)
-                top.linkTo(horDivider.bottom, 6.dp)
-            }
-        )
-
-        Text(
-            text = history.gamePlayedDate,
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.primary.copy(0.75f),
-            modifier = Modifier.constrainAs(gamePlayedDateText) {
-                end.linkTo(parent.end, 4.dp)
-                top.linkTo(gamePlayedTimeText.bottom, 4.dp)
-            }
-        )
     }
 }
 
