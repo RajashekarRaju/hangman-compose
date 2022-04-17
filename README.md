@@ -22,14 +22,23 @@
 - [ ] Players can have hints for each level.
 - [ ] Improve game user experience.
 - [ ] Fix issues for smaller screen devices.
+- [ ] Replace all Shared Preferences with DataStore.
 
 ## :dango: App Overview
 
+
 | Screen | Red Theme | Teal Theme |
 | :----- | :-: | :--: |
-| **OnBoarding Screen** <br><br> • Default destination for the app.<br> • Players can make changes to game modes.<br> | <img src="/assets/onboarding_red.png" width="200" /> | <img src="/assets/onboarding_teal.png" width="200" /> |
-| **Game Screen** <br><br> • Destination for playing the game.<br> • Game loads with default game preferences last saved by the player.<br> | <img src="/assets/game_red.png" width="200" /> | <img src="/assets/game_teal.png" width="200" /> |
-| **History Screen** <br><br> • Players can see their whole game history.<br> • Made use of room database to store all the history data.<br> | <img src="/assets/history_red.png" width="200" /> | <img src="/assets/history_teal.png" width="200" /> |
+| **OnBoarding Screen** <br><br> • Default destination for the app.<br> • Players can choose different game categories from dialog.<br> • Players can choose difficulty mode through slider.<br> • Highest score will automatically update from game history data.<br> • Players can mute/unmute game background music.<br> • Players can read the game instructions from dialog.<br> • Shared preferences are used to save game category and difficulty.<br> | <img src="/assets/onboarding_red.png" width="200" /> | <img src="/assets/onboarding_teal.png" width="200" /> |
+| **Game Screen** <br><br> • Destination for playing the game.<br> • Game loads with default game preferences last saved by the player.<br> • Players can check their points and current level.<br> • Players can view the number of attempts left to guess the word.<br> • Once player completes all levels, a dialog will show up with total points scored.<br> • At any level if player loses the game, dialog will be shown with word which isn't guessed correctly.<br> • Can access the game instructions dialog to see which game mode is running.<br> • Players cannot reuse the same letter which is already guessed.<br> • Players cannot directly exit the game, a modal sheet will confirm the exit.<br> • Players can view which letters are correctly being guessed.<br> | <img src="/assets/game_red.png" width="200" /> | <img src="/assets/game_teal.png" width="200" /> |
+| **History Screen** <br><br> • Players can see their whole game history.<br> • Made use of room database to store all the history data.<br> • Each game history item has properties overall score, category, difficulty, level, won/lost info, time/date of play will be saved.<br> • Any specific game item history can be deleted from database by swiping.<br> • When no history is available a simple text message will be shown.<br> • Game progress will be saved only when player loses or wins but not when exits.<br> | <img src="/assets/history_red.png" width="200" /> | <img src="/assets/history_teal.png" width="200" /> |
+
+
+| Adjust Difficulty Mode | Game Instructions | Game Exit Modal Sheet |
+| :--------------------: | :---------------: | :-------: |
+| <img src="/assets/difficulty_red.png" width="200"/> | <img src="/assets/categories_red.png" width="200" /> | <img src="/assets/instructions_red.png" width="200" /> |
+| Game Won Dialog | Game Lost Dialog | Game Exit |
+| <img src="/assets/game_won_red.png" width="200"/> | <img src="/assets/game_lost_red.png" width="200" /> | <img src="/assets/exit_red.png" width="200" /> |
 
 ## :hourglass_flowing_sand: Experiencing slow game performance ?
 
@@ -48,19 +57,19 @@ help you improve app performance.
 
 ```kotlin
 val TealColorPalette = lightColors(
-    primary = tealPrimary,
-    background = tealBackground,
-    onBackground = tealOnBackground,
-    surface = tealSurface,
-    onSurface = tealOnSurface
+  primary = tealPrimary,
+  background = tealBackground,
+  onBackground = tealOnBackground,
+  surface = tealSurface,
+  onSurface = tealOnSurface
 )
 
 val RedColorPalette = darkColors(
-    primary = redPrimary,
-    background = redBackground,
-    onBackground = redOnBackground,
-    surface = redSurface,
-    onSurface = redOnSurface
+  primary = redPrimary,
+  background = redBackground,
+  onBackground = redOnBackground,
+  surface = redSurface,
+  onSurface = redOnSurface
 )
 ```
 
