@@ -8,8 +8,6 @@ import com.hangman.hangman.diKoin.repositoryModule
 import com.hangman.hangman.diKoin.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
-import timber.log.Timber
-
 
 class HangmanApp : Application() {
 
@@ -17,10 +15,6 @@ class HangmanApp : Application() {
         super.onCreate()
 
         initKoin()
-
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
     }
 
     private fun initKoin() {
