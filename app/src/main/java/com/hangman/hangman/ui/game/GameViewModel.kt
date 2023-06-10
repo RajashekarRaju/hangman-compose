@@ -2,6 +2,7 @@ package com.hangman.hangman.ui.game
 
 import android.app.Application
 import android.media.MediaPlayer
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,7 +14,6 @@ import com.hangman.hangman.repository.database.entity.HistoryEntity
 import com.hangman.hangman.utils.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.util.*
 
 
@@ -264,7 +264,7 @@ class GameViewModel(
             updatePlayerGuesses.add(" ")
         }
         // This allows you to cheat.
-        Timber.e("Word to guess is $wordToGuess")
+        Log.e("GameViewModel", "Word to guess is $wordToGuess")
     }
 
     // When this function triggered, we will save the existing game progress to the database,

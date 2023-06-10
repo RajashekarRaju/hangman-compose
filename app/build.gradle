@@ -5,26 +5,41 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.hangman.hangman"
         minSdk 24
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "0.1.0"
 
         vectorDrawables {
             useSupportLibrary true
         }
-
-        // signingConfig signingConfigs.debug
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+        debug {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    signingConfigs {
+        release {
+            keyAlias "keyAlias"
+            keyPassword "keyPassword"
+            storeFile file("keys/hangman/hangman-game-release-key")
+            storePassword "storePassword"
         }
     }
 
@@ -56,35 +71,32 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
-    implementation 'androidx.activity:activity-compose:1.4.0'
+    implementation 'androidx.activity:activity-compose:1.7.2'
 
     // Observe state and livedata
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
 
     // Constraint Layout
-    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
     // Navigation
-    implementation "androidx.navigation:navigation-compose:2.4.2"
+    implementation "androidx.navigation:navigation-compose:2.6.0"
 
     // For persisting game difficulty, high score values.
     implementation 'androidx.preference:preference-ktx:1.2.0'
 
-    // Timber for logging
-    implementation "com.jakewharton.timber:timber:4.7.1"
-
     // Room
-    implementation "androidx.room:room-runtime:2.4.2"
-    implementation "androidx.room:room-ktx:2.4.2"
-    kapt "androidx.room:room-compiler:2.4.2"
+    implementation "androidx.room:room-runtime:2.5.1"
+    implementation "androidx.room:room-ktx:2.5.1"
+    kapt "androidx.room:room-compiler:2.5.1"
 
     // Koin - Jetpack Compose
     implementation "io.insert-koin:koin-androidx-compose:3.2.0-beta-1"
