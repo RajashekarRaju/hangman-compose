@@ -17,14 +17,29 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
-
-        // signingConfig signingConfigs.debug
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+        debug {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    signingConfigs {
+        release {
+            keyAlias "keyAlias"
+            keyPassword "keyPassword"
+            storeFile file("keys/hangman/hangman-game-release-key")
+            storePassword "storePassword"
         }
     }
 
