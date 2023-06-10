@@ -4,6 +4,7 @@ import android.app.Application
 import android.media.MediaPlayer
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
@@ -35,6 +36,7 @@ class GameViewModel(
 ) : ViewModel() {
 
     /**
+     * Will update the UI state for all player guessing letters.
      * This value always has latest guesses made by player to guess correct letters in word.
      * Helps us determine whether game should be finished or not by reading values in indices.
      * This value won't be used directly to update any composables in [GameScreen].
@@ -48,16 +50,7 @@ class GameViewModel(
      * point player won that level.
      * To update the UI state player won, we will pass boolean to [gameOverByNoAttemptsLeft].
      */
-    private val updatePlayerGuesses = mutableListOf<String>()
-
-    /**
-     * What ever latest changes are available in [updatePlayerGuesses] those will be updated
-     * to this [MutableLiveData] value [_updateGuessesByPlayer].
-     * This will update the UI state for all player guessing letters.
-     */
-    private var _updateGuessesByPlayer = MutableLiveData(updatePlayerGuesses)
-    val updateGuessesByPlayer: LiveData<MutableList<String>>
-        get() = _updateGuessesByPlayer
+    val updatePlayerGuesses = mutableStateListOf<String>()
 
     // List of A-Z alphabets, will let the player access alphabets in any order they want.
     private var _alphabetsList = MutableLiveData<List<Alphabets>>()

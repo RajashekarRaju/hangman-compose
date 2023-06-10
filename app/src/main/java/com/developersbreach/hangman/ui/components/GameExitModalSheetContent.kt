@@ -1,4 +1,4 @@
-package com.developersbreach.hangman.ui.game
+package com.developersbreach.hangman.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column

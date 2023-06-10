@@ -45,7 +45,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.developersbreach.hangman.R
-import com.developersbreach.hangman.ui.game.GameInstructionsInfoDialog
+import com.developersbreach.hangman.ui.components.GameInstructionsInfoDialog
 import com.developersbreach.hangman.utils.createInfiniteRepeatableRotateAnimation
 
 /**
