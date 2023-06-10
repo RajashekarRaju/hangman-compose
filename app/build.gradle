@@ -2,13 +2,16 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id "org.jlleitschuh.gradle.ktlint" version "11.4.0"
 }
+
+apply plugin: "org.jlleitschuh.gradle.ktlint"
 
 android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.hangman.hangman"
+        applicationId "com.developersbreach.hangman"
         minSdk 24
         targetSdk 33
         versionCode 1
@@ -17,6 +20,9 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
     buildTypes {
@@ -67,6 +73,29 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
+
+    ktlint {
+        verbose = true
+        debug = false
+        android = true
+        ignoreFailures = false
+        outputToConsole = true
+        reporters {
+            reporter "json"
+        }
+    }
+}
+
+tasks.named("check") {
+    dependsOn("ktlintCheck")
+}
+
+gradle.projectsEvaluated {
+    assemble.dependsOn ktlintCheck
 }
 
 dependencies {
@@ -100,4 +129,12 @@ dependencies {
 
     // Koin - Jetpack Compose
     implementation "io.insert-koin:koin-androidx-compose:3.2.0-beta-1"
+
+    testImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+    testImplementation "io.mockk:mockk:1.13.5"
+
+    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:$compose_version")
+
+    debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_version")
 }
