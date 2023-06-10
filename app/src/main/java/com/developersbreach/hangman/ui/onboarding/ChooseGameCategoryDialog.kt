@@ -2,12 +2,23 @@ package com.developersbreach.hangman.ui.onboarding
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.RadioButton
+import androidx.compose.material.RadioButtonDefaults
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -22,13 +33,13 @@ import com.developersbreach.hangman.R
  */
 data class Category(
     val categoryId: Int,
-    val categoryName: String,
+    val categoryName: String
 )
 
 val categoryOptions = listOf(
     Category(0, "Countries"),
     Category(1, "Languages"),
-    Category(2, "Companies"),
+    Category(2, "Companies")
 )
 
 // Dialog for adjusting game difficulty from OnBoarding screen.
@@ -57,11 +68,10 @@ fun ChooseGameCategoryDialog(
                 .background(MaterialTheme.colors.surface, RoundedCornerShape(16.dp))
                 .padding(40.dp)
         ) {
-
             Text(
                 text = stringResource(R.string.game_category_dialog_title),
                 style = MaterialTheme.typography.h5,
-                color = MaterialTheme.colors.primary.copy(0.75f),
+                color = MaterialTheme.colors.primary.copy(0.75f)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -111,10 +121,9 @@ private fun ItemCategoryRow(
                     onGameCategorySelected(gameCategory.categoryId)
                     // Immediately updated the preferences too save player category later.
                     viewModel.updatePlayerChosenCategory(gameCategory.categoryId)
-                },
+                }
             )
     ) {
-
         RadioButton(
             selected = (gameCategory.categoryId == selectedGameCategory),
             onClick = null,

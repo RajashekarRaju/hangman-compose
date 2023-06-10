@@ -1,10 +1,28 @@
 package com.developersbreach.hangman.ui.history
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.DismissValue
+import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
+import androidx.compose.material.SwipeToDismiss
+import androidx.compose.material.Text
+import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -22,7 +40,6 @@ import com.developersbreach.hangman.R
 import com.developersbreach.hangman.repository.database.entity.HistoryEntity
 import com.developersbreach.hangman.ui.game.CreateCircularProgressIndicator
 import com.developersbreach.hangman.ui.game.animateCurrentLevelProgress
-
 
 /**
  * History screen, can be navigated from onboarding screen.
@@ -145,11 +162,9 @@ private fun ItemGameHistory(
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier.fillMaxSize()
     ) {
-
         ConstraintLayout(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp)
         ) {
-
             val (
                 gameScore, gameSummaryText, gameDifficultyText,
                 gameCategory, horDivider, gamePlayedTimeText, gamePlayedDateText
@@ -175,7 +190,7 @@ private fun ItemGameHistory(
                         currentProgress = 1f,
                         indicatorSize = 40.dp,
                         strokeWidth = 2.dp,
-                        progressColor = MaterialTheme.colors.primary.copy(0.25f),
+                        progressColor = MaterialTheme.colors.primary.copy(0.25f)
                     )
 
                     Text(
@@ -193,7 +208,7 @@ private fun ItemGameHistory(
                     text = "Lvl ${history.gameLevel}",
                     style = MaterialTheme.typography.body2,
                     color = MaterialTheme.colors.primary.copy(0.75f),
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Center
                 )
             }
 
@@ -262,7 +277,6 @@ private fun ItemGameHistory(
                 }
             )
         }
-
     }
 }
 

@@ -21,7 +21,7 @@ class HangmanApp : Application() {
             modules(
                 databaseModule,
                 repositoryModule,
-                viewModelModule,
+                viewModelModule
             )
         }
     }

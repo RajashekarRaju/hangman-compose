@@ -9,7 +9,8 @@ class GameCategoryPref(
     context: Context
 ) {
     private val sharedPref = context.getSharedPreferences(
-        PREFERENCE_KEY_GAME_CATEGORY, Context.MODE_PRIVATE
+        PREFERENCE_KEY_GAME_CATEGORY,
+        Context.MODE_PRIVATE
     )
 
     fun getGameCategoryPref(): GameCategory {

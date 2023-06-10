@@ -1,7 +1,13 @@
 package com.developersbreach.hangman.ui.game
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,10 +23,10 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.developersbreach.hangman.R
 import com.developersbreach.hangman.repository.instructionsList
 import com.developersbreach.hangman.utils.GameCategory
 import com.developersbreach.hangman.utils.GameDifficulty
-import com.developersbreach.hangman.R
 
 /**
  * Dialog with game instructions information.
@@ -48,7 +54,7 @@ fun GameInstructionsInfoDialog(
             Text(
                 text = stringResource(R.string.dialog_game_instructions_title),
                 style = MaterialTheme.typography.h6,
-                color = MaterialTheme.colors.onSurface,
+                color = MaterialTheme.colors.onSurface
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -93,7 +99,7 @@ fun GameInstructionsInfoDialog(
 
             Divider(
                 color = MaterialTheme.colors.onSurface.copy(0.25f),
-                thickness = 1.dp,
+                thickness = 1.dp
             )
 
             LazyColumn(

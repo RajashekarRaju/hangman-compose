@@ -1,10 +1,27 @@
 package com.developersbreach.hangman.ui.onboarding
 
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.runtime.Composable
@@ -31,7 +48,6 @@ import com.developersbreach.hangman.R
 import com.developersbreach.hangman.ui.game.GameInstructionsInfoDialog
 import com.developersbreach.hangman.utils.createInfiniteRepeatableRotateAnimation
 
-
 /**
  * Default screen first visible to the player.
  * This screen has it's own ViewModel [OnBoardingViewModel]
@@ -41,10 +57,10 @@ fun OnBoardingScreen(
     navigateToGameScreen: () -> Unit,
     navigateToHistoryScreen: () -> Unit,
     viewModel: OnBoardingViewModel,
-    finishActivity: () -> Unit,
+    finishActivity: () -> Unit
 ) {
     Surface(
-        color = MaterialTheme.colors.background,
+        color = MaterialTheme.colors.background
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -81,7 +97,7 @@ private fun OnBoardingScreenContent(
     navigateToGameScreen: () -> Unit,
     finishActivity: () -> Unit,
     navigateToHistoryScreen: () -> Unit,
-    viewModel: OnBoardingViewModel,
+    viewModel: OnBoardingViewModel
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -105,9 +121,7 @@ private fun OnBoardingScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-
             item {
-
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // OnClick button, navigates to game screen.
@@ -220,9 +234,8 @@ private fun PlayGameButton(
         onClick = {
             releaseBackgroundMusic()
             navigateToGameScreen()
-        },
+        }
     ) {
-
         Icon(
             painter = painterResource(id = R.drawable.skull),
             contentDescription = stringResource(R.string.cd_play_game_button),
@@ -277,7 +290,7 @@ private fun ExitGameButton(
 
 @Composable
 private fun GameHistoryButton(
-    navigateToHistoryScreen: () -> Unit,
+    navigateToHistoryScreen: () -> Unit
 ) {
     Button(
         modifier = Modifier.width(160.dp),
@@ -287,7 +300,7 @@ private fun GameHistoryButton(
         border = BorderStroke(
             width = 2.dp,
             color = MaterialTheme.colors.primary.copy(0.5f)
-        ),
+        )
     ) {
         OnBoardingButtonText(buttonName = stringResource(R.string.button_title_history))
     }
@@ -295,7 +308,7 @@ private fun GameHistoryButton(
 
 @Composable
 fun GameDifficultyButton(
-    viewModel: OnBoardingViewModel,
+    viewModel: OnBoardingViewModel
 ) {
     // Change state value to open the dialog.
     val openGameDifficultyDialog = rememberSaveable { mutableStateOf(false) }
@@ -322,7 +335,7 @@ fun GameDifficultyButton(
 
 @Composable
 fun GameCategoryButton(
-    viewModel: OnBoardingViewModel,
+    viewModel: OnBoardingViewModel
 ) {
     // Change state value to open the dialog.
     val openGameCategoryDialog = rememberSaveable { mutableStateOf(false) }
@@ -349,7 +362,7 @@ fun GameCategoryButton(
 
 @Composable
 private fun GameInstructionIconButton(
-    viewModel: OnBoardingViewModel,
+    viewModel: OnBoardingViewModel
 ) {
     // Change state value to open the dialog.
     val openGameInstructionsDialog = rememberSaveable { mutableStateOf(false) }
@@ -371,7 +384,7 @@ private fun GameInstructionIconButton(
         Icon(
             imageVector = Icons.Outlined.Info,
             contentDescription = stringResource(R.string.cd_open_instructions_dialog),
-            tint = MaterialTheme.colors.primary,
+            tint = MaterialTheme.colors.primary
         )
     }
 }
@@ -403,7 +416,7 @@ private fun BackgroundVolumeIconButton(
         Icon(
             painter = painterResource(id = volumeIcon),
             contentDescription = stringResource(R.string.cd_game_sound_play_pause),
-            tint = MaterialTheme.colors.primary,
+            tint = MaterialTheme.colors.primary
         )
     }
 }

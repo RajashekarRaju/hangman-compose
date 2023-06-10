@@ -16,7 +16,6 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-
             // Let game run in immersive fullscreen mode.
             hideSystemBars()
 

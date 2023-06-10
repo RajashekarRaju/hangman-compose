@@ -9,7 +9,8 @@ class GameDifficultyPref(
     context: Context
 ) {
     private val sharedPref = context.getSharedPreferences(
-        PREFERENCE_KEY_GAME_DIFFICULTY, Context.MODE_PRIVATE
+        PREFERENCE_KEY_GAME_DIFFICULTY,
+        Context.MODE_PRIVATE
     )
 
     fun getGameDifficultyPref(): GameDifficulty {

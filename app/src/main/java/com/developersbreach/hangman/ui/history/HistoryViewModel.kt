@@ -7,7 +7,6 @@ import com.developersbreach.hangman.repository.GameRepository
 import com.developersbreach.hangman.repository.database.entity.HistoryEntity
 import kotlinx.coroutines.launch
 
-
 /**
  * ViewModel for screen [HistoryScreen].
  * Initialized with koin.

@@ -3,7 +3,15 @@ package com.developersbreach.hangman.ui.game
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -11,12 +19,27 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.runtime.*
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,7 +62,6 @@ import com.developersbreach.hangman.utils.SparkAnimateGuessedLetter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-
 /**
  * Game screen, can be navigated from onboarding screen.
  * This screen has it's own ViewModel [GameViewModel]
@@ -54,7 +76,7 @@ fun GameScreen(
     // Modal sheet to ask player whether to quit playing the game, triggered while up navigation.
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = true,
+        skipHalfExpanded = true
     )
 
     // Take control of back button so that user cannot navigate back from the game in middle.
@@ -78,7 +100,7 @@ fun GameScreen(
                     navigateUp = navigateUp,
                     modalSheetState = modalSheetState
                 )
-            },
+            }
         ) {
             // State for showing game instructions dialog.
             val openGameInstructionsDialog = rememberSaveable { mutableStateOf(false) }
@@ -128,9 +150,8 @@ private fun GameScreenContent(
     viewModel: GameViewModel,
     modalSheetState: ModalBottomSheetState,
     openGameInstructionsDialog: MutableState<Boolean>,
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
-
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -346,7 +367,7 @@ private fun AttemptsLeftAndLevelText(
         },
         style = MaterialTheme.typography.h6,
         color = MaterialTheme.colors.primary.copy(0.50f),
-        textAlign = TextAlign.Center,
+        textAlign = TextAlign.Center
     )
 
     Divider(
@@ -372,7 +393,7 @@ private fun AttemptsLeftAndLevelText(
         },
         style = MaterialTheme.typography.h6,
         color = MaterialTheme.colors.primary.copy(0.50f),
-        textAlign = TextAlign.Center,
+        textAlign = TextAlign.Center
     )
 }
 
@@ -419,10 +440,9 @@ private fun AttemptsLeftAndLevelProgressBars(
  */
 @Composable
 private fun ItemGuessingAlphabetContainer(
-    validGuess: String,
+    validGuess: String
 ) {
     ConstraintLayout {
-
         val (alphabet, box) = createRefs()
 
         Text(

@@ -2,7 +2,9 @@ package com.developersbreach.hangman.ui.game
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -29,7 +31,7 @@ import com.developersbreach.hangman.utils.ApplyAnimatedVisibility
 @Composable
 fun ShowDialogWhenGameWon(
     viewModel: GameViewModel,
-    navigateUp: () -> Unit,
+    navigateUp: () -> Unit
 ) {
     Dialog(
         onDismissRequest = { navigateUp() }
@@ -44,7 +46,6 @@ fun ShowDialogWhenGameWon(
         ) {
             Text(
                 text = buildAnnotatedString {
-
                     withStyle(
                         style = SpanStyle(
                             color = MaterialTheme.colors.primary,
@@ -83,7 +84,7 @@ fun ShowDialogWhenGameWon(
                 modifier = Modifier
                     .padding(horizontal = 40.dp, vertical = 60.dp)
                     .fillMaxWidth()
-                    .align(alignment = Alignment.Center),
+                    .align(alignment = Alignment.Center)
             )
         }
     }
@@ -108,7 +109,6 @@ fun ShowPopupWhenGameLost(
                     shape = RoundedCornerShape(16.dp)
                 )
         ) {
-
             ApplyAnimatedVisibility(
                 densityValue = (-400).dp,
                 content = {
@@ -120,7 +120,7 @@ fun ShowPopupWhenGameLost(
                         alignment = Alignment.TopCenter,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .align(alignment = Alignment.TopCenter),
+                            .align(alignment = Alignment.TopCenter)
                     )
                 }
             )
@@ -150,7 +150,7 @@ fun ShowPopupWhenGameLost(
                     withStyle(
                         style = SpanStyle(
                             color = MaterialTheme.colors.primary,
-                            fontSize = 28.sp,
+                            fontSize = 28.sp
                         )
                     ) {
                         append(viewModel.wordToGuess)
@@ -162,7 +162,7 @@ fun ShowPopupWhenGameLost(
                 modifier = Modifier
                     .padding(horizontal = 40.dp, vertical = 60.dp)
                     .fillMaxWidth()
-                    .align(alignment = Alignment.Center),
+                    .align(alignment = Alignment.Center)
             )
         }
     }

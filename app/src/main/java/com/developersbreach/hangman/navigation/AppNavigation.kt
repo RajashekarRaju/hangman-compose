@@ -22,7 +22,7 @@ import org.koin.androidx.compose.getViewModel
 fun AppNavigation(
     startDestination: String = AppDestinations.ONBOARDING_SCREEN_ROUTE,
     routes: AppDestinations = AppDestinations,
-    activity: MainActivity,
+    activity: MainActivity
 ) {
     val navController = rememberNavController()
     val actions = remember(navController) {
@@ -33,7 +33,6 @@ fun AppNavigation(
         navController = navController,
         startDestination = startDestination
     ) {
-
         composable(
             AppDestinations.ONBOARDING_SCREEN_ROUTE
         ) {

@@ -1,6 +1,5 @@
 package com.developersbreach.hangman.repository
 
-
 fun companyData() = listOf(
     "apple", "intel", "tesla", "cisco", "nike", "honda", "pepsi", "ikea", "visa", "adobe", "linde",
     "dior", "sony", "vale", "cigna", "bayer", "block", "uber", "ford", "gojek", "slack", "vinci",
@@ -8,10 +7,10 @@ fun companyData() = listOf(
     "oracle", "nescafe", "nvidia", "tencent", "walmart", "chevron", "pfizer", "costco", "alibaba",
     "toyota", "verizon", "comcast", "prosus", "netflix", "intuit", "anthem", "paypal", "airbnb",
     "target", "boeing", "seimens", "allianz", "infosys", "shopify", "github", "phonepe", "spotify",
-    "twitter", "medkitdoc", "microsoft", "facebook", "gillette", "panasonic", "mastercard", "cocacola",
-    "accenture", "novartis", "salesforce", "mcdonald", "qualcomm", "honeywell", "unilever",
-    "citigroup", "starbucks", "glencore", "mercedes", "atlassian", "snowflake", "macquarie",
-    "linkedin", "soundcloud", "tunnelbear", "wordpress", "whatsapp"
+    "twitter", "medkitdoc", "microsoft", "facebook", "gillette", "panasonic", "mastercard",
+    "cocacola", "accenture", "novartis", "salesforce", "mcdonald", "qualcomm", "honeywell",
+    "unilever", "citigroup", "starbucks", "glencore", "mercedes", "atlassian", "snowflake",
+    "macquarie", "linkedin", "soundcloud", "tunnelbear", "wordpress", "whatsapp"
 )
 
 fun countryData() = listOf(
@@ -36,8 +35,8 @@ fun languageData() = listOf(
     "telugu", "french", "german", "italian", "kannada", "polish", "yoruba", "burmese", "sindhi",
     "tagalog", "amharic", "magahi", "saraiki", "somali", "cebuano", "nepali", "kazakh", "deccan",
     "uyghur", "arabic", "mandarin", "portuguese", "japanese", "vietnamese", "gujarati", "malayalam",
-    "romanian", "chinese", "javanese", "bhojpuri", "indonesian", "maithili", "ukrainian", "assamese",
-    "sinhalese", "bavarian", "hungarian"
+    "romanian", "chinese", "javanese", "bhojpuri", "indonesian", "maithili", "ukrainian",
+    "assamese", "sinhalese", "bavarian", "hungarian"
 )
 
 val instructionsList = listOf(

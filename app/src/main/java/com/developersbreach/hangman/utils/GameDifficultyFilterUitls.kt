@@ -1,6 +1,8 @@
 package com.developersbreach.hangman.utils
 
-import com.developersbreach.hangman.repository.*
+import com.developersbreach.hangman.repository.companyData
+import com.developersbreach.hangman.repository.countryData
+import com.developersbreach.hangman.repository.languageData
 
 /**
  * [EASY] -> Filters words of length 4 & 5.

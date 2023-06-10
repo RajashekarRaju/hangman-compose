@@ -1,8 +1,17 @@
 package com.developersbreach.hangman.ui.game
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -14,7 +23,6 @@ import androidx.compose.ui.unit.sp
 import com.developersbreach.hangman.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
 
 /**
  * Modal sheet shows up when hits up navigation button.
@@ -33,7 +41,7 @@ fun ShowExitGameModalSheet(
         Text(
             text = stringResource(R.string.modal_sheet_exit_game_title),
             style = MaterialTheme.typography.h5,
-            color = MaterialTheme.colors.primary.copy(0.75f),
+            color = MaterialTheme.colors.primary.copy(0.75f)
         )
 
         Spacer(modifier = Modifier.height(48.dp))
@@ -72,7 +80,7 @@ fun ShowExitGameModalSheet(
                 coroutineScope.launch {
                     modalSheetState.hide()
                 }
-            },
+            }
         ) {
             Text(
                 text = stringResource(id = R.string.modal_sheet_negative_title),

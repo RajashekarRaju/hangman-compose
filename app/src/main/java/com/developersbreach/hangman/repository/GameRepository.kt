@@ -1,8 +1,8 @@
 package com.developersbreach.hangman.repository
 
 import androidx.lifecycle.LiveData
-import com.developersbreach.hangman.repository.database.entity.HistoryEntity
 import com.developersbreach.hangman.repository.database.GameDatabase
+import com.developersbreach.hangman.repository.database.entity.HistoryEntity
 import com.developersbreach.hangman.utils.GameCategory
 import com.developersbreach.hangman.utils.GameDifficulty
 import com.developersbreach.hangman.utils.Words

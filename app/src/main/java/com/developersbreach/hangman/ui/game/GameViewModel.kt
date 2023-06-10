@@ -6,16 +6,24 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.developersbreach.hangman.R
 import com.developersbreach.hangman.modal.Alphabets
-import com.developersbreach.hangman.repository.*
+import com.developersbreach.hangman.repository.GameRepository
 import com.developersbreach.hangman.repository.database.entity.HistoryEntity
-import com.developersbreach.hangman.utils.*
+import com.developersbreach.hangman.utils.GameCategory
+import com.developersbreach.hangman.utils.GameCategoryPref
+import com.developersbreach.hangman.utils.GameDifficulty
+import com.developersbreach.hangman.utils.GameDifficultyPref
+import com.developersbreach.hangman.utils.Words
+import com.developersbreach.hangman.utils.alphabetsList
+import com.developersbreach.hangman.utils.getDateAndTime
+import java.util.UUID
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
-
 
 /**
  * ViewModel for screen [GameScreen].
@@ -165,7 +173,6 @@ class GameViewModel(
 
             // if true, player won the level, now move to next level
             if (playerWonTheCurrentLevel) {
-
                 // Reward points for level by length of guessed word.
                 pointsScoredPerWord = wordToGuess.length
                 // If level is reset/new, reset the attempts left to default.

@@ -1,7 +1,14 @@
 package com.developersbreach.hangman.utils
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
@@ -115,7 +122,7 @@ fun SparkAnimateGuessedLetter(
             style = Stroke(
                 width = 12f,
                 pathEffect = PathEffect.dashPathEffect(
-                    intervals = floatArrayOf(6f, 12f),
+                    intervals = floatArrayOf(6f, 12f)
                 )
             )
         )

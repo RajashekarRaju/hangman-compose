@@ -5,7 +5,6 @@ import com.developersbreach.hangman.modal.Alphabets
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 /**
  * The return type should be immutable since it's result is used in GameViewModel.
  * Creating a [mutableStateOf] object with a mutable collection type isn't possible, so

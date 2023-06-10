@@ -26,6 +26,9 @@ jobs:
       - name: Run local tests
         run: ./gradlew testDebug --stacktrace
 
+      - name: Run ktlint
+        run: ./gradlew ktlintCheck
+
       - name: Create AVD and Run androidTest
         id: testing
         uses: reactivecircus/android-emulator-runner@v2

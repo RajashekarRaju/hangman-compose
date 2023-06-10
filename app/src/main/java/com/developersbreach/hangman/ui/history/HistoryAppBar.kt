@@ -1,7 +1,11 @@
 package com.developersbreach.hangman.ui.history
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
@@ -20,7 +24,7 @@ import com.developersbreach.hangman.R
 fun HistoryAppBar(
     navigateUp: () -> Unit,
     showDeleteIconInAppBar: Boolean,
-    deleteAllGameHistoryData: () -> Unit,
+    deleteAllGameHistoryData: () -> Unit
 ) {
     TopAppBar(
         backgroundColor = MaterialTheme.colors.background,
