@@ -1,4 +1,4 @@
-package com.developersbreach.hangman.ui.game
+package com.developersbreach.hangman.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,14 +24,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.developersbreach.hangman.R
 import com.developersbreach.hangman.utils.ApplyAnimatedVisibility
+import com.developersbreach.hangman.utils.GameDifficulty
 
 /**
  * Dialog shown when player wins the game.
  */
 @Composable
 fun ShowDialogWhenGameWon(
-    viewModel: GameViewModel,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    pointsScoredOverall: Int,
+    gameDifficulty: GameDifficulty
 ) {
     Dialog(
         onDismissRequest = { navigateUp() }
@@ -64,7 +66,7 @@ fun ShowDialogWhenGameWon(
                             fontSize = 28.sp
                         )
                     ) {
-                        append(viewModel.pointsScoredOverall.toString())
+                        append(pointsScoredOverall.toString())
                     }
 
                     append(stringResource(id = R.string.dialog_game_won_difficulty))
@@ -75,7 +77,7 @@ fun ShowDialogWhenGameWon(
                             fontSize = 28.sp
                         )
                     ) {
-                        append(viewModel.gameDifficulty.toString())
+                        append(gameDifficulty.toString())
                     }
                 },
                 style = MaterialTheme.typography.h5,
@@ -95,8 +97,8 @@ fun ShowDialogWhenGameWon(
  */
 @Composable
 fun ShowPopupWhenGameLost(
-    viewModel: GameViewModel,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    wordToGuess: String
 ) {
     Dialog(
         onDismissRequest = { navigateUp() }
@@ -153,7 +155,7 @@ fun ShowPopupWhenGameLost(
                             fontSize = 28.sp
                         )
                     ) {
-                        append(viewModel.wordToGuess)
+                        append(wordToGuess)
                     }
                 },
                 style = MaterialTheme.typography.h5,

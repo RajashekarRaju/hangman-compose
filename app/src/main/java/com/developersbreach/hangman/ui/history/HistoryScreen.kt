@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.developersbreach.hangman.R
 import com.developersbreach.hangman.repository.database.entity.HistoryEntity
-import com.developersbreach.hangman.ui.game.CreateCircularProgressIndicator
+import com.developersbreach.hangman.ui.components.CreateCircularProgressIndicator
 import com.developersbreach.hangman.ui.game.animateCurrentLevelProgress
 
 /**
