@@ -17,6 +17,9 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
     buildTypes {
@@ -67,6 +70,10 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
 }
 
 dependencies {
@@ -100,4 +107,12 @@ dependencies {
 
     // Koin - Jetpack Compose
     implementation "io.insert-koin:koin-androidx-compose:3.2.0-beta-1"
+
+    testImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+    testImplementation "io.mockk:mockk:1.13.5"
+
+    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:$compose_version")
+
+    debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_version")
 }
