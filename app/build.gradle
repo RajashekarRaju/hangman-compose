@@ -8,7 +8,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.hangman.hangman"
+        applicationId "com.developersbreach.hangman"
         minSdk 24
         targetSdk 33
         versionCode 1
