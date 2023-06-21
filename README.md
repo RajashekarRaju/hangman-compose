@@ -4,6 +4,12 @@
 
 ![Game Banner](/assets/banner_hangman.png)
 
+## :arrow_down: Download
+
+<a href="https://play.google.com/store/apps/details?id=com.developersbreach.hangman&hl=en_IN&gl=US" target="_blank">
+<img src="https://play.google.com/intl/en_gb/badges/static/images/badges/en_badge_web_generic.png" width=240 />
+</a>
+
 ## :sparkler: What's New: v0.1.0
 
 - [x] Players will be challenged with unique words only.
