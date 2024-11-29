@@ -7,7 +7,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -41,7 +41,7 @@ fun HistoryAppBar(
                 onClick = { navigateUp() }
             ) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.cd_navigate_up),
                     tint = MaterialTheme.colors.primary
                 )

@@ -3,7 +3,6 @@ package com.developersbreach.hangman.ui.game
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
@@ -12,6 +11,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +31,6 @@ import com.developersbreach.hangman.ui.theme.RedHangmanTheme
 import com.developersbreach.hangman.utils.alphabetsList
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun GameScreenUI(
     navigateUp: () -> Unit,
@@ -131,14 +130,13 @@ fun GameScreenUI(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
 private fun GameScreenUIContent() {
     RedHangmanTheme {
         GameScreenUI(
             navigateUp = { },
-            modalSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
+            modalSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
             openGameInstructionsDialog = remember { mutableStateOf(false) },
             currentPlayerLevel = 2,
             attemptsLeftToGuess = 5,
