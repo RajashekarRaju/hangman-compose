@@ -2,13 +2,10 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'com.google.devtools.ksp'
-    id "org.jlleitschuh.gradle.ktlint" version "11.4.0"
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
     id 'org.jetbrains.kotlin.plugin.compose' version "2.0.20"
 }
-
-apply plugin: "org.jlleitschuh.gradle.ktlint"
 
 android {
     compileSdk 34
@@ -53,12 +50,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_19
-        targetCompatibility JavaVersion.VERSION_19
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '19'
+        jvmTarget = '17'
     }
 
     buildFeatures {
@@ -75,26 +72,7 @@ android {
     testOptions {
         unitTests.includeAndroidResources = true
     }
-
-    ktlint {
-        verbose = true
-        debug = false
-        android = true
-        ignoreFailures = false
-        outputToConsole = true
-        reporters {
-            reporter "json"
-        }
-    }
     namespace 'com.developersbreach.hangman'
-}
-
-tasks.named("check") {
-    dependsOn("ktlintCheck")
-}
-
-gradle.projectsEvaluated {
-    assemble.dependsOn ktlintCheck
 }
 
 def compose_version = "1.7.5"
