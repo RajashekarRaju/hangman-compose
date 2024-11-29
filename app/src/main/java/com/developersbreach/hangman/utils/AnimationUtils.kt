@@ -66,9 +66,10 @@ fun createInfiniteRepeatableRotateAnimation(
     delayMillis: Int = 0,
     easing: Easing = LinearEasing
 ): Float {
-    val infiniteRotateAnim = rememberInfiniteTransition()
+    val infiniteRotateAnim = rememberInfiniteTransition(label = "RotateInfiniteTransition")
 
     val rotateAnimation by infiniteRotateAnim.animateFloat(
+        label = "RotateAnimation",
         initialValue = initialValue,
         targetValue = targetValue,
         animationSpec = infiniteRepeatable(
@@ -92,8 +93,9 @@ fun createInfiniteRepeatableRotateAnimation(
 fun SparkAnimateGuessedLetter(
     sparkColor: Color = MaterialTheme.colors.primary.copy(0.50f)
 ) {
-    val infiniteTransition = rememberInfiniteTransition()
+    val infiniteTransition = rememberInfiniteTransition(label = "SparkInfiniteTransition")
     val scale: Float by infiniteTransition.animateFloat(
+        label = "SparkAnimation",
         initialValue = 0f,
         targetValue = 12f,
         animationSpec = infiniteRepeatable(

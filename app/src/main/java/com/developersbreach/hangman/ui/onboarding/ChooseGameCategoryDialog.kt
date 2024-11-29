@@ -17,7 +17,7 @@ import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,7 +53,7 @@ fun ChooseGameCategoryDialog(
     // From last preferences, if player does not choose category again, we will load the last saved
     // settings for existing games.
     val (selectedCategory, onCategorySelected) = remember {
-        mutableStateOf(categoryOptions[gameCategory.ordinal].categoryId)
+        mutableIntStateOf(categoryOptions[gameCategory.ordinal].categoryId)
     }
 
     Dialog(

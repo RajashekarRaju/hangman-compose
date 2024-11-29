@@ -4,6 +4,7 @@ import android.app.Application
 import android.media.MediaPlayer
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -71,7 +72,7 @@ class GameViewModel(
     var wordToGuess: String by mutableStateOf("")
 
     // Keeps track of attempts left to find out whether or not to finish the game.
-    var attemptsLeftToGuess: Int by mutableStateOf(8)
+    var attemptsLeftToGuess: Int by mutableIntStateOf(8)
 
     // Reveal the word if player lost the game at any level.
     private var _revealGuessingWord = MutableLiveData(gameOverByNoAttemptsLeft)
@@ -79,13 +80,13 @@ class GameViewModel(
         get() = _revealGuessingWord
 
     // Number of points depend on length of the string for guessed word.
-    private var pointsScoredPerWord: Int by mutableStateOf(0)
+    private var pointsScoredPerWord: Int by mutableIntStateOf(0)
 
     // Keeps track of all points scored in each level.
-    var pointsScoredOverall: Int by mutableStateOf(0)
+    var pointsScoredOverall: Int by mutableIntStateOf(0)
 
     // Starting level with 1, last level is 5
-    var currentPlayerLevel: Int by mutableStateOf(0)
+    var currentPlayerLevel: Int by mutableIntStateOf(0)
 
     // Get shared preferences for value game difficulty.
     private val gameDifficultyPreferences = GameDifficultyPref(application)
