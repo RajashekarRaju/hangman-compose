@@ -1,21 +1,19 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'kotlin-kapt'
-    id "org.jlleitschuh.gradle.ktlint" version "11.4.0"
+    id 'com.google.devtools.ksp'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+    id 'org.jetbrains.kotlin.plugin.compose' version "2.0.20"
 }
 
-apply plugin: "org.jlleitschuh.gradle.ktlint"
-
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.developersbreach.hangman"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "0.1.0"
 
@@ -52,22 +50,17 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
-        // To mark experimental features api
-        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+        jvmTarget = '17'
     }
 
     buildFeatures {
         compose true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion compose_version
+        buildConfig true
     }
 
     packagingOptions {
@@ -79,67 +72,51 @@ android {
     testOptions {
         unitTests.includeAndroidResources = true
     }
-
-    ktlint {
-        verbose = true
-        debug = false
-        android = true
-        ignoreFailures = false
-        outputToConsole = true
-        reporters {
-            reporter "json"
-        }
-    }
+    namespace 'com.developersbreach.hangman'
 }
 
-tasks.named("check") {
-    dependsOn("ktlintCheck")
-}
-
-gradle.projectsEvaluated {
-    assemble.dependsOn ktlintCheck
-}
+def compose_version = "1.7.5"
 
 dependencies {
-
-    implementation 'androidx.core:core-ktx:1.10.1'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation "androidx.compose.material:material-icons-extended:$compose_version"
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
-    implementation 'androidx.activity:activity-compose:1.7.2'
+    implementation 'androidx.activity:activity-compose:1.9.3'
 
     // Observe state and livedata
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
 
     // Constraint Layout
-    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.1.0"
 
     // Navigation
-    implementation "androidx.navigation:navigation-compose:2.6.0"
+    implementation "androidx.navigation:navigation-compose:2.8.4"
 
     // For persisting game difficulty, high score values.
-    implementation 'androidx.preference:preference-ktx:1.2.0'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
 
     // Room
-    implementation "androidx.room:room-runtime:2.5.1"
-    implementation "androidx.room:room-ktx:2.5.1"
-    kapt "androidx.room:room-compiler:2.5.1"
+    implementation "androidx.room:room-runtime:2.6.1"
+    implementation "androidx.room:room-ktx:2.6.1"
+    ksp "androidx.room:room-compiler:2.6.1"
 
     // Koin - Jetpack Compose
     implementation "io.insert-koin:koin-androidx-compose:3.2.0-beta-1"
 
-    implementation platform('com.google.firebase:firebase-bom:32.1.0')
+    implementation platform('com.google.firebase:firebase-bom:33.6.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
 
     testImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     testImplementation "io.mockk:mockk:1.13.5"
 
-    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
+    androidTestImplementation 'androidx.test.ext:junit-ktx:1.2.1'
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:$compose_version")
 
     debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_version")

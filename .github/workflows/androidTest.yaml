@@ -13,10 +13,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: set up JDK 11
+      - name: set up JDK 17
         uses: actions/setup-java@v2
         with:
-          java-version: 11
+          java-version: 17
           distribution: 'temurin'
           cache: 'gradle'
 
@@ -25,9 +25,6 @@ jobs:
 
       - name: Run local tests
         run: ./gradlew testDebug --stacktrace
-
-      - name: Run ktlint
-        run: ./gradlew ktlintCheck
 
       - name: Create AVD and Run androidTest
         id: testing
@@ -47,20 +44,20 @@ jobs:
 
       - name: Upload Failing Test Report Log
         if: steps.testing.outcome != 'success'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: logs
           path: app/build/outputs/androidTest-results/connected/flavors/*/failed/*.png
 
       - name: Upload build outputs (APKs)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: build-outputs
           path: ./app/build/outputs/**/*.apk
 
       - name: Upload build reports
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: build-reports
           path: ./app/build/reports

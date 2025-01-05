@@ -1,7 +1,6 @@
 package com.developersbreach.hangman.ui.game
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -20,7 +19,6 @@ import kotlinx.coroutines.launch
  * Game screen, can be navigated from onboarding screen.
  * This screen has it's own ViewModel [GameViewModel]
  */
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun GameScreen(
     navigateUp: () -> Unit,
@@ -85,7 +83,6 @@ fun GameScreen(
         maxLevelReached = viewModel.maxLevelReached,
         alphabetsList = alphabetsList,
         updateGuessesByPlayer = updateGuessesByPlayer,
-        gameOverByNoAttemptsLeft = viewModel.gameOverByNoAttemptsLeft,
         checkIfLetterMatches = {
             viewModel.checkIfLetterMatches(it)
         }

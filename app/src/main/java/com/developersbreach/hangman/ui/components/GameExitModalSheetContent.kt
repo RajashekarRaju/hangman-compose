@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
@@ -27,7 +26,6 @@ import kotlinx.coroutines.launch
 /**
  * Modal sheet shows up when hits up navigation button.
  */
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ShowExitGameModalSheet(
     navigateUp: () -> Unit,

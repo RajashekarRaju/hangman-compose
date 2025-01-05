@@ -4,6 +4,7 @@ import android.app.Application
 import android.media.MediaPlayer
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -61,7 +62,7 @@ class GameViewModel(
     private var playerWonTheCurrentLevel by mutableStateOf(false)
 
     // To prevent player keep playing the current game level.
-    var gameOverByNoAttemptsLeft by mutableStateOf(false)
+    private var gameOverByNoAttemptsLeft by mutableStateOf(false)
 
     // Player has completed all 5 levels and won the game.
     var gameOverByWinning by mutableStateOf(false)
@@ -71,7 +72,7 @@ class GameViewModel(
     var wordToGuess: String by mutableStateOf("")
 
     // Keeps track of attempts left to find out whether or not to finish the game.
-    var attemptsLeftToGuess: Int by mutableStateOf(8)
+    var attemptsLeftToGuess: Int by mutableIntStateOf(8)
 
     // Reveal the word if player lost the game at any level.
     private var _revealGuessingWord = MutableLiveData(gameOverByNoAttemptsLeft)
@@ -79,13 +80,13 @@ class GameViewModel(
         get() = _revealGuessingWord
 
     // Number of points depend on length of the string for guessed word.
-    private var pointsScoredPerWord: Int by mutableStateOf(0)
+    private var pointsScoredPerWord: Int by mutableIntStateOf(0)
 
     // Keeps track of all points scored in each level.
-    var pointsScoredOverall: Int by mutableStateOf(0)
+    var pointsScoredOverall: Int by mutableIntStateOf(0)
 
     // Starting level with 1, last level is 5
-    var currentPlayerLevel: Int by mutableStateOf(0)
+    var currentPlayerLevel: Int by mutableIntStateOf(0)
 
     // Get shared preferences for value game difficulty.
     private val gameDifficultyPreferences = GameDifficultyPref(application)
@@ -137,9 +138,21 @@ class GameViewModel(
         alphabet: Alphabets
     ) {
         viewModelScope.launch {
+            if (gameOverByNoAttemptsLeft) {
+                return@launch
+            }
+
             // Make sure to compare valid strings/chars by keeping it same letter case.
             val currentAlphabet: String = alphabet.alphabet.lowercase()
             val currentGuessingWord: String = wordToGuess.lowercase()
+
+            // Update to mark the guessed alphabet
+            _alphabetsList.value = _alphabetsList.value?.map {
+                when (it.alphabetId) {
+                    alphabet.alphabetId -> it.copy(isAlphabetGuessed = true)
+                    else -> it
+                }
+            }
 
             if (currentGuessingWord.contains(currentAlphabet)) {
                 // Since letter was a match, loop into indices range.
@@ -257,7 +270,13 @@ class GameViewModel(
         // Once data has been reset in alphabets list, a property isAlphabetGuessed in list of
         // every objects value needs to reset to false, so that player can choose same alphabets
         // in next level.
-        _alphabetsList.value = alphabetsList()
+        _alphabetsList.value = when (_alphabetsList.value) {
+            null -> alphabetsList()
+            else -> _alphabetsList.value?.map {
+                it.copy(isAlphabetGuessed = false)
+            }
+        }
+
         // Clears the previously guessed word for new one to take place with empty string.
         updatePlayerGuesses.clear()
         for (i in wordToGuess.indices) {
