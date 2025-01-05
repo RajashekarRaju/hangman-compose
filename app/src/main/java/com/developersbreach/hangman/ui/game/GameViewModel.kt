@@ -62,7 +62,7 @@ class GameViewModel(
     private var playerWonTheCurrentLevel by mutableStateOf(false)
 
     // To prevent player keep playing the current game level.
-    var gameOverByNoAttemptsLeft by mutableStateOf(false)
+    private var gameOverByNoAttemptsLeft by mutableStateOf(false)
 
     // Player has completed all 5 levels and won the game.
     var gameOverByWinning by mutableStateOf(false)
@@ -138,9 +138,21 @@ class GameViewModel(
         alphabet: Alphabets
     ) {
         viewModelScope.launch {
+            if (gameOverByNoAttemptsLeft) {
+                return@launch
+            }
+
             // Make sure to compare valid strings/chars by keeping it same letter case.
             val currentAlphabet: String = alphabet.alphabet.lowercase()
             val currentGuessingWord: String = wordToGuess.lowercase()
+
+            // Update to mark the guessed alphabet
+            _alphabetsList.value = _alphabetsList.value?.map {
+                when (it.alphabetId) {
+                    alphabet.alphabetId -> it.copy(isAlphabetGuessed = true)
+                    else -> it
+                }
+            }
 
             if (currentGuessingWord.contains(currentAlphabet)) {
                 // Since letter was a match, loop into indices range.
@@ -258,7 +270,13 @@ class GameViewModel(
         // Once data has been reset in alphabets list, a property isAlphabetGuessed in list of
         // every objects value needs to reset to false, so that player can choose same alphabets
         // in next level.
-        _alphabetsList.value = alphabetsList()
+        _alphabetsList.value = when (_alphabetsList.value) {
+            null -> alphabetsList()
+            else -> _alphabetsList.value?.map {
+                it.copy(isAlphabetGuessed = false)
+            }
+        }
+
         // Clears the previously guessed word for new one to take place with empty string.
         updatePlayerGuesses.clear()
         for (i in wordToGuess.indices) {

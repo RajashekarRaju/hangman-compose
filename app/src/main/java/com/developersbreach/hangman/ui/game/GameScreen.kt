@@ -83,7 +83,6 @@ fun GameScreen(
         maxLevelReached = viewModel.maxLevelReached,
         alphabetsList = alphabetsList,
         updateGuessesByPlayer = updateGuessesByPlayer,
-        gameOverByNoAttemptsLeft = viewModel.gameOverByNoAttemptsLeft,
         checkIfLetterMatches = {
             viewModel.checkIfLetterMatches(it)
         }

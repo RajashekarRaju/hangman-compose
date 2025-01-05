@@ -31,7 +31,6 @@ import com.developersbreach.hangman.utils.SparkAnimateGuessedLetter
 fun AlphabetsList(
     modifier: Modifier,
     alphabetsList: List<Alphabets>,
-    gameOverByNoAttemptsLeft: Boolean,
     checkIfLetterMatches: (alphabet: Alphabets) -> Unit
 ) {
     Box(
@@ -53,7 +52,6 @@ fun AlphabetsList(
                     ) { alphabet ->
                         ItemAlphabetText(
                             alphabet = alphabet,
-                            gameOverByNoAttemptsLeft = gameOverByNoAttemptsLeft,
                             checkIfLetterMatches = checkIfLetterMatches
                         )
                     }
@@ -69,7 +67,6 @@ fun AlphabetsList(
 @Composable
 private fun ItemAlphabetText(
     alphabet: Alphabets,
-    gameOverByNoAttemptsLeft: Boolean,
     checkIfLetterMatches: (alphabet: Alphabets) -> Unit
 ) {
     // If alphabet is correctly guessed,
@@ -83,15 +80,7 @@ private fun ItemAlphabetText(
             .background(color = MaterialTheme.colors.primary.copy(0.12f))
             .clickable(
                 enabled = !alphabet.isAlphabetGuessed,
-                onClick = {
-                    // Don't let player click items if game is over.
-                    if (!gameOverByNoAttemptsLeft) {
-                        // For each guess check if match is correct from ViewModel.
-                        checkIfLetterMatches(alphabet)
-                        // Immediately disable click and reduce alpha for this item.
-                        alphabet.isAlphabetGuessed = true
-                    }
-                }
+                onClick = { checkIfLetterMatches(alphabet) }
             )
     ) {
         val (alphabetText, clickEffectAnim) = createRefs()

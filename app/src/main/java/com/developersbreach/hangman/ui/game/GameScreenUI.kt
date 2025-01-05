@@ -42,7 +42,6 @@ fun GameScreenUI(
     maxLevelReached: Int,
     alphabetsList: List<Alphabets>,
     updateGuessesByPlayer: SnapshotStateList<String>,
-    gameOverByNoAttemptsLeft: Boolean,
     checkIfLetterMatches: (alphabet: Alphabets) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -116,7 +115,6 @@ fun GameScreenUI(
 
                 AlphabetsList(
                     alphabetsList = alphabetsList,
-                    gameOverByNoAttemptsLeft = gameOverByNoAttemptsLeft,
                     checkIfLetterMatches = checkIfLetterMatches,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -144,7 +142,6 @@ private fun GameScreenUIContent() {
             maxLevelReached = 1,
             alphabetsList = alphabetsList(),
             updateGuessesByPlayer = SnapshotStateList(),
-            gameOverByNoAttemptsLeft = false,
             checkIfLetterMatches = { }
         )
     }
