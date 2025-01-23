@@ -133,9 +133,7 @@ private fun OnBoardingScreenContent(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // OnClick button, finishes the activity to close the app.
-                ExitGameButton(viewModel) {
-                    finishActivity()
-                }
+                ExitGameButton { finishActivity() }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -252,18 +250,13 @@ private fun PlayGameButton(
 
 @Composable
 private fun ExitGameButton(
-    viewModel: OnBoardingViewModel,
     finishActivity: () -> Unit
 ) {
     Button(
         modifier = Modifier.width(160.dp),
         shape = MaterialTheme.shapes.medium,
         colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
-        onClick = {
-            // Before closing the app reset teh game difficulty to default difficulty.
-            viewModel.resetGameDifficultyPreferences()
-            finishActivity()
-        },
+        onClick = { finishActivity() },
         border = BorderStroke(
             width = 2.dp,
             color = MaterialTheme.colors.primary.copy(0.5f)

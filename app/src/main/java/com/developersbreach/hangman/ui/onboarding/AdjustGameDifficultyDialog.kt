@@ -30,7 +30,10 @@ fun AdjustGameDifficultyDialog(
     viewModel: OnBoardingViewModel,
     openGameDifficultyDialog: MutableState<Boolean>
 ) {
-    var sliderDifficultyPosition by rememberSaveable { mutableFloatStateOf(1.0f) }
+    var sliderDifficultyPosition by rememberSaveable {
+        val ordinal = viewModel.gamePreferences.getGameDifficultyPref().ordinal
+        mutableFloatStateOf((ordinal.plus(1)).toFloat())
+    }
 
     Dialog(
         onDismissRequest = {
