@@ -104,6 +104,7 @@ dependencies {
     // Room
     implementation "androidx.room:room-runtime:2.6.1"
     implementation "androidx.room:room-ktx:2.6.1"
+    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
     ksp "androidx.room:room-compiler:2.6.1"
 
     // Koin - Jetpack Compose
@@ -115,6 +116,9 @@ dependencies {
 
     testImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     testImplementation "io.mockk:mockk:1.13.5"
+
+    testImplementation "androidx.test.ext:junit-ktx:1.2.1"
+    testImplementation 'org.robolectric:robolectric:4.14'
 
     androidTestImplementation 'androidx.test.ext:junit-ktx:1.2.1'
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:$compose_version")
