@@ -17,9 +17,8 @@ import com.developersbreach.hangman.modal.Alphabets
 import com.developersbreach.hangman.repository.GameRepository
 import com.developersbreach.hangman.repository.database.entity.HistoryEntity
 import com.developersbreach.hangman.utils.GameCategory
-import com.developersbreach.hangman.utils.GameCategoryPref
 import com.developersbreach.hangman.utils.GameDifficulty
-import com.developersbreach.hangman.utils.GameDifficultyPref
+import com.developersbreach.hangman.utils.GamePref
 import com.developersbreach.hangman.utils.Words
 import com.developersbreach.hangman.utils.alphabetsList
 import com.developersbreach.hangman.utils.getDateAndTime
@@ -88,11 +87,8 @@ class GameViewModel(
     // Starting level with 1, last level is 5
     var currentPlayerLevel: Int by mutableIntStateOf(0)
 
-    // Get shared preferences for value game difficulty.
-    private val gameDifficultyPreferences = GameDifficultyPref(application)
-
-    // Get shared preferences for value game category.
-    private val gameCategoryPreferences = GameCategoryPref(application)
+    // Get shared preferences for value game difficulty and category.
+    private val gamePreferences = GamePref(application)
 
     // Set default state game difficulty value to easy mode.
     var gameDifficulty: GameDifficulty by mutableStateOf(GameDifficulty.EASY)
@@ -115,9 +111,9 @@ class GameViewModel(
     init {
         viewModelScope.launch {
             // Get player saved game difficulty level from preferences.
-            gameDifficulty = gameDifficultyPreferences.getGameDifficultyPref()
+            gameDifficulty = gamePreferences.getGameDifficultyPref()
             // Get player saved game category from preferences.
-            gameCategory = gameCategoryPreferences.getGameCategoryPref()
+            gameCategory = gamePreferences.getGameCategoryPref()
 
             // Based on category and difficulty, get 5 unique random words from database.
             guessingWordsForCurrentGame =

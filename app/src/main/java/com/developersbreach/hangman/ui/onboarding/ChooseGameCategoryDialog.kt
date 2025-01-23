@@ -49,7 +49,7 @@ fun ChooseGameCategoryDialog(
     openGameCategoryDialog: MutableState<Boolean>
 ) {
     // Get last saved game category player preferences.
-    val gameCategory = viewModel.gameCategoryPreferences.getGameCategoryPref()
+    val gameCategory = viewModel.gamePreferences.getGameCategoryPref()
     // From last preferences, if player does not choose category again, we will load the last saved
     // settings for existing games.
     val (selectedCategory, onCategorySelected) = remember {

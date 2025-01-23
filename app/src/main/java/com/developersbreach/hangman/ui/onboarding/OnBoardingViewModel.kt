@@ -11,9 +11,8 @@ import androidx.lifecycle.viewModelScope
 import com.developersbreach.hangman.R
 import com.developersbreach.hangman.repository.GameRepository
 import com.developersbreach.hangman.utils.GameCategory
-import com.developersbreach.hangman.utils.GameCategoryPref
 import com.developersbreach.hangman.utils.GameDifficulty
-import com.developersbreach.hangman.utils.GameDifficultyPref
+import com.developersbreach.hangman.utils.GamePref
 import kotlinx.coroutines.launch
 
 /**
@@ -34,24 +33,17 @@ class OnBoardingViewModel(
     // Updates the radio button from saved player preferences for game category.
     var gameCategory by mutableStateOf(GameCategory.COUNTRIES)
 
-    // Updates the preferences with game difficulty slider position.
-    private val gameDifficultyPreferences = GameDifficultyPref(application)
-
     // Get shared preferences for value game category.
-    val gameCategoryPreferences = GameCategoryPref(application)
+    val gamePreferences = GamePref(application)
 
     // Tracks media player current play/pause/release state.
     var isBackgroundMusicPlaying by mutableStateOf(false)
     private lateinit var mediaPlayer: MediaPlayer
 
     init {
+        gameDifficulty = gamePreferences.getGameDifficultyPref()
         // Start game sound on screen launch.
         playGameBackgroundMusicOnStart()
-    }
-
-    // Resets the game difficulty mode to easy.
-    fun resetGameDifficultyPreferences() {
-        gameDifficultyPreferences.updateGameDifficultyPref(GameDifficulty.EASY)
     }
 
     // Initialize the media player and manage the play/release state.
@@ -88,7 +80,7 @@ class OnBoardingViewModel(
         }
 
         // Update the value in preferences with latest player chosen game difficulty mode.
-        gameDifficultyPreferences.updateGameDifficultyPref(gameDifficulty)
+        gamePreferences.updateGameDifficultyPref(gameDifficulty)
     }
 
     // Once user makes changes to radio button this function will be triggered.
@@ -103,6 +95,6 @@ class OnBoardingViewModel(
         }
 
         // Update the value in preferences with latest player chosen game category mode.
-        gameCategoryPreferences.updateGameCategoryPref(gameCategory.ordinal)
+        gamePreferences.updateGameCategoryPref(gameCategory.ordinal)
     }
 }
