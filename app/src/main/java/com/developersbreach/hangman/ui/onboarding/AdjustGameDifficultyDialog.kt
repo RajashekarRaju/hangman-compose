@@ -23,15 +23,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.developersbreach.hangman.R
+import com.developersbreach.hangman.utils.GameDifficulty
 
 // Dialog for adjusting game difficulty from OnBoarding screen.
 @Composable
 fun AdjustGameDifficultyDialog(
-    viewModel: OnBoardingViewModel,
-    openGameDifficultyDialog: MutableState<Boolean>
+    gameDifficulty: GameDifficulty,
+    openGameDifficultyDialog: MutableState<Boolean>,
+    updatePlayerChosenDifficulty: (Float) -> Unit
 ) {
     var sliderDifficultyPosition by rememberSaveable {
-        val ordinal = viewModel.gamePreferences.getGameDifficultyPref().ordinal
+        val ordinal = gameDifficulty.ordinal
         mutableFloatStateOf((ordinal.plus(1)).toFloat())
     }
 
@@ -64,7 +66,7 @@ fun AdjustGameDifficultyDialog(
                 steps = 1,
                 onValueChangeFinished = {
                     // Immediately make changes to preferences with updated slider position.
-                    viewModel.updatePlayerChosenDifficulty(sliderDifficultyPosition)
+                    updatePlayerChosenDifficulty(sliderDifficultyPosition)
                 },
                 colors = SliderDefaults.colors(
                     thumbColor = MaterialTheme.colors.primary,
@@ -79,7 +81,7 @@ fun AdjustGameDifficultyDialog(
 
             // Updated the text value from previously player chosen game difficulty preferences.
             Text(
-                text = viewModel.gameDifficulty.name,
+                text = gameDifficulty.name,
                 style = MaterialTheme.typography.h4,
                 color = MaterialTheme.colors.onSurface
             )

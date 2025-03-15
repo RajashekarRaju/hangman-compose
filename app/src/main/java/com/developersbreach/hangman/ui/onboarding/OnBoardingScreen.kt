@@ -3,7 +3,6 @@ package com.developersbreach.hangman.ui.onboarding
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,7 +19,6 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
@@ -34,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -46,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.developersbreach.hangman.R
 import com.developersbreach.hangman.ui.components.GameInstructionsInfoDialog
+import com.developersbreach.hangman.utils.GameCategory
+import com.developersbreach.hangman.utils.GameDifficulty
 import com.developersbreach.hangman.utils.createInfiniteRepeatableRotateAnimation
 
 /**
@@ -59,30 +58,21 @@ fun OnBoardingScreen(
     viewModel: OnBoardingViewModel,
     finishActivity: () -> Unit
 ) {
-    Surface(
-        color = MaterialTheme.colors.background
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            // Full screen occupying background image.
-            Image(
-                painter = painterResource(id = R.drawable.game_background),
-                contentDescription = stringResource(R.string.cd_image_screen_bg),
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-                alpha = 0.1f
-            )
+    val highScore by viewModel.highestScore.observeAsState(0)
+    OnBoardingScreenUI(
+        navigateToGameScreen = navigateToGameScreen,
+        navigateToHistoryScreen = navigateToHistoryScreen,
+        finishActivity = finishActivity,
+        highScore = highScore ?: 0,
+        releaseBackgroundMusic = { viewModel.releaseBackgroundMusic() },
+        gameDifficulty = viewModel.gameDifficulty,
+        updatePlayerChosenCategory = { viewModel.updatePlayerChosenDifficulty(it) },
+        gameCategory = viewModel.gameCategory,
+        isBackgroundMusicPlaying = viewModel.isBackgroundMusicPlaying,
+        onClickPlayGameBackgroundMusicOnStart = { viewModel.playGameBackgroundMusicOnStart() },
+        onClickReleaseBackgroundMusic = { viewModel.releaseBackgroundMusic() }
 
-            // Main screen content
-            OnBoardingScreenContent(
-                navigateToGameScreen = navigateToGameScreen,
-                finishActivity = finishActivity,
-                navigateToHistoryScreen = navigateToHistoryScreen,
-                viewModel = viewModel
-            )
-        }
-    }
+    )
 }
 
 /**
@@ -93,11 +83,18 @@ fun OnBoardingScreen(
  * @param navigateToHistoryScreen navigates to history screen with button click.
  */
 @Composable
-private fun OnBoardingScreenContent(
+fun OnBoardingScreenContent(
     navigateToGameScreen: () -> Unit,
     finishActivity: () -> Unit,
     navigateToHistoryScreen: () -> Unit,
-    viewModel: OnBoardingViewModel
+    highScore: Int,
+    releaseBackgroundMusic: () -> Unit,
+    gameDifficulty: GameDifficulty,
+    updatePlayerChosenCategory: (Float) -> Unit,
+    gameCategory: GameCategory,
+    isBackgroundMusicPlaying: Boolean,
+    onClickPlayGameBackgroundMusicOnStart: () -> Unit,
+    onClickReleaseBackgroundMusic: () -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -112,7 +109,7 @@ private fun OnBoardingScreenContent(
         Spacer(modifier = Modifier.height(12.dp))
 
         // Shows highest score.
-        HighestGameScoreName(viewModel)
+        HighestGameScoreName(highScore = highScore)
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -127,7 +124,7 @@ private fun OnBoardingScreenContent(
                 // OnClick button, navigates to game screen.
                 PlayGameButton(navigateToGameScreen) {
                     // Stop the background music once game screen opens.
-                    viewModel.releaseBackgroundMusic()
+                    releaseBackgroundMusic()
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -143,23 +140,38 @@ private fun OnBoardingScreenContent(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // OnClick button, open the dialog with game difficulty adjustments.
-                GameDifficultyButton(viewModel)
+                GameDifficultyButton(
+                    gameDifficulty = gameDifficulty,
+                    updatePlayerChosenCategory = updatePlayerChosenCategory
+                )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // OnClick button, open the dialog with game category options.
-                GameCategoryButton(viewModel)
+                GameCategoryButton(
+                    gameCategory = gameCategory,
+                    updatePlayerChosenCategory = {
+                        updatePlayerChosenCategory(it.toFloat())
+                    }
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Row {
                     // OnClick icon, opens dialog with game instructions.
-                    GameInstructionIconButton(viewModel)
+                    GameInstructionIconButton(
+                        gameDifficulty = gameDifficulty,
+                        gameCategory = gameCategory
+                    )
 
                     Spacer(modifier = Modifier.width(16.dp))
 
                     // OnClick icon, play/stops background music.
-                    BackgroundVolumeIconButton(viewModel)
+                    BackgroundVolumeIconButton(
+                        isBackgroundMusicPlaying = isBackgroundMusicPlaying,
+                        onClickPlayGameBackgroundMusicOnStart = onClickPlayGameBackgroundMusicOnStart,
+                        onClickReleaseBackgroundMusic = onClickReleaseBackgroundMusic
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -191,10 +203,8 @@ private fun GameTaglineText() {
 
 @Composable
 private fun HighestGameScoreName(
-    viewModel: OnBoardingViewModel
+    highScore: Int
 ) {
-    val highScore by viewModel.highestScore.observeAsState(0)
-
     Text(
         text = buildAnnotatedString {
             append(stringResource(R.string.highest_score_header))
@@ -301,14 +311,16 @@ private fun GameHistoryButton(
 
 @Composable
 fun GameDifficultyButton(
-    viewModel: OnBoardingViewModel
+    gameDifficulty: GameDifficulty,
+    updatePlayerChosenCategory: (Float) -> Unit
 ) {
     // Change state value to open the dialog.
     val openGameDifficultyDialog = rememberSaveable { mutableStateOf(false) }
     if (openGameDifficultyDialog.value) {
         AdjustGameDifficultyDialog(
-            viewModel = viewModel,
-            openGameDifficultyDialog = openGameDifficultyDialog
+            openGameDifficultyDialog = openGameDifficultyDialog,
+            gameDifficulty = gameDifficulty,
+            updatePlayerChosenDifficulty = updatePlayerChosenCategory
         )
     }
 
@@ -328,14 +340,16 @@ fun GameDifficultyButton(
 
 @Composable
 fun GameCategoryButton(
-    viewModel: OnBoardingViewModel
+    updatePlayerChosenCategory: (Int) -> Unit,
+    gameCategory: GameCategory
 ) {
     // Change state value to open the dialog.
     val openGameCategoryDialog = rememberSaveable { mutableStateOf(false) }
     if (openGameCategoryDialog.value) {
         ChooseGameCategoryDialog(
-            viewModel = viewModel,
-            openGameCategoryDialog = openGameCategoryDialog
+            openGameCategoryDialog = openGameCategoryDialog,
+            updatePlayerChosenCategory = updatePlayerChosenCategory,
+            gameCategory = gameCategory
         )
     }
 
@@ -355,14 +369,15 @@ fun GameCategoryButton(
 
 @Composable
 private fun GameInstructionIconButton(
-    viewModel: OnBoardingViewModel
+    gameDifficulty: GameDifficulty,
+    gameCategory: GameCategory
 ) {
     // Change state value to open the dialog.
     val openGameInstructionsDialog = rememberSaveable { mutableStateOf(false) }
     if (openGameInstructionsDialog.value) {
         GameInstructionsInfoDialog(
-            gameDifficulty = viewModel.gameDifficulty,
-            gameCategory = viewModel.gameCategory,
+            gameDifficulty = gameDifficulty,
+            gameCategory = gameCategory,
             openGameInstructionsDialog = openGameInstructionsDialog
         )
     }
@@ -384,21 +399,23 @@ private fun GameInstructionIconButton(
 
 @Composable
 private fun BackgroundVolumeIconButton(
-    viewModel: OnBoardingViewModel
+    isBackgroundMusicPlaying: Boolean,
+    onClickPlayGameBackgroundMusicOnStart: () -> Unit,
+    onClickReleaseBackgroundMusic: () -> Unit,
 ) {
     // Change the icon to match game sound play pause state.
     var volumeIcon = R.drawable.ic_volume_enabled
-    if (!viewModel.isBackgroundMusicPlaying) {
+    if (!isBackgroundMusicPlaying) {
         volumeIcon = R.drawable.ic_volume_disabled
     }
 
     IconButton(
         onClick = {
             // Play or release the game sound.
-            if (!viewModel.isBackgroundMusicPlaying) {
-                viewModel.playGameBackgroundMusicOnStart()
+            if (!isBackgroundMusicPlaying) {
+                onClickPlayGameBackgroundMusicOnStart()
             } else {
-                viewModel.releaseBackgroundMusic()
+                onClickReleaseBackgroundMusic()
             }
         },
         modifier = Modifier.background(

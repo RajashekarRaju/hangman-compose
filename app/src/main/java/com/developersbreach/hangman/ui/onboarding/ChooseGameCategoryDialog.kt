@@ -26,6 +26,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.developersbreach.hangman.R
+import com.developersbreach.hangman.utils.GameCategory
 
 /**
  * These categories will be shown in dialog, player can choose between any game category
@@ -45,11 +46,11 @@ val categoryOptions = listOf(
 // Dialog for adjusting game difficulty from OnBoarding screen.
 @Composable
 fun ChooseGameCategoryDialog(
-    viewModel: OnBoardingViewModel,
-    openGameCategoryDialog: MutableState<Boolean>
+    openGameCategoryDialog: MutableState<Boolean>,
+    gameCategory: GameCategory,
+    updatePlayerChosenCategory: (Int) -> Unit
 ) {
     // Get last saved game category player preferences.
-    val gameCategory = viewModel.gamePreferences.getGameCategoryPref()
     // From last preferences, if player does not choose category again, we will load the last saved
     // settings for existing games.
     val (selectedCategory, onCategorySelected) = remember {
@@ -85,7 +86,7 @@ fun ChooseGameCategoryDialog(
                         gameCategory = categoryName,
                         selectedGameCategory = selectedCategory,
                         onGameCategorySelected = onCategorySelected,
-                        viewModel = viewModel
+                        updatePlayerChosenCategory = updatePlayerChosenCategory
                     )
                 }
             }
@@ -101,7 +102,7 @@ private fun ItemCategoryRow(
     gameCategory: Category,
     selectedGameCategory: Int,
     onGameCategorySelected: (Int) -> Unit,
-    viewModel: OnBoardingViewModel
+    updatePlayerChosenCategory: (Int) -> Unit,
 ) {
     // Removed default ripple effect.
     val interactionSource = remember { MutableInteractionSource() }
@@ -120,7 +121,7 @@ private fun ItemCategoryRow(
                     // Selects player clicked radio button game category.
                     onGameCategorySelected(gameCategory.categoryId)
                     // Immediately updated the preferences too save player category later.
-                    viewModel.updatePlayerChosenCategory(gameCategory.categoryId)
+                    updatePlayerChosenCategory(gameCategory.categoryId)
                 }
             )
     ) {
