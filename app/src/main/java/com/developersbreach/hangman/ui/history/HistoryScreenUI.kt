@@ -43,31 +43,6 @@ import com.developersbreach.hangman.ui.theme.RedHangmanTheme
 import com.developersbreach.hangman.utils.GameCategory
 import com.developersbreach.hangman.utils.GameDifficulty
 
-@Preview
-@Composable
-private fun HistoryScreenUIPreview() {
-    RedHangmanTheme { 
-        HistoryScreenUI(
-            navigateUp = {},
-            gameHistoryList = listOf(
-                HistoryEntity(
-                    gameId = "atomorum",
-                    gameScore = 2913,
-                    gameLevel = 8499,
-                    gameDifficulty = GameDifficulty.HARD,
-                    gameCategory = GameCategory.LANGUAGES,
-                    gameSummary = false,
-                    gamePlayedTime = "interesset",
-                    gamePlayedDate = "decore"
-                ),
-            ),
-            deleteAllGameHistoryData = {},
-            onClickDeleteSelectedGameHistory = {}
-
-        )
-    }
-}
-
 @Composable
 fun HistoryScreenUI(
     navigateUp: () -> Unit,
@@ -310,4 +285,29 @@ private fun ShowEmptyHistoryMessage() {
         color = MaterialTheme.colors.onBackground.copy(0.75f),
         modifier = Modifier.padding(horizontal = 24.dp, vertical = 48.dp)
     )
+}
+
+@Preview
+@Composable
+private fun HistoryScreenUIPreview() {
+    RedHangmanTheme {
+        HistoryScreenUI(
+            navigateUp = {},
+            gameHistoryList = listOf(
+                HistoryEntity(
+                    gameId = "atomorum",
+                    gameScore = 2913,
+                    gameLevel = 8499,
+                    gameDifficulty = GameDifficulty.HARD,
+                    gameCategory = GameCategory.LANGUAGES,
+                    gameSummary = false,
+                    gamePlayedTime = "interesset",
+                    gamePlayedDate = "decore"
+                ),
+            ),
+            deleteAllGameHistoryData = {},
+            onClickDeleteSelectedGameHistory = {}
+
+        )
+    }
 }
