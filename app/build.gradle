@@ -1,127 +1,66 @@
 plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
-    id 'com.google.devtools.ksp'
-    id 'com.google.gms.google-services'
-    id 'com.google.firebase.crashlytics'
-    id 'org.jetbrains.kotlin.plugin.compose' version "2.0.20"
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
+    id("com.google.devtools.ksp") version "2.0.20-1.0.24"
 }
 
 android {
-    compileSdk 34
+    namespace = "com.developersbreach.hangman"
+    compileSdk = 35
 
     defaultConfig {
-        applicationId "com.developersbreach.hangman"
-        minSdk 24
-        targetSdk 34
-        versionCode 1
-        versionName "0.1.0"
+        applicationId = "com.developersbreach.hangman"
+        minSdk = 24
+        targetSdk = 34
+        versionCode = 1
+        versionName = "0.1.0"
 
-        vectorDrawables {
-            useSupportLibrary true
-        }
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArguments clearPackageData: 'true'
+        vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
+            minifyEnabled = true
+            shrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         debug {
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled = false
+            shrinkResources = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig signingConfigs.debug
-        }
-    }
-
-    signingConfigs {
-        release {
-            keyAlias "keyAlias"
-            keyPassword "keyPassword"
-            storeFile file("keys/hangman/hangman-game-release-key")
-            storePassword "storePassword"
         }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = '17'
-    }
-
-    buildFeatures {
-        compose true
-        buildConfig true
-    }
-
-    packagingOptions {
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
-    }
-
-    testOptions {
-        unitTests.includeAndroidResources = true
-    }
-    namespace 'com.developersbreach.hangman'
+    kotlinOptions.jvmTarget = "17"
+    buildFeatures.compose = true
 }
 
-def compose_version = "1.7.5"
-
 dependencies {
-    implementation 'androidx.core:core-ktx:1.13.1'
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'com.google.android.material:material:1.12.0'
-    implementation "androidx.compose.material:material-icons-extended:$compose_version"
-    implementation "androidx.compose.ui:ui:$compose_version"
-    implementation "androidx.compose.material:material:$compose_version"
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    implementation "androidx.compose.ui:ui-tooling:$compose_version"
-    implementation 'androidx.activity:activity-compose:1.9.3'
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.com.google.material)
 
-    // Observe state and livedata
-    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.ui.tooling)
 
-    // Constraint Layout
-    implementation "androidx.constraintlayout:constraintlayout-compose:1.1.0"
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    // Navigation
-    implementation "androidx.navigation:navigation-compose:2.8.4"
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp("androidx.room:room-compiler:2.6.1")
 
-    // For persisting game difficulty, high score values.
-    implementation 'androidx.preference:preference-ktx:1.2.1'
-
-    // Room
-    implementation "androidx.room:room-runtime:2.6.1"
-    implementation "androidx.room:room-ktx:2.6.1"
-    implementation 'androidx.security:security-crypto:1.1.0-alpha06'
-    ksp "androidx.room:room-compiler:2.6.1"
-
-    // Koin - Jetpack Compose
-    implementation "io.insert-koin:koin-androidx-compose:3.2.0-beta-1"
-
-    implementation platform('com.google.firebase:firebase-bom:33.6.0')
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-
-    testImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
-    testImplementation "io.mockk:mockk:1.13.5"
-
-    testImplementation "androidx.test.ext:junit-ktx:1.2.1"
-    testImplementation 'org.robolectric:robolectric:4.14'
-
-    androidTestImplementation 'androidx.test.ext:junit-ktx:1.2.1'
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:$compose_version")
-
-    debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_version")
+    implementation(libs.com.google.firebase.analytics)
+    implementation(libs.com.google.firebase.crashlytics)
 }
