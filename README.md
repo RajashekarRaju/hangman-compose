@@ -3,6 +3,7 @@
 ### Thanks to [Cicero Hellmann](https://github.com/cicerohellmann) For giving this cool idea to build Hangman game with Compose for Android.
 
 ![Game Banner](/assets/banner_hangman.png)
+This project is now built with **Kotlin Multiplatform Compose**. The same game logic runs on Android and Windows.
 
 ## :arrow_down: Download
 
@@ -139,3 +140,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+### Running on Windows
+Use `./gradlew :desktopApp:run` to launch the desktop version.

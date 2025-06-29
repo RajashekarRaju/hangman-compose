@@ -1,0 +1,16 @@
+plugins {
+    id 'org.jetbrains.compose' version '1.7.0'
+    id 'org.jetbrains.kotlin.plugin.compose' version '2.0.20'
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+dependencies {
+    implementation project(':shared')
+    implementation(compose.desktop.currentOs)
+}
+
+compose.desktop {
+    application {
+        mainClass = 'com.developersbreach.hangman.desktop.DesktopAppKt'
+    }
+}

@@ -1,0 +1,34 @@
+plugins {
+    id 'org.jetbrains.kotlin.multiplatform'
+    id 'org.jetbrains.compose' version '1.7.0'
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.plugin.compose' version '2.0.20'
+}
+
+kotlin {
+    jvm("desktop")
+    android()
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation compose.runtime
+            }
+        }
+        androidMain {
+            dependencies {
+            }
+        }
+        desktopMain {
+            dependencies {
+            }
+        }
+    }
+}
+
+android {
+    namespace 'com.developersbreach.hangman.shared'
+    compileSdk 34
+    defaultConfig {
+        minSdk 24
+    }
+}
