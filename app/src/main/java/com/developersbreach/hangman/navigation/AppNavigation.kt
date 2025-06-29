@@ -7,11 +7,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.developersbreach.hangman.MainActivity
 import com.developersbreach.hangman.ui.game.GameScreen
-import com.developersbreach.hangman.ui.game.GameViewModel
+import com.developersbreach.hangman.viewmodel.GameViewModel
 import com.developersbreach.hangman.ui.history.HistoryScreen
-import com.developersbreach.hangman.ui.history.HistoryViewModel
+import com.developersbreach.hangman.viewmodel.HistoryViewModel
 import com.developersbreach.hangman.ui.onboarding.OnBoardingScreen
-import com.developersbreach.hangman.ui.onboarding.OnBoardingViewModel
+import com.developersbreach.hangman.viewmodel.OnBoardingViewModel
 import org.koin.androidx.compose.getViewModel
 
 /**

@@ -8,33 +8,25 @@ import androidx.room.PrimaryKey
 import com.developersbreach.hangman.utils.GameCategory
 import com.developersbreach.hangman.utils.GameDifficulty
 
-@Entity(tableName = "history_table")
 @Immutable
-data class HistoryEntity(
-
+@Entity(tableName = "history_table")
+actual data class HistoryEntity(
     @Stable
     @PrimaryKey
     @ColumnInfo(name = "column_game_id")
-    val gameId: String,
-
+    actual val gameId: String,
     @ColumnInfo(name = "column_game_score")
-    val gameScore: Int,
-
+    actual val gameScore: Int,
     @ColumnInfo(name = "column_game_level")
-    val gameLevel: Int,
-
+    actual val gameLevel: Int,
     @ColumnInfo(name = "column_game_difficulty")
-    val gameDifficulty: GameDifficulty,
-
+    actual val gameDifficulty: GameDifficulty,
     @ColumnInfo(name = "column_game_category")
-    val gameCategory: GameCategory,
-
+    actual val gameCategory: GameCategory,
     @ColumnInfo(name = "column_game_summary")
-    val gameSummary: Boolean,
-
+    actual val gameSummary: Boolean,
     @ColumnInfo(name = "column_game_time")
-    val gamePlayedTime: String,
-
+    actual val gamePlayedTime: String,
     @ColumnInfo(name = "column_game_date")
-    val gamePlayedDate: String
+    actual val gamePlayedDate: String
 )
