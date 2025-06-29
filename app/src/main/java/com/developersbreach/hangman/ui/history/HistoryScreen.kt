@@ -2,7 +2,7 @@ package com.developersbreach.hangman.ui.history
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import com.developersbreach.hangman.repository.database.entity.HistoryEntity
 
 /**
@@ -16,7 +16,7 @@ fun HistoryScreen(
 ) {
     // Create ViewModel instance with koin.
     // Get all the game history list.
-    val gameHistoryList by viewModel.gameHistoryList.observeAsState(emptyList())
+    val gameHistoryList by viewModel.gameHistoryList.collectAsState(initial = emptyList())
 
     HistoryScreenUI(
         navigateUp = navigateUp,

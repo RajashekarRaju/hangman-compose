@@ -1,3 +1,5 @@
 package com.developersbreach.hangman.viewmodel
 
-actual open class BaseViewModel
+import androidx.lifecycle.ViewModel
+
+actual open class BaseViewModel : ViewModel()

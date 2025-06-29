@@ -3,8 +3,8 @@ package com.developersbreach.hangman.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.Flow
 import com.developersbreach.hangman.repository.GameRepository
 import com.developersbreach.hangman.utils.GameCategory
 import com.developersbreach.hangman.utils.GameDifficulty
@@ -18,7 +18,7 @@ class OnBoardingViewModel(
     private val audioPlayer: PlatformAudioPlayer
 ) : BaseViewModel() {
 
-    val highestScore: LiveData<Int?> = repository.getHighestScore()
+    val highestScore: Flow<Int?> = repository.getHighestScore()
 
     var gameDifficulty: GameDifficulty by mutableStateOf(GameDifficulty.EASY)
     var gameCategory by mutableStateOf(GameCategory.COUNTRIES)

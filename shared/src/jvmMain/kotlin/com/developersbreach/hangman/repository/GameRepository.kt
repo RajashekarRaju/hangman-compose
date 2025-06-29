@@ -1,6 +1,6 @@
 package com.developersbreach.hangman.repository
 
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 import com.developersbreach.hangman.repository.database.entity.HistoryEntity
 import com.developersbreach.hangman.utils.GameCategory
 import com.developersbreach.hangman.utils.GameDifficulty
@@ -19,10 +19,10 @@ class GameRepository(
     suspend fun saveCurrentGameToHistory(historyEntity: HistoryEntity) =
         storage.saveNewGameToHistory(historyEntity)
 
-    fun getCompleteGameHistory(): LiveData<List<HistoryEntity>> =
+    fun getCompleteGameHistory(): Flow<List<HistoryEntity>> =
         storage.getCompleteGameHistory()
 
-    fun getHighestScore(): LiveData<Int?> =
+    fun getHighestScore(): Flow<Int?> =
         storage.getHighestScore()
 
     suspend fun deleteSelectedSingleGameHistory(historyEntity: HistoryEntity) =

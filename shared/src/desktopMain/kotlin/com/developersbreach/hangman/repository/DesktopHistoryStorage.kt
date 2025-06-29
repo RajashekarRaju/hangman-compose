@@ -1,33 +1,33 @@
 package com.developersbreach.hangman.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import com.developersbreach.hangman.repository.database.entity.HistoryEntity
 
 class DesktopHistoryStorage : HistoryStorage {
     private val historyList = mutableListOf<HistoryEntity>()
-    private val historyLiveData = MutableLiveData<List<HistoryEntity>>(historyList)
-    private val highestScore = MutableLiveData<Int?>(null)
+    private val historyFlow = MutableStateFlow<List<HistoryEntity>>(historyList)
+    private val highestScore = MutableStateFlow<Int?>(null)
 
-    override fun getCompleteGameHistory(): LiveData<List<HistoryEntity>> = historyLiveData
+    override fun getCompleteGameHistory(): Flow<List<HistoryEntity>> = historyFlow
 
-    override fun getHighestScore(): LiveData<Int?> = highestScore
+    override fun getHighestScore(): Flow<Int?> = highestScore
 
     override suspend fun saveNewGameToHistory(historyEntity: HistoryEntity) {
         historyList.add(historyEntity)
-        historyLiveData.value = historyList.toList()
+        historyFlow.value = historyList.toList()
         highestScore.value = historyList.maxOfOrNull { it.gameScore }
     }
 
     override suspend fun deleteSingleGameHistory(historyEntity: HistoryEntity) {
         historyList.remove(historyEntity)
-        historyLiveData.value = historyList.toList()
+        historyFlow.value = historyList.toList()
         highestScore.value = historyList.maxOfOrNull { it.gameScore }
     }
 
     override suspend fun deleteAllGamesHistory() {
         historyList.clear()
-        historyLiveData.value = emptyList()
+        historyFlow.value = emptyList()
         highestScore.value = null
     }
 }

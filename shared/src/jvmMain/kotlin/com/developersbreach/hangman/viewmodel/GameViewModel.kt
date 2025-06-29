@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import androidx.lifecycle.viewModelScope
 import com.developersbreach.hangman.modal.Alphabets
 import com.developersbreach.hangman.repository.GameRepository
@@ -30,8 +30,8 @@ class GameViewModel(
 
     val updatePlayerGuesses = mutableStateListOf<String>()
 
-    private var _alphabetsList = MutableLiveData<List<Alphabets>>()
-    val alphabetsList: LiveData<List<Alphabets>> get() = _alphabetsList
+    private var _alphabetsList = MutableStateFlow<List<Alphabets>>(emptyList())
+    val alphabetsList: StateFlow<List<Alphabets>> get() = _alphabetsList
 
     private var playerWonTheCurrentLevel by mutableStateOf(false)
     private var gameOverByNoAttemptsLeft by mutableStateOf(false)
@@ -40,8 +40,8 @@ class GameViewModel(
     var wordToGuess: String by mutableStateOf("")
     var attemptsLeftToGuess: Int by mutableIntStateOf(8)
 
-    private var _revealGuessingWord = MutableLiveData(gameOverByNoAttemptsLeft)
-    val revealGuessingWord: LiveData<Boolean> get() = _revealGuessingWord
+    private var _revealGuessingWord = MutableStateFlow(gameOverByNoAttemptsLeft)
+    val revealGuessingWord: StateFlow<Boolean> get() = _revealGuessingWord
 
     private var pointsScoredPerWord: Int by mutableIntStateOf(0)
     var pointsScoredOverall: Int by mutableIntStateOf(0)
@@ -73,7 +73,7 @@ class GameViewModel(
             val currentAlphabet: String = alphabet.alphabet.lowercase()
             val currentGuessingWord: String = wordToGuess.lowercase()
 
-            _alphabetsList.value = _alphabetsList.value?.map {
+            _alphabetsList.value = _alphabetsList.value.map {
                 if (it.alphabetId == alphabet.alphabetId) it.copy(isAlphabetGuessed = true) else it
             }
 
@@ -146,9 +146,10 @@ class GameViewModel(
     }
 
     private fun updateOrResetWordToGuess() {
-        _alphabetsList.value = when (_alphabetsList.value) {
-            null -> alphabetsList()
-            else -> _alphabetsList.value?.map { it.copy(isAlphabetGuessed = false) }
+        _alphabetsList.value = if (_alphabetsList.value.isEmpty()) {
+            alphabetsList()
+        } else {
+            _alphabetsList.value.map { it.copy(isAlphabetGuessed = false) }
         }
         updatePlayerGuesses.clear()
         for (i in wordToGuess.indices) {

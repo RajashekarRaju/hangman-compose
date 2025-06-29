@@ -5,7 +5,7 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -25,14 +25,14 @@ fun GameScreen(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     viewModel: GameViewModel
 ) {
-    val alphabetsList by viewModel.alphabetsList.observeAsState(listOf())
+    val alphabetsList by viewModel.alphabetsList.collectAsState(initial = listOf())
     val updateGuessesByPlayer = viewModel.updatePlayerGuesses
 
     // State for showing game instructions dialog.
     val openGameInstructionsDialog = rememberSaveable { mutableStateOf(false) }
 
     // If true, a dialog will show up with player lost message.
-    val shouldRevealWord by viewModel.revealGuessingWord.observeAsState(false)
+    val shouldRevealWord by viewModel.revealGuessingWord.collectAsState(initial = false)
 
     // Modal sheet to ask player whether to quit playing the game, triggered while up navigation.
     val modalSheetState = rememberModalBottomSheetState(

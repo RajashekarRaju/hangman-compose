@@ -1,6 +1,6 @@
 package com.developersbreach.hangman.repository.database.dao
 
-import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -15,10 +15,10 @@ interface HistoryDao {
     fun saveNewGameToHistory(historyEntity: HistoryEntity)
 
     @Query("SELECT * FROM history_table")
-    fun getCompleteGameHistory(): LiveData<List<HistoryEntity>>
+    fun getCompleteGameHistory(): Flow<List<HistoryEntity>>
 
     @Query("SELECT MAX(column_game_score) FROM history_table")
-    fun getHighestScoreFromHistory(): LiveData<Int?>
+    fun getHighestScoreFromHistory(): Flow<Int?>
 
     @Delete
     fun deleteSingleGameHistory(historyEntity: HistoryEntity)

@@ -24,7 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -58,7 +58,7 @@ fun OnBoardingScreen(
     viewModel: OnBoardingViewModel,
     finishActivity: () -> Unit
 ) {
-    val highScore by viewModel.highestScore.observeAsState(0)
+    val highScore by viewModel.highestScore.collectAsState(initial = 0)
     OnBoardingScreenUI(
         navigateToGameScreen = navigateToGameScreen,
         navigateToHistoryScreen = navigateToHistoryScreen,
