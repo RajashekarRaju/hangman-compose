@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.developersbreach.hangman.R
 import com.developersbreach.hangman.utils.ApplyAnimatedVisibility
-import com.developersbreach.hangman.utils.GameDifficulty
+import com.developersbreach.game.core.GameDifficulty
 
 /**
  * Dialog shown when player wins the game.

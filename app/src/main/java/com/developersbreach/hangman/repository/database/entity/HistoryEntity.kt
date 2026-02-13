@@ -5,8 +5,8 @@ import androidx.compose.runtime.Stable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.developersbreach.hangman.utils.GameCategory
-import com.developersbreach.hangman.utils.GameDifficulty
+import com.developersbreach.game.core.GameCategory
+import com.developersbreach.game.core.GameDifficulty
 
 @Entity(tableName = "history_table")
 @Immutable

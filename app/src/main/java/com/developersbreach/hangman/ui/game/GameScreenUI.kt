@@ -24,11 +24,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.developersbreach.hangman.R
-import com.developersbreach.hangman.modal.Alphabets
+import com.developersbreach.game.core.Alphabet
 import com.developersbreach.hangman.ui.components.AppIconButton
 import com.developersbreach.hangman.ui.components.ShowExitGameModalSheet
 import com.developersbreach.hangman.ui.theme.RedHangmanTheme
-import com.developersbreach.hangman.utils.alphabetsList
+import com.developersbreach.game.core.alphabetsList
 import kotlinx.coroutines.launch
 
 @Composable
@@ -40,9 +40,9 @@ fun GameScreenUI(
     attemptsLeftToGuess: Int,
     pointsScoredOverall: Int,
     maxLevelReached: Int,
-    alphabetsList: List<Alphabets>,
+    alphabetsList: List<Alphabet>,
     updateGuessesByPlayer: SnapshotStateList<String>,
-    checkIfLetterMatches: (alphabet: Alphabets) -> Unit
+    checkIfLetterMatches: (alphabet: Alphabet) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
 

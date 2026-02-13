@@ -1,4 +1,4 @@
-package com.developersbreach.hangman.repository
+package com.developersbreach.game.core
 
 fun companyData() = listOf(
     "apple", "intel", "tesla", "cisco", "nike", "honda", "pepsi", "ikea", "visa", "adobe", "linde",

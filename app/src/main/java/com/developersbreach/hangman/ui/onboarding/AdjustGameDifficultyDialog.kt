@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.developersbreach.hangman.R
-import com.developersbreach.hangman.utils.GameDifficulty
+import com.developersbreach.game.core.GameDifficulty
 
 // Dialog for adjusting game difficulty from OnBoarding screen.
 @Composable

@@ -20,7 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.developersbreach.hangman.modal.Alphabets
+import com.developersbreach.game.core.Alphabet
 import com.developersbreach.hangman.utils.ApplyAnimatedVisibility
 import com.developersbreach.hangman.utils.SparkAnimateGuessedLetter
 
@@ -30,8 +30,8 @@ import com.developersbreach.hangman.utils.SparkAnimateGuessedLetter
 @Composable
 fun AlphabetsList(
     modifier: Modifier,
-    alphabetsList: List<Alphabets>,
-    checkIfLetterMatches: (alphabet: Alphabets) -> Unit
+    alphabetsList: List<Alphabet>,
+    checkIfLetterMatches: (alphabet: Alphabet) -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -66,8 +66,8 @@ fun AlphabetsList(
  */
 @Composable
 private fun ItemAlphabetText(
-    alphabet: Alphabets,
-    checkIfLetterMatches: (alphabet: Alphabets) -> Unit
+    alphabet: Alphabet,
+    checkIfLetterMatches: (alphabet: Alphabet) -> Unit
 ) {
     // If alphabet is correctly guessed,
     // Reduce it's alpha, so that player know it's already used.

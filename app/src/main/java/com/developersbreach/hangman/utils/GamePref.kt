@@ -1,6 +1,8 @@
 package com.developersbreach.hangman.utils
 
 import android.content.Context
+import com.developersbreach.game.core.GameCategory
+import com.developersbreach.game.core.GameDifficulty
 
 class GamePref(
     context: Context

@@ -24,9 +24,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.developersbreach.hangman.R
-import com.developersbreach.hangman.repository.instructionsList
-import com.developersbreach.hangman.utils.GameCategory
-import com.developersbreach.hangman.utils.GameDifficulty
+import com.developersbreach.game.core.instructionsList
+import com.developersbreach.game.core.GameCategory
+import com.developersbreach.game.core.GameDifficulty
 
 /**
  * Dialog with game instructions information.

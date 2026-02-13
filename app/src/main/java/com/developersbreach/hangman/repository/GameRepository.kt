@@ -3,10 +3,10 @@ package com.developersbreach.hangman.repository
 import androidx.lifecycle.LiveData
 import com.developersbreach.hangman.repository.database.GameDatabase
 import com.developersbreach.hangman.repository.database.entity.HistoryEntity
-import com.developersbreach.hangman.utils.GameCategory
-import com.developersbreach.hangman.utils.GameDifficulty
-import com.developersbreach.hangman.utils.Words
-import com.developersbreach.hangman.utils.getFilteredWordsByGameDifficulty
+import com.developersbreach.game.core.GameCategory
+import com.developersbreach.game.core.GameDifficulty
+import com.developersbreach.game.core.Words
+import com.developersbreach.game.core.getFilteredWordsByGameDifficulty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

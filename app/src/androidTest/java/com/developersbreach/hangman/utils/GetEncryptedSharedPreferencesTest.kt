@@ -3,6 +3,7 @@ package com.developersbreach.hangman.utils
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.developersbreach.game.core.GameDifficulty
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test

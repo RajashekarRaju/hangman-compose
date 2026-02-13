@@ -26,7 +26,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.developersbreach.hangman.R
-import com.developersbreach.hangman.utils.GameCategory
+import com.developersbreach.game.core.GameCategory
 
 /**
  * These categories will be shown in dialog, player can choose between any game category

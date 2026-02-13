@@ -40,8 +40,8 @@ import com.developersbreach.hangman.repository.database.entity.HistoryEntity
 import com.developersbreach.hangman.ui.components.CreateCircularProgressIndicator
 import com.developersbreach.hangman.ui.game.animateCurrentLevelProgress
 import com.developersbreach.hangman.ui.theme.RedHangmanTheme
-import com.developersbreach.hangman.utils.GameCategory
-import com.developersbreach.hangman.utils.GameDifficulty
+import com.developersbreach.game.core.GameCategory
+import com.developersbreach.game.core.GameDifficulty
 
 @Composable
 fun HistoryScreenUI(

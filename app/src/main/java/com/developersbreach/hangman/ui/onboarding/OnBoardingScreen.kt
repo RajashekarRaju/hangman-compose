@@ -43,8 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.developersbreach.hangman.R
 import com.developersbreach.hangman.ui.components.GameInstructionsInfoDialog
-import com.developersbreach.hangman.utils.GameCategory
-import com.developersbreach.hangman.utils.GameDifficulty
+import com.developersbreach.game.core.GameCategory
+import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.utils.createInfiniteRepeatableRotateAnimation
 
 /**

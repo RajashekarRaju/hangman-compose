@@ -10,8 +10,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.developersbreach.hangman.R
 import com.developersbreach.hangman.repository.GameRepository
-import com.developersbreach.hangman.utils.GameCategory
-import com.developersbreach.hangman.utils.GameDifficulty
+import com.developersbreach.game.core.GameCategory
+import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.utils.GamePref
 import kotlinx.coroutines.launch
 

@@ -1,36 +1,11 @@
 package com.developersbreach.hangman.utils
 
-import androidx.compose.runtime.mutableStateOf
-import com.developersbreach.hangman.modal.Alphabets
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 /**
- * The return type should be immutable since it's result is used in GameViewModel.
- * Creating a [mutableStateOf] object with a mutable collection type isn't possible, so
- * at the end instead of returning array object, transform those to list.
- */
-fun alphabetsList(): MutableList<Alphabets> {
-    val alphabet = ('A'..'Z').toList()
-    val alphabetId = (1..26).toList()
-    val zipAlphabets = alphabetId zip alphabet
-
-    val alphabetList: MutableList<Alphabets> = mutableListOf()
-
-    zipAlphabets.forEach { pair ->
-        alphabetList.add(
-            Alphabets(
-                alphabetId = pair.first,
-                alphabet = pair.second.toString()
-            )
-        )
-    }
-
-    return alphabetList
-}
-
-/**
- * Returns time and data in required format as pair.
+ * Returns time and date in required format as pair.
  * This will be used to record the time/date when the player game history saved.
  */
 fun getDateAndTime(): Pair<String, String> {
