@@ -85,6 +85,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":composeApp"))
     implementation(project(":game-core"))
 
     // Core Android + Compose UI
