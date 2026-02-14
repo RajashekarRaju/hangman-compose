@@ -1,0 +1,31 @@
+<resources>
+    <string name="game_cd_close_game">Close game</string>
+    <string name="game_cd_open_instructions">Open game instructions dialog</string>
+
+    <string name="game_current_level">Level %1$d/%2$d</string>
+    <string name="game_current_points">Points %1$d</string>
+
+    <string name="game_exit_title">Exit Game?</string>
+    <string name="game_exit_confirm">Exit</string>
+    <string name="game_exit_dismiss">Keep Playing</string>
+
+    <string name="game_won_title">You Have Won!</string>
+    <string name="game_won_points">Points scored: %1$d</string>
+    <string name="game_won_difficulty">Difficulty: %1$s</string>
+    <string name="game_lost_title">You Lost</string>
+    <string name="game_lost_word">The word was: %1$s</string>
+    <string name="game_dialog_done">Done</string>
+
+    <string name="game_dialog_instructions_title">Instructions</string>
+    <string name="game_dialog_instructions_subtitle">Guess the name of the %1$s.</string>
+    <string name="game_label_difficulty">Difficulty: %1$s</string>
+    <string name="game_label_category">Category: %1$s</string>
+
+    <string name="game_difficulty_easy">Easy</string>
+    <string name="game_difficulty_medium">Medium</string>
+    <string name="game_difficulty_hard">Hard</string>
+
+    <string name="game_category_countries">Countries</string>
+    <string name="game_category_languages">Languages</string>
+    <string name="game_category_companies">Companies</string>
+</resources>

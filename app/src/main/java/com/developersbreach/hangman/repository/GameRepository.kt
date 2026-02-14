@@ -1,74 +1,118 @@
 package com.developersbreach.hangman.repository
 
 import androidx.lifecycle.LiveData
-import com.developersbreach.hangman.repository.database.GameDatabase
-import com.developersbreach.hangman.repository.database.entity.HistoryEntity
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.game.core.Words
 import com.developersbreach.game.core.getFilteredWordsByGameDifficulty
+import com.developersbreach.hangman.repository.database.GameDatabase
+import com.developersbreach.hangman.repository.database.entity.HistoryEntity
+import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
+import com.developersbreach.hangman.repository.model.HistoryRecord
+import com.developersbreach.hangman.utils.getDateAndTime
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 /**
  * Instance is created by Koin.
  */
 class GameRepository(
-    private val database: GameDatabase
-) {
+    private val database: GameDatabase,
+) : HistoryRepository, GameSessionRepository {
 
-    /**
-     * Returns the list of country name guessing words by difficulty.
-     */
-    fun getRandomGuessingWord(
+    override fun getRandomGuessingWord(
         gameDifficulty: GameDifficulty,
-        gameCategory: GameCategory
+        gameCategory: GameCategory,
     ): List<Words> {
         return getFilteredWordsByGameDifficulty(gameDifficulty, gameCategory)
     }
 
-    /**
-     * Saves the single game history to database.
-     */
-    suspend fun saveCurrentGameToHistory(
-        historyEntity: HistoryEntity
-    ) {
+    override suspend fun saveCompletedGame(request: GameHistoryWriteRequest) {
+        val (date, time) = getDateAndTime()
+        val historyEntity = HistoryEntity(
+            gameId = UUID.randomUUID().toString(),
+            gameScore = request.gameScore,
+            gameLevel = request.gameLevel,
+            gameSummary = request.gameSummary,
+            gameDifficulty = request.gameDifficulty,
+            gameCategory = request.gameCategory,
+            gamePlayedTime = time,
+            gamePlayedDate = date,
+        )
+
         withContext(Dispatchers.IO) {
             database.historyDao.saveNewGameToHistory(historyEntity)
         }
     }
 
-    /**
-     * Returns the completed game history.
-     */
-    fun getCompleteGameHistory(): LiveData<List<HistoryEntity>> {
+    fun getCompleteGameHistory(): Flow<List<HistoryEntity>> {
         return database.historyDao.getCompleteGameHistory()
     }
 
-    /**
-     * Get maximum highest number from the game score column.
-     */
+    override fun observeHistory(): Flow<List<HistoryRecord>> {
+        return database.historyDao.getCompleteGameHistory().map { historyList ->
+            historyList.map { history ->
+                history.toRecord()
+            }
+        }
+    }
+
     fun getHighestScore(): LiveData<Int?> {
         return database.historyDao.getHighestScoreFromHistory()
     }
 
-    /**
-     * Delete the single game history item.
-     */
     suspend fun deleteSelectedSingleGameHistory(
-        historyEntity: HistoryEntity
+        historyEntity: HistoryEntity,
     ) {
         withContext(Dispatchers.IO) {
             database.historyDao.deleteSingleGameHistory(historyEntity)
         }
     }
 
-    /**
-     * Deletes the completed game history.
-     */
+    override suspend fun deleteHistoryItem(history: HistoryRecord) {
+        withContext(Dispatchers.IO) {
+            database.historyDao.deleteSingleGameHistory(history.toEntity())
+        }
+    }
+
     suspend fun deleteCompleteGamesHistory() {
         withContext(Dispatchers.IO) {
             database.historyDao.deleteAllGamesHistory()
         }
     }
+
+    override suspend fun deleteAllHistory() {
+        withContext(Dispatchers.IO) {
+            database.historyDao.deleteAllGamesHistory()
+        }
+    }
+}
+
+private fun HistoryEntity.toRecord(): HistoryRecord {
+    return HistoryRecord(
+        gameId = gameId,
+        gameScore = gameScore,
+        gameLevel = gameLevel,
+        gameDifficulty = gameDifficulty,
+        gameCategory = gameCategory,
+        gameSummary = gameSummary,
+        gamePlayedTime = gamePlayedTime,
+        gamePlayedDate = gamePlayedDate,
+    )
+}
+
+private fun HistoryRecord.toEntity(): HistoryEntity {
+    return HistoryEntity(
+        gameId = gameId,
+        gameScore = gameScore,
+        gameLevel = gameLevel,
+        gameDifficulty = gameDifficulty,
+        gameCategory = gameCategory,
+        gameSummary = gameSummary,
+        gamePlayedTime = gamePlayedTime,
+        gamePlayedDate = gamePlayedDate,
+    )
 }

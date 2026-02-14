@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.developersbreach.hangman.repository.database.entity.HistoryEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface HistoryDao {
@@ -15,7 +16,7 @@ interface HistoryDao {
     fun saveNewGameToHistory(historyEntity: HistoryEntity)
 
     @Query("SELECT * FROM history_table")
-    fun getCompleteGameHistory(): LiveData<List<HistoryEntity>>
+    fun getCompleteGameHistory(): Flow<List<HistoryEntity>>
 
     @Query("SELECT MAX(column_game_score) FROM history_table")
     fun getHighestScoreFromHistory(): LiveData<Int?>

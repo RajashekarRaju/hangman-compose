@@ -7,6 +7,11 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
 }
 
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.developersbreach.hangman.feature.game.generated.resources"
+}
+
 kotlin {
     jvmToolchain(21)
 
@@ -33,10 +38,20 @@ kotlin {
             implementation(project(":game-core"))
             implementation(project(":core:designsystem"))
             implementation(project(":core:data"))
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
+
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material3)
+            implementation(libs.jetbrains.compose.material.icons.extended)
+            implementation(libs.compose.components.resources)
+
+            implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.koin.compose.viewmodel)
+        }
+
+        androidMain.dependencies {
+            implementation(libs.androidx.activity.compose)
         }
     }
 }

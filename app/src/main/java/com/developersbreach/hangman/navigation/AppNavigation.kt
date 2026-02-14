@@ -12,7 +12,7 @@ import com.developersbreach.hangman.ui.history.HistoryScreen
 import com.developersbreach.hangman.ui.history.HistoryViewModel
 import com.developersbreach.hangman.ui.onboarding.OnBoardingScreen
 import com.developersbreach.hangman.ui.onboarding.OnBoardingViewModel
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * All ViewModels instances are crated from this navigation file temporarily sort the issue from
@@ -36,7 +36,7 @@ fun AppNavigation(
         composable(
             AppDestinations.ONBOARDING_SCREEN_ROUTE
         ) {
-            val viewModel = getViewModel<OnBoardingViewModel>()
+            val viewModel = koinViewModel<OnBoardingViewModel>()
             OnBoardingScreen(
                 navigateToGameScreen = actions.navigateToGameScreen,
                 navigateToHistoryScreen = actions.navigateToHistoryScreen,
@@ -51,7 +51,7 @@ fun AppNavigation(
         composable(
             AppDestinations.GAME_SCREEN_ROUTE
         ) {
-            val viewModel = getViewModel<GameViewModel>()
+            val viewModel = koinViewModel<GameViewModel>()
             GameScreen(
                 navigateUp = actions.navigateUp,
                 viewModel = viewModel
@@ -61,7 +61,7 @@ fun AppNavigation(
         composable(
             AppDestinations.HISTORY_SCREEN_ROUTE
         ) {
-            val viewModel = getViewModel<HistoryViewModel>()
+            val viewModel = koinViewModel<HistoryViewModel>()
             HistoryScreen(
                 navigateUp = actions.navigateUp,
                 viewModel = viewModel

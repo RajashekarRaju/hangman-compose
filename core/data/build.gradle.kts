@@ -25,6 +25,13 @@ kotlin {
         browser()
         binaries.executable()
     }
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":game-core"))
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+        }
+    }
 }
 
 android {

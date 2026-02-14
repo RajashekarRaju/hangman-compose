@@ -87,6 +87,10 @@ kotlin {
 dependencies {
     implementation(project(":composeApp"))
     implementation(project(":game-core"))
+    implementation(project(":core:data"))
+    implementation(project(":feature:onboarding"))
+    implementation(project(":feature:history"))
+    implementation(project(":feature:game"))
 
     // Core Android + Compose UI
     implementation(libs.androidx.core.ktx)

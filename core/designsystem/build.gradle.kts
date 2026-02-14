@@ -7,6 +7,11 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
 }
 
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.developersbreach.hangman.core.designsystem.generated.resources"
+}
+
 kotlin {
     jvmToolchain(21)
 
@@ -30,10 +35,9 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
+            implementation(libs.compose.material3)
+            implementation(libs.jetbrains.compose.material.icons.extended)
+            implementation(libs.compose.components.resources)
         }
     }
 }
