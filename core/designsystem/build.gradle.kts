@@ -10,13 +10,17 @@ plugins {
 kotlin {
     jvmToolchain(21)
 
-    jvm("desktop") {
+    androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_21)
         }
     }
 
-    androidTarget()
+    jvm("desktop") {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
+    }
 
     @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
     wasmJs {
@@ -25,32 +29,17 @@ kotlin {
     }
 
     sourceSets {
-        val desktopMain by getting
-
         commonMain.dependencies {
-            implementation(project(":core:designsystem"))
-            implementation(project(":core:data"))
-            implementation(project(":feature:onboarding"))
-            implementation(project(":feature:game"))
-            implementation(project(":feature:history"))
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
         }
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-        }
-
-        val wasmJsMain by getting
-        wasmJsMain.dependencies {
-
-        }
     }
 }
 
 android {
-    namespace = "com.developersbreach.hangman.composeapp"
+    namespace = "com.developersbreach.hangman.core.designsystem"
     compileSdk = 36
 
     defaultConfig {
