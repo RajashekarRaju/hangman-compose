@@ -1,69 +1,50 @@
 package com.developersbreach.hangman.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.developersbreach.hangman.MainActivity
 import com.developersbreach.hangman.ui.game.GameScreen
 import com.developersbreach.hangman.ui.game.GameViewModel
 import com.developersbreach.hangman.ui.history.HistoryScreen
 import com.developersbreach.hangman.ui.history.HistoryViewModel
 import com.developersbreach.hangman.ui.onboarding.OnBoardingScreen
 import com.developersbreach.hangman.ui.onboarding.OnBoardingViewModel
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
-/**
- * All ViewModels instances are crated from this navigation file temporarily sort the issue from
- * values not being updated in [GameScreen].
- */
 @Composable
 fun AppNavigation(
-    startDestination: String = AppDestinations.ONBOARDING_SCREEN_ROUTE,
-    routes: AppDestinations = AppDestinations,
-    activity: MainActivity
+    startDestination: Destination = OnBoardingRoute,
+    closeApplication: () -> Unit,
 ) {
     val navController = rememberNavController()
-    val actions = remember(navController) {
-        AppActions(navController, routes)
-    }
 
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        composable(
-            AppDestinations.ONBOARDING_SCREEN_ROUTE
-        ) {
+        composable<OnBoardingRoute> {
             val viewModel = koinViewModel<OnBoardingViewModel>()
             OnBoardingScreen(
-                navigateToGameScreen = actions.navigateToGameScreen,
-                navigateToHistoryScreen = actions.navigateToHistoryScreen,
-                viewModel = viewModel
-            ) {
-                actions.finishActivity(
-                    finishActivity = activity.finish()
-                )
-            }
+                navigateToGameScreen = { navController.navigate(GameRoute) },
+                navigateToHistoryScreen = { navController.navigate(HistoryRoute) },
+                viewModel = viewModel,
+                finishActivity = closeApplication,
+            )
         }
 
-        composable(
-            AppDestinations.GAME_SCREEN_ROUTE
-        ) {
+        composable<GameRoute> {
             val viewModel = koinViewModel<GameViewModel>()
             GameScreen(
-                navigateUp = actions.navigateUp,
+                navigateUp = { navController.navigateUp() },
                 viewModel = viewModel
             )
         }
 
-        composable(
-            AppDestinations.HISTORY_SCREEN_ROUTE
-        ) {
+        composable<HistoryRoute> {
             val viewModel = koinViewModel<HistoryViewModel>()
             HistoryScreen(
-                navigateUp = actions.navigateUp,
+                navigateUp = { navController.navigateUp() },
                 viewModel = viewModel
             )
         }

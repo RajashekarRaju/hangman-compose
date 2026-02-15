@@ -84,6 +84,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":composeApp"))
     implementation(project(":game-core"))
     implementation(project(":core:data"))
     implementation(project(":feature:onboarding"))
@@ -95,7 +96,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.google.material)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.navigation.compose)
 
     // DI
     implementation(libs.koin.androidx.compose)

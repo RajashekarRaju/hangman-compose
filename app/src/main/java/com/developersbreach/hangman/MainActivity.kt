@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
             hideSystemBars()
 
             HangmanTheme {
-                AppNavigation(activity = this)
+                AppNavigation(closeApplication = { finish() })
             }
         }
     }
