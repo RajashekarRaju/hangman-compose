@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.developersbreach.game.core.Alphabet
+import com.developersbreach.hangman.ui.components.SparkPulse
 import com.developersbreach.hangman.ui.components.TitleMediumText
 import com.developersbreach.hangman.ui.theme.HangmanTheme
 
@@ -63,6 +64,13 @@ private fun ItemAlphabetText(
                 onClick = { onAlphabetClicked(alphabet.alphabetId) },
             ),
     ) {
+        if (alphabet.isAlphabetGuessed) {
+            SparkPulse(
+                modifier = Modifier.size(40.dp),
+                sparkColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.50f),
+            )
+        }
+
         TitleMediumText(
             text = alphabet.alphabet,
             color = HangmanTheme.colorScheme.primary,

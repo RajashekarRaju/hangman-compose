@@ -1,4 +1,4 @@
-package com.developersbreach.hangman.utils
+package com.developersbreach.hangman.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Easing
@@ -9,10 +9,10 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -24,109 +24,96 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.developersbreach.hangman.ui.theme.HangmanTheme
 
-// Manages the state for animations state.
 @Composable
-private fun applyTransitionState() = remember {
-    MutableTransitionState(false).apply {
-        // Start the animation immediately.
-        targetState = true
+private fun rememberVisibleTransitionState(): MutableTransitionState<Boolean> {
+    return remember {
+        MutableTransitionState(false).apply {
+            targetState = true
+        }
     }
 }
 
-// Animation to slide any element vertically from it's density.
 @Composable
-fun ApplyAnimatedVisibility(
+fun AnimatedEnter(
+    modifier: Modifier = Modifier,
+    offsetY: Dp = 32.dp,
+    durationMillis: Int = 450,
     content: @Composable () -> Unit,
-    densityValue: Dp
 ) {
     val density = LocalDensity.current
-
     AnimatedVisibility(
-        visibleState = applyTransitionState(),
-        enter = slideInVertically(
-            animationSpec = tween(durationMillis = 500)
-        ) {
-            // Slide in from top/bottom the direction.
-            with(density) { densityValue.roundToPx() }
-        },
-        content = { content() }
+        visibleState = rememberVisibleTransitionState(),
+        enter = fadeIn(animationSpec = tween(durationMillis = durationMillis)) +
+            slideInVertically(
+                animationSpec = tween(durationMillis = durationMillis),
+                initialOffsetY = { with(density) { offsetY.roundToPx() } },
+            ),
+        modifier = modifier,
+        content = { content() },
     )
 }
 
-/**
- * Infinitely repeatable animation which rotates any element on applied.
- */
 @Composable
-fun createInfiniteRepeatableRotateAnimation(
+fun rememberInfiniteRotation(
     initialValue: Float = 0f,
     targetValue: Float = 360f,
     repeatMode: RepeatMode = RepeatMode.Restart,
     durationMillis: Int = 5000,
     delayMillis: Int = 0,
-    easing: Easing = LinearEasing
+    easing: Easing = LinearEasing,
 ): Float {
-    val infiniteRotateAnim = rememberInfiniteTransition(label = "RotateInfiniteTransition")
-
-    val rotateAnimation by infiniteRotateAnim.animateFloat(
-        label = "RotateAnimation",
+    val transition = rememberInfiniteTransition(label = "InfiniteRotationTransition")
+    val rotation by transition.animateFloat(
+        label = "InfiniteRotation",
         initialValue = initialValue,
         targetValue = targetValue,
         animationSpec = infiniteRepeatable(
-            repeatMode = repeatMode,
             animation = tween(
                 durationMillis = durationMillis,
                 delayMillis = delayMillis,
-                easing = easing
-            )
-        )
+                easing = easing,
+            ),
+            repeatMode = repeatMode,
+        ),
     )
-
-    return rotateAnimation
+    return rotation
 }
 
-/**
- * Infinitely draws circles to create path of sparks on the canvas.
- * Needs rework, iterate once only.
- */
 @Composable
-fun SparkAnimateGuessedLetter(
-    sparkColor: Color = MaterialTheme.colors.primary.copy(0.50f)
+fun SparkPulse(
+    modifier: Modifier = Modifier,
+    sparkColor: Color = HangmanTheme.colorScheme.primary.copy(alpha = 0.50f),
 ) {
-    val infiniteTransition = rememberInfiniteTransition(label = "SparkInfiniteTransition")
-    val scale: Float by infiniteTransition.animateFloat(
-        label = "SparkAnimation",
+    val transition = rememberInfiniteTransition(label = "SparkPulseTransition")
+    val scale by transition.animateFloat(
+        label = "SparkPulseScale",
         initialValue = 0f,
         targetValue = 12f,
         animationSpec = infiniteRepeatable(
-            animation = tween(2000),
-            repeatMode = RepeatMode.Restart
-        )
+            animation = tween(durationMillis = 2000),
+            repeatMode = RepeatMode.Restart,
+        ),
     )
 
     Canvas(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
-            }
+            },
     ) {
-        val canvasWidth = size.width
-        val canvasHeight = size.height
         drawCircle(
             color = sparkColor,
-            center = Offset(
-                x = canvasWidth / 2,
-                y = canvasHeight / 2
-            ),
+            center = Offset(x = size.width / 2, y = size.height / 2),
             radius = size.minDimension / 4,
             style = Stroke(
                 width = 12f,
-                pathEffect = PathEffect.dashPathEffect(
-                    intervals = floatArrayOf(6f, 12f)
-                )
-            )
+                pathEffect = PathEffect.dashPathEffect(intervals = floatArrayOf(6f, 12f)),
+            ),
         )
     }
 }

@@ -20,12 +20,15 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +46,7 @@ import com.developersbreach.hangman.feature.history.generated.resources.history_
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.repository.model.HistoryRecord
+import com.developersbreach.hangman.ui.components.AnimatedEnter
 import com.developersbreach.hangman.ui.components.BodyLargeText
 import com.developersbreach.hangman.ui.components.BodyMediumText
 import com.developersbreach.hangman.ui.components.BodySmallText
@@ -58,32 +62,34 @@ fun HistoryScreenUI(
     uiState: HistoryUiState,
     onEvent: (HistoryEvent) -> Unit
 ) {
-    Surface(color = HangmanTheme.colorScheme.background) {
-        Scaffold(
-            topBar = {
-                HistoryAppBar(
-                    navigateUp = { onEvent(HistoryEvent.NavigateUpClicked) },
-                    showDeleteIconInAppBar = uiState.showDeleteIconInAppBar,
-                    deleteAllGameHistoryData = { onEvent(HistoryEvent.DeleteAllClicked) }
-                )
-            },
-            containerColor = HangmanTheme.colorScheme.background,
-            contentColor = HangmanTheme.colorScheme.onBackground
-        ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(historyBackgroundGradient())
-                    .padding(paddingValues)
-            ) {
+    Scaffold(
+        topBar = {
+            HistoryAppBar(
+                navigateUp = { onEvent(HistoryEvent.NavigateUpClicked) },
+                showDeleteIconInAppBar = uiState.showDeleteIconInAppBar,
+                deleteAllGameHistoryData = { onEvent(HistoryEvent.DeleteAllClicked) }
+            )
+        },
+        containerColor = HangmanTheme.colorScheme.background,
+        contentColor = HangmanTheme.colorScheme.onBackground
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(historyBackgroundGradient())
+                .padding(paddingValues)
+        ) {
+            AnimatedEnter {
                 HistoryScreenContent(
                     gameHistoryList = uiState.gameHistoryList,
                     onClickDeleteSelectedGameHistory = { history ->
                         onEvent(HistoryEvent.DeleteHistoryItemClicked(history))
                     }
                 )
+            }
 
-                if (uiState.gameHistoryList.isEmpty()) {
+            if (uiState.gameHistoryList.isEmpty()) {
+                AnimatedEnter(offsetY = 20.dp) {
                     ShowEmptyHistoryMessage(
                         modifier = Modifier
                             .align(Alignment.Center)
@@ -107,6 +113,7 @@ private fun historyBackgroundGradient(): Brush {
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun HistoryScreenContent(
     gameHistoryList: List<HistoryRecord>,
     onClickDeleteSelectedGameHistory: (history: HistoryRecord) -> Unit
@@ -120,11 +127,48 @@ private fun HistoryScreenContent(
             items = gameHistoryList.reversed(),
             key = { it.gameId }
         ) { history ->
-            ItemGameHistory(
-                history = history,
-                onDeleteClick = { onClickDeleteSelectedGameHistory(history) }
+            val dismissState = rememberSwipeToDismissBoxState(
+                confirmValueChange = { value ->
+                    if (value == SwipeToDismissBoxValue.EndToStart) {
+                        onClickDeleteSelectedGameHistory(history)
+                        true
+                    } else {
+                        false
+                    }
+                }
             )
+
+            SwipeToDismissBox(
+                state = dismissState,
+                enableDismissFromStartToEnd = false,
+                backgroundContent = { DeleteHistorySwipeBackground() }
+            ) {
+                AnimatedEnter(offsetY = 12.dp) {
+                    ItemGameHistory(
+                        history = history,
+                        onDeleteClick = { onClickDeleteSelectedGameHistory(history) }
+                    )
+                }
+            }
         }
+    }
+}
+
+@Composable
+private fun DeleteHistorySwipeBackground() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(HangmanTheme.shapes.medium)
+            .background(HangmanTheme.colorScheme.error.copy(alpha = 0.12f)),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.Delete,
+            contentDescription = null,
+            tint = HangmanTheme.colorScheme.error,
+            modifier = Modifier.padding(horizontal = 20.dp)
+        )
     }
 }
 

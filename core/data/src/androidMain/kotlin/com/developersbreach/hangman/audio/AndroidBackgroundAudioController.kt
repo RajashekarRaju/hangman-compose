@@ -2,7 +2,7 @@ package com.developersbreach.hangman.audio
 
 import android.app.Application
 import android.media.MediaPlayer
-import com.developersbreach.hangman.R
+import com.developersbreach.hangman.core.data.R
 
 class AndroidBackgroundAudioController(
     private val application: Application

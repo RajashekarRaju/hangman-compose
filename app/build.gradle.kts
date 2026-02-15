@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.kotlin.compose)
@@ -85,36 +84,18 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":composeApp"))
     implementation(project(":game-core"))
     implementation(project(":core:data"))
     implementation(project(":feature:onboarding"))
     implementation(project(":feature:history"))
     implementation(project(":feature:game"))
+    implementation(project(":core:designsystem"))
 
     // Core Android + Compose UI
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
     implementation(libs.google.material)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.material)
-    implementation(libs.androidx.compose.material.icons.extended)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.ui.tooling)
-    implementation(libs.androidx.compose.runtime.livedata)
-    implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.navigation.compose)
-
-    // App state + preferences
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.preference.ktx)
-
-    // Data layer
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.security.crypto)
-    ksp(libs.androidx.room.compiler)
 
     // DI
     implementation(libs.koin.androidx.compose)
@@ -124,16 +105,6 @@ dependencies {
     implementation(libs.firebase.analytics.ktx)
     implementation(libs.firebase.crashlytics.ktx)
 
-    // Unit tests
-    testImplementation(libs.androidx.compose.ui.test.junit4)
-    testImplementation(libs.mockk)
-    testImplementation(libs.androidx.test.ext.junit.ktx)
-    testImplementation(libs.robolectric)
-
     // Instrumentation tests
     androidTestImplementation(libs.androidx.test.ext.junit.ktx)
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-
-    // Debug-only tooling
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

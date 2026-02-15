@@ -1,7 +1,5 @@
 package com.developersbreach.hangman.repository.database.entity
 
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -9,10 +7,8 @@ import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 
 @Entity(tableName = "history_table")
-@Immutable
 data class HistoryEntity(
 
-    @Stable
     @PrimaryKey
     @ColumnInfo(name = "column_game_id")
     val gameId: String,

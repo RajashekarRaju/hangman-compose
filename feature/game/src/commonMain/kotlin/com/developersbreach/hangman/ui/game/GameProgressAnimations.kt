@@ -6,23 +6,19 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 
 @Composable
 fun animateCurrentLevelProgress(
     currentPlayerLevel: Int
 ): Float {
-    var currentLevelProgress by remember { mutableFloatStateOf(0f) }
-
-    when (currentPlayerLevel) {
-        0 -> currentLevelProgress = 0f
-        1 -> currentLevelProgress = 0.2f
-        2 -> currentLevelProgress = 0.4f
-        3 -> currentLevelProgress = 0.6f
-        4 -> currentLevelProgress = 0.8f
-        5 -> currentLevelProgress = 1f
+    val currentLevelProgress = when (currentPlayerLevel.coerceIn(0, 5)) {
+        0 -> 0f
+        1 -> 0.2f
+        2 -> 0.4f
+        3 -> 0.6f
+        4 -> 0.8f
+        5 -> 1f
+        else -> 0f
     }
 
     return animateToTargetState(
@@ -34,18 +30,17 @@ fun animateCurrentLevelProgress(
 fun animateAttemptsLeftProgress(
     attemptsLeft: Int
 ): Float {
-    var currentAttemptsLeftProgress by remember { mutableFloatStateOf(0f) }
-
-    when (attemptsLeft) {
-        8 -> currentAttemptsLeftProgress = 0f
-        7 -> currentAttemptsLeftProgress = 0.13f
-        6 -> currentAttemptsLeftProgress = 0.25f
-        5 -> currentAttemptsLeftProgress = 0.37f
-        4 -> currentAttemptsLeftProgress = 0.50f
-        3 -> currentAttemptsLeftProgress = 0.63f
-        2 -> currentAttemptsLeftProgress = 0.75f
-        1 -> currentAttemptsLeftProgress = 0.87f
-        0 -> currentAttemptsLeftProgress = 1f
+    val currentAttemptsLeftProgress = when (attemptsLeft.coerceIn(0, 8)) {
+        8 -> 0f
+        7 -> 0.13f
+        6 -> 0.25f
+        5 -> 0.37f
+        4 -> 0.50f
+        3 -> 0.63f
+        2 -> 0.75f
+        1 -> 0.87f
+        0 -> 1f
+        else -> 0f
     }
 
     return animateToTargetState(

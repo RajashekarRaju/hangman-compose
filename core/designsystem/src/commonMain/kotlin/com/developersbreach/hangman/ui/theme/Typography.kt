@@ -12,25 +12,26 @@ import org.jetbrains.compose.resources.Font
 
 @Composable
 fun getFontFamily(): FontFamily {
+    val resource = Res.font.creepster_regular
     return FontFamily(
         Font(
-            resource = Res.font.creepster_regular,
+            resource = resource,
             weight = FontWeight.Bold
         ),
         Font(
-            resource = Res.font.creepster_regular,
+            resource = resource,
             weight = FontWeight.SemiBold
         ),
         Font(
-            resource = Res.font.creepster_regular,
+            resource = resource,
             weight = FontWeight.Medium
         ),
         Font(
-            resource = Res.font.creepster_regular,
+            resource = resource,
             weight = FontWeight.Normal
         ),
         Font(
-            resource = Res.font.creepster_regular,
+            resource = resource,
             weight = FontWeight.Light
         )
     )
@@ -43,45 +44,97 @@ fun getTypography(): Typography {
     return Typography(
         displayLarge = TextStyle(
             fontFamily = primaryFontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 57.sp,
-            lineHeight = 64.sp,
+            fontWeight = FontWeight.Normal,
+            fontSize = 44.sp,
+            letterSpacing = 8.sp,
         ),
         displayMedium = TextStyle(
             fontFamily = primaryFontFamily,
-            fontWeight = FontWeight.Medium,
-            fontSize = 45.sp,
-            lineHeight = 52.sp,
+            fontWeight = FontWeight.Normal,
+            fontSize = 28.sp,
+            letterSpacing = 4.sp,
+        ),
+        displaySmall = TextStyle(
+            fontFamily = primaryFontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = 24.sp,
+            letterSpacing = 4.sp,
         ),
         headlineLarge = TextStyle(
             fontFamily = primaryFontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 32.sp,
-            lineHeight = 40.sp,
+            fontWeight = FontWeight.Normal,
+            fontSize = 28.sp,
+            letterSpacing = 4.sp,
         ),
         headlineMedium = TextStyle(
             fontFamily = primaryFontFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 28.sp,
-            lineHeight = 36.sp,
+            fontWeight = FontWeight.Normal,
+            fontSize = 24.sp,
+            letterSpacing = 4.sp,
         ),
         headlineSmall = TextStyle(
             fontFamily = primaryFontFamily,
-            fontWeight = FontWeight.Medium,
-            fontSize = 24.sp,
-            lineHeight = 32.sp,
+            fontWeight = FontWeight.Normal,
+            fontSize = 20.sp,
+            letterSpacing = 4.sp,
+        ),
+        titleLarge = TextStyle(
+            fontFamily = primaryFontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = 18.sp,
+            letterSpacing = 6.sp,
+        ),
+        titleMedium = TextStyle(
+            fontFamily = primaryFontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp,
+            lineHeight = 28.sp,
+            letterSpacing = 8.sp,
+        ),
+        titleSmall = TextStyle(
+            fontFamily = primaryFontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp,
+            letterSpacing = 4.sp,
         ),
         bodyLarge = TextStyle(
             fontFamily = primaryFontFamily,
             fontWeight = FontWeight.Normal,
-            fontSize = 16.sp,
-            lineHeight = 24.sp,
+            fontSize = 14.sp,
+            lineHeight = 28.sp,
+            letterSpacing = 6.sp,
         ),
         bodyMedium = TextStyle(
             fontFamily = primaryFontFamily,
             fontWeight = FontWeight.Normal,
+            fontSize = 12.sp,
+            lineHeight = 28.sp,
+            letterSpacing = 4.sp,
+        ),
+        bodySmall = TextStyle(
+            fontFamily = primaryFontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = 12.sp,
+            lineHeight = 28.sp,
+            letterSpacing = 4.sp,
+        ),
+        labelLarge = TextStyle(
+            fontFamily = primaryFontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp,
+            letterSpacing = 4.sp,
+        ),
+        labelMedium = TextStyle(
+            fontFamily = primaryFontFamily,
+            fontWeight = FontWeight.Normal,
             fontSize = 14.sp,
-            lineHeight = 20.sp,
+            letterSpacing = 4.sp,
+        ),
+        labelSmall = TextStyle(
+            fontFamily = primaryFontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = 12.sp,
+            letterSpacing = 4.sp,
         ),
     )
 }

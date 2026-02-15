@@ -16,12 +16,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.VolumeOff
-import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.style.TextAlign
@@ -53,10 +52,13 @@ import com.developersbreach.hangman.feature.onboarding.generated.resources.onboa
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_play_game_button
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_game_tagline
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_highest_score_header
+import com.developersbreach.hangman.feature.onboarding.generated.resources.demon
 import com.developersbreach.hangman.feature.onboarding.generated.resources.rope_with_title
+import com.developersbreach.hangman.feature.onboarding.generated.resources.skull
 import com.developersbreach.hangman.ui.components.BodySmallText
 import com.developersbreach.hangman.ui.components.LabelLargeText
 import com.developersbreach.hangman.ui.components.TitleMediumText
+import com.developersbreach.hangman.ui.components.rememberInfiniteRotation
 import com.developersbreach.hangman.ui.theme.HangmanTheme
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.resources.painterResource
@@ -199,14 +201,18 @@ private fun HighestGameScoreText(highScore: Int) {
 
 @Composable
 private fun PlayGameButton(onClick: () -> Unit) {
+    val rotation = rememberInfiniteRotation()
+
     OnBoardingActionButton(
         text = stringResource(Res.string.onboarding_button_play),
         icon = {
             Icon(
-                imageVector = Icons.Filled.PlayArrow,
+                painter = painterResource(Res.drawable.skull),
                 contentDescription = stringResource(Res.string.onboarding_cd_play_game_button),
                 tint = HangmanTheme.colorScheme.primary,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier
+                    .size(20.dp)
+                    .rotate(rotation)
             )
         },
         onClick = onClick
@@ -215,14 +221,18 @@ private fun PlayGameButton(onClick: () -> Unit) {
 
 @Composable
 private fun ExitGameButton(onClick: () -> Unit) {
+    val rotation = rememberInfiniteRotation(initialValue = 360f, targetValue = 0f)
+
     OnBoardingActionButton(
         text = stringResource(Res.string.onboarding_button_exit),
         icon = {
             Icon(
-                imageVector = Icons.Filled.Close,
+                painter = painterResource(Res.drawable.demon),
                 contentDescription = stringResource(Res.string.onboarding_cd_exit_game),
                 tint = HangmanTheme.colorScheme.primary,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier
+                    .size(28.dp)
+                    .rotate(rotation)
             )
         },
         onClick = onClick
@@ -315,7 +325,7 @@ private fun BackgroundVolumeIconButton(
     isBackgroundMusicPlaying: Boolean,
     onToggleBackgroundMusic: () -> Unit,
 ) {
-    val icon = if (isBackgroundMusicPlaying) Icons.AutoMirrored.Filled.VolumeUp else Icons.Filled.VolumeOff
+    val icon = if (isBackgroundMusicPlaying) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff
 
     IconButton(
         onClick = onToggleBackgroundMusic,

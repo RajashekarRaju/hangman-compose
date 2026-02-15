@@ -16,7 +16,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +26,7 @@ import com.developersbreach.game.core.alphabetsList
 import com.developersbreach.hangman.feature.game.generated.resources.Res
 import com.developersbreach.hangman.feature.game.generated.resources.game_cd_close_game
 import com.developersbreach.hangman.feature.game.generated.resources.game_cd_open_instructions
+import com.developersbreach.hangman.ui.components.AnimatedEnter
 import com.developersbreach.hangman.ui.theme.HangmanTheme
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import com.developersbreach.hangman.ui.theme.ThemePalettes
@@ -37,8 +37,8 @@ fun GameScreenUI(
     uiState: GameUiState,
     onEvent: (GameEvent) -> Unit,
 ) {
-    Surface(color = HangmanTheme.colorScheme.background) {
-        Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        AnimatedEnter {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize(),
@@ -70,7 +70,9 @@ fun GameScreenUI(
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
+        }
 
+        AnimatedEnter(offsetY = 16.dp) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,

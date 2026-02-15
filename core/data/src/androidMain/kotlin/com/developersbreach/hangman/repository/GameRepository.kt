@@ -1,6 +1,5 @@
 package com.developersbreach.hangman.repository
 
-import androidx.lifecycle.LiveData
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.game.core.Words
@@ -48,10 +47,6 @@ class GameRepository(
         }
     }
 
-    fun getCompleteGameHistory(): Flow<List<HistoryEntity>> {
-        return database.historyDao.getCompleteGameHistory()
-    }
-
     override fun observeHistory(): Flow<List<HistoryRecord>> {
         return database.historyDao.getCompleteGameHistory().map { historyList ->
             historyList.map { history ->
@@ -60,27 +55,9 @@ class GameRepository(
         }
     }
 
-    fun getHighestScore(): LiveData<Int?> {
-        return database.historyDao.getHighestScoreFromHistory()
-    }
-
-    suspend fun deleteSelectedSingleGameHistory(
-        historyEntity: HistoryEntity,
-    ) {
-        withContext(Dispatchers.IO) {
-            database.historyDao.deleteSingleGameHistory(historyEntity)
-        }
-    }
-
     override suspend fun deleteHistoryItem(history: HistoryRecord) {
         withContext(Dispatchers.IO) {
             database.historyDao.deleteSingleGameHistory(history.toEntity())
-        }
-    }
-
-    suspend fun deleteCompleteGamesHistory() {
-        withContext(Dispatchers.IO) {
-            database.historyDao.deleteAllGamesHistory()
         }
     }
 

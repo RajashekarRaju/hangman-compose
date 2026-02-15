@@ -28,6 +28,7 @@ kotlin {
         val desktopMain by getting
 
         commonMain.dependencies {
+            implementation(project(":game-core"))
             implementation(project(":core:designsystem"))
             implementation(project(":core:data"))
             implementation(project(":feature:onboarding"))
@@ -40,6 +41,7 @@ kotlin {
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
         }
 
         val wasmJsMain by getting

@@ -682,7 +682,7 @@ object ThemePalettes {
         lavenderPalette,
     )
 
-    val default: ThemePalette = graphitePalette
+    val default: ThemePalette = originalPalette
 
     private val paletteById = all.associateBy { it.id }
 

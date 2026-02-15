@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -31,6 +32,11 @@ kotlin {
             implementation(project(":game-core"))
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
         }
+        androidMain.dependencies {
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.androidx.room.ktx)
+            implementation(libs.androidx.security.crypto)
+        }
     }
 }
 
@@ -46,4 +52,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+}
+
+dependencies {
+    add("kspAndroid", libs.androidx.room.compiler)
 }
