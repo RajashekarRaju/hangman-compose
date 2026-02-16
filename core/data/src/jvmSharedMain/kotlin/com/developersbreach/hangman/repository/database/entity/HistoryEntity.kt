@@ -32,5 +32,5 @@ data class HistoryEntity(
     val gamePlayedTime: String,
 
     @ColumnInfo(name = "column_game_date")
-    val gamePlayedDate: String
+    val gamePlayedDate: String,
 )

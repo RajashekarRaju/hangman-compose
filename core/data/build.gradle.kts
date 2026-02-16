@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.androidx.room)
 }
 
 kotlin {
@@ -28,14 +29,27 @@ kotlin {
     }
 
     sourceSets {
-        commonMain.dependencies {
-            implementation(project(":game-core"))
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+        val commonMain by getting {
+            dependencies {
+                implementation(project(":game-core"))
+                implementation(libs.kotlinx.coroutines.core)
+            }
         }
-        androidMain.dependencies {
-            implementation(libs.androidx.room.runtime)
-            implementation(libs.androidx.room.ktx)
-            implementation(libs.androidx.security.crypto)
+
+        val jvmSharedMain by creating {
+            dependsOn(commonMain)
+            dependencies {
+                api(libs.androidx.room.runtime)
+                implementation(libs.androidx.sqlite.bundled)
+            }
+        }
+
+        val androidMain by getting {
+            dependsOn(jvmSharedMain)
+        }
+
+        val desktopMain by getting {
+            dependsOn(jvmSharedMain)
         }
     }
 }
@@ -56,4 +70,9 @@ android {
 
 dependencies {
     add("kspAndroid", libs.androidx.room.compiler)
+    add("kspDesktop", libs.androidx.room.compiler)
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }

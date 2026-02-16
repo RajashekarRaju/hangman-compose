@@ -4,18 +4,21 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 import com.developersbreach.hangman.navigation.AppNavigation
 import com.developersbreach.hangman.ui.theme.HangmanTheme
+import org.koin.core.context.startKoin
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-    ComposeViewport(
-        content = {
-            HangmanTheme {
-                AppNavigation(
-                    closeApplication = {
-                        // NO need to do anything here.
-                    }
-                )
-            }
+    startKoin {
+        modules(initKoinComponents())
+    }
+
+    ComposeViewport(viewportContainerId = "compose-root") {
+        HangmanTheme {
+            AppNavigation(
+                closeApplication = {
+                    // NO need to do anything here.
+                }
+            )
         }
-    )
+    }
 }

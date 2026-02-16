@@ -1,9 +1,5 @@
 package com.developersbreach.hangman.repository
 
-import com.developersbreach.game.core.GameCategory
-import com.developersbreach.game.core.GameDifficulty
-import com.developersbreach.game.core.Words
-import com.developersbreach.game.core.getFilteredWordsByGameDifficulty
 import com.developersbreach.hangman.repository.database.GameDatabase
 import com.developersbreach.hangman.repository.database.entity.HistoryEntity
 import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
@@ -15,19 +11,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-/**
- * Instance is created by Koin.
- */
 class GameRepository(
     private val database: GameDatabase,
 ) : HistoryRepository, GameSessionRepository {
-
-    override fun getRandomGuessingWord(
-        gameDifficulty: GameDifficulty,
-        gameCategory: GameCategory,
-    ): List<Words> {
-        return getFilteredWordsByGameDifficulty(gameDifficulty, gameCategory)
-    }
 
     override suspend fun saveCompletedGame(request: GameHistoryWriteRequest) {
         val (date, time) = getDateAndTime()

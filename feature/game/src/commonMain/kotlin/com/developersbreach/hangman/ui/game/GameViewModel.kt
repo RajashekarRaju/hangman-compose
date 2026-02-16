@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.developersbreach.game.core.GameSessionEngine
 import com.developersbreach.game.core.GameSessionState
+import com.developersbreach.game.core.getFilteredWordsByGameDifficulty
 import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer
 import com.developersbreach.hangman.repository.GameSessionRepository
@@ -67,7 +68,7 @@ class GameViewModel(
             val gameDifficulty = settingsRepository.getGameDifficulty()
             val gameCategory = settingsRepository.getGameCategory()
             val guessingWordsForCurrentGame =
-                sessionRepository.getRandomGuessingWord(gameDifficulty, gameCategory)
+                getFilteredWordsByGameDifficulty(gameDifficulty, gameCategory)
 
             gameSessionEngine = GameSessionEngine(
                 guessingWordsForCurrentGame = guessingWordsForCurrentGame,

@@ -10,7 +10,7 @@ plugins {
 
 kotlin {
     jvmToolchain(21)
-
+    compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
     jvm("desktop") {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_21)
@@ -35,17 +35,18 @@ kotlin {
             implementation(project(":feature:onboarding"))
             implementation(project(":feature:game"))
             implementation(project(":feature:history"))
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(libs.androidx.navigation.compose)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.components.resources)
+            implementation(libs.jetbrains.navigation)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.koin.compose.viewmodel)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
+            implementation(libs.kotlinx.coroutines.swing)
         }
 
         val wasmJsMain by getting

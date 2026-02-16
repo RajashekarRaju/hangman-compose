@@ -12,14 +12,14 @@ import kotlinx.coroutines.flow.Flow
 interface HistoryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun saveNewGameToHistory(historyEntity: HistoryEntity)
+    suspend fun saveNewGameToHistory(historyEntity: HistoryEntity)
 
     @Query("SELECT * FROM history_table")
     fun getCompleteGameHistory(): Flow<List<HistoryEntity>>
 
     @Delete
-    fun deleteSingleGameHistory(historyEntity: HistoryEntity)
+    suspend fun deleteSingleGameHistory(historyEntity: HistoryEntity)
 
     @Query("DELETE FROM history_table")
-    fun deleteAllGamesHistory()
+    suspend fun deleteAllGamesHistory()
 }

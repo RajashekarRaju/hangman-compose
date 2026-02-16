@@ -86,12 +86,14 @@ class OnBoardingViewModel(
     }
 
     private fun hydrateFromPreferences() {
-        _uiState.update { current ->
-            current.copy(
-                gameDifficulty = settingsRepository.getGameDifficulty(),
-                gameCategory = settingsRepository.getGameCategory(),
-                isBackgroundMusicPlaying = audioController.isPlaying()
-            )
+        viewModelScope.launch {
+            _uiState.update { current ->
+                current.copy(
+                    gameDifficulty = settingsRepository.getGameDifficulty(),
+                    gameCategory = settingsRepository.getGameCategory(),
+                    isBackgroundMusicPlaying = audioController.isPlaying()
+                )
+            }
         }
     }
 
@@ -117,9 +119,11 @@ class OnBoardingViewModel(
             else -> GameDifficulty.EASY
         }
 
-        settingsRepository.setGameDifficulty(gameDifficulty)
         _uiState.update { current ->
             current.copy(gameDifficulty = gameDifficulty)
+        }
+        viewModelScope.launch {
+            settingsRepository.setGameDifficulty(gameDifficulty)
         }
     }
 
@@ -131,9 +135,11 @@ class OnBoardingViewModel(
             else -> GameCategory.COUNTRIES
         }
 
-        settingsRepository.setGameCategory(gameCategory)
         _uiState.update { current ->
             current.copy(gameCategory = gameCategory)
+        }
+        viewModelScope.launch {
+            settingsRepository.setGameCategory(gameCategory)
         }
     }
 

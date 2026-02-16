@@ -5,11 +5,11 @@ import com.developersbreach.game.core.GameDifficulty
 
 interface GameSettingsRepository {
 
-    fun getGameDifficulty(): GameDifficulty
+    suspend fun getGameDifficulty(): GameDifficulty
 
-    fun getGameCategory(): GameCategory
+    suspend fun getGameCategory(): GameCategory
 
-    fun setGameDifficulty(gameDifficulty: GameDifficulty)
+    suspend fun setGameDifficulty(gameDifficulty: GameDifficulty)
 
-    fun setGameCategory(gameCategory: GameCategory)
+    suspend fun setGameCategory(gameCategory: GameCategory)
 }
