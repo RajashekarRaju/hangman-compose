@@ -1,0 +1,33 @@
+<resources>
+    <string name="onboarding_button_play">Play</string>
+    <string name="onboarding_button_exit">Exit</string>
+    <string name="onboarding_button_history">History</string>
+    <string name="onboarding_button_difficulty">Difficulty</string>
+    <string name="onboarding_button_category">Category</string>
+
+    <string name="onboarding_difficulty_dialog_title">Difficulty</string>
+    <string name="onboarding_category_dialog_title">Category</string>
+
+    <string name="onboarding_game_tagline">Be Aware. Letters Can Demise You</string>
+    <string name="onboarding_highest_score_header">Highest Score - %1$d</string>
+
+    <string name="onboarding_dialog_instructions_title">Instructions</string>
+    <string name="onboarding_dialog_instructions_subtitle">Guess the name of the %1$s.</string>
+    <string name="onboarding_label_difficulty">Difficulty: %1$s</string>
+    <string name="onboarding_label_category">Category: %1$s</string>
+
+    <string name="onboarding_difficulty_easy">Easy</string>
+    <string name="onboarding_difficulty_medium">Medium</string>
+    <string name="onboarding_difficulty_hard">Hard</string>
+
+    <string name="onboarding_category_countries">Countries</string>
+    <string name="onboarding_category_languages">Languages</string>
+    <string name="onboarding_category_companies">Companies</string>
+
+    <string name="onboarding_cd_game_banner">Hangman game banner</string>
+    <string name="onboarding_cd_play_game_button">Play game</string>
+    <string name="onboarding_cd_exit_game">Exit game</string>
+    <string name="onboarding_cd_game_sound_play_pause">Play or pause background game sound.</string>
+    <string name="onboarding_cd_image_screen_bg">Background image of the screen.</string>
+    <string name="onboarding_cd_open_instructions_dialog">Open game instructions dialog.</string>
+</resources>

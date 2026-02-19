@@ -1,0 +1,9 @@
+<resources>
+    <string name="history_app_bar_title">Game History</string>
+    <string name="history_cd_navigate_up">Navigate up</string>
+    <string name="history_cd_delete_all">Delete history</string>
+    <string name="history_cd_delete_item">Delete history item</string>
+    <string name="history_summary_won">WON</string>
+    <string name="history_summary_lost">LOST</string>
+    <string name="history_empty_state">No games played yet</string>
+</resources>
