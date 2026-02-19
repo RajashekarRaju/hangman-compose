@@ -4,6 +4,7 @@ on:
     branches: [ '*' ]
   push:
     branches: [ master, development ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -26,9 +27,10 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run local tests
-        run: ./gradlew testDebug --stacktrace
+        run: ./gradlew :app:testDebugUnitTest --stacktrace
 
       - name: Create AVD and Run androidTest
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         id: testing
         uses: reactivecircus/android-emulator-runner@v2
         continue-on-error: true
@@ -42,23 +44,17 @@ jobs:
           disable-animations: true
           script: |
             echo "Generated AVD snapshot for caching."
-            ./gradlew connectedCheck
+            ./gradlew :app:connectedDebugAndroidTest
 
       - name: Upload Failing Test Report Log
-        if: steps.testing.outcome != 'success'
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && steps.testing.outcome != 'success'
         uses: actions/upload-artifact@v4
         with:
           name: logs
           path: app/build/outputs/androidTest-results/connected/flavors/*/failed/*.png
 
-      - name: Upload build outputs (APKs)
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-outputs
-          path: ./app/build/outputs/**/*.apk
-
       - name: Upload build reports
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: build-reports
