@@ -1,6 +1,8 @@
 package com.developersbreach.hangman.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -18,16 +20,26 @@ fun AppNavigation(
     closeApplication: () -> Unit,
 ) {
     val navController = rememberNavController()
+    val resolvedStartDestination = remember(startDestination) {
+        initialDestinationFromUrl(startDestination)
+    }
+
+    DisposableEffect(navController) {
+        val clearListener = setBrowserNavigationListener { destination ->
+            navController.navigateToDestination(destination)
+        }
+        onDispose { clearListener() }
+    }
 
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = resolvedStartDestination
     ) {
         composable<OnBoardingRoute> {
             val viewModel = koinViewModel<OnBoardingViewModel>()
             OnBoardingScreen(
-                navigateToGameScreen = { navController.navigate(GameRoute) },
-                navigateToHistoryScreen = { navController.navigate(HistoryRoute) },
+                navigateToGameScreen = { navController.navigateToDestination(GameRoute) },
+                navigateToHistoryScreen = { navController.navigateToDestination(HistoryRoute) },
                 viewModel = viewModel,
                 finishActivity = closeApplication,
             )
@@ -36,7 +48,11 @@ fun AppNavigation(
         composable<GameRoute> {
             val viewModel = koinViewModel<GameViewModel>()
             GameScreen(
-                navigateUp = { navController.navigateUp() },
+                navigateUp = {
+                    if (navController.navigateUp()) {
+                        updateUrlForDestination(RouteSpec.root.destination)
+                    }
+                },
                 viewModel = viewModel
             )
         }
@@ -44,7 +60,11 @@ fun AppNavigation(
         composable<HistoryRoute> {
             val viewModel = koinViewModel<HistoryViewModel>()
             HistoryScreen(
-                navigateUp = { navController.navigateUp() },
+                navigateUp = {
+                    if (navController.navigateUp()) {
+                        updateUrlForDestination(RouteSpec.root.destination)
+                    }
+                },
                 viewModel = viewModel
             )
         }

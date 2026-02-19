@@ -17,6 +17,7 @@ rootProject.name = "Hangman"
 include(":app")
 include(":game-core")
 include(":composeApp")
+include(":navigation")
 include(":core:designsystem")
 include(":core:data")
 include(":feature:onboarding")

@@ -1,5 +1,11 @@
 # :video_game: Hangman - Built With Compose :paintbrush:
 
+## :globe_with_meridians: Play on Web
+
+[![Deploy Web (Production)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/pages-production.yml/badge.svg)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/pages-production.yml)
+
+Play now: [https://rajashekarraju.github.io/hangman-compose/](https://rajashekarraju.github.io/hangman-compose/)
+
 ### Thanks to [Cicero Hellmann](https://github.com/cicerohellmann) For giving this cool idea to build Hangman game with Compose for Android.
 
 ![Game Banner](/assets/banner_hangman.png)

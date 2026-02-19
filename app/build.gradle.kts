@@ -105,6 +105,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics.ktx)
     implementation(libs.firebase.crashlytics.ktx)
+    implementation(project(":navigation"))
 
     // Instrumentation tests
     androidTestImplementation(libs.androidx.test.ext.junit.ktx)
