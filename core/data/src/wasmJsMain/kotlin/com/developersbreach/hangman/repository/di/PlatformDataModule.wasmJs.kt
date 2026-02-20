@@ -1,4 +1,4 @@
-package com.developersbreach.hangman.composeapp
+package com.developersbreach.hangman.repository.di
 
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
@@ -8,18 +8,23 @@ import com.developersbreach.hangman.audio.GameSoundEffectPlayer
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
+import com.developersbreach.hangman.repository.metadata.generateHistoryMetadata
 import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
 import com.developersbreach.hangman.repository.model.HistoryRecord
+import com.developersbreach.hangman.repository.storage.StoredHistoryRecord
+import com.developersbreach.hangman.repository.storage.StoredSettings
+import com.developersbreach.hangman.repository.storage.toDomain
+import com.developersbreach.hangman.repository.storage.toGameCategory
+import com.developersbreach.hangman.repository.storage.toGameDifficulty
+import com.developersbreach.hangman.repository.storage.toStored
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlin.js.JsName
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-actual fun platformRepositoryModule(): Module = module {
+actual fun platformDataModule(): Module = module {
     single { WasmLocalStorageGameRepository() }
     single<HistoryRepository> { get<WasmLocalStorageGameRepository>() }
     single<GameSessionRepository> { get<WasmLocalStorageGameRepository>() }
@@ -45,7 +50,7 @@ private class WasmLocalStorageGameRepository : HistoryRepository, GameSessionRep
     }
 
     private fun persist(history: List<HistoryRecord>) {
-        val payload = json.encodeToString(history.map { StoredHistoryRecord.fromDomain(it) })
+        val payload = json.encodeToString(history.map { it.toStored() })
         window.localStorage.setItem(HISTORY_KEY, payload)
     }
 
@@ -63,15 +68,16 @@ private class WasmLocalStorageGameRepository : HistoryRepository, GameSessionRep
     }
 
     override suspend fun saveCompletedGame(request: GameHistoryWriteRequest) {
+        val metadata = generateHistoryMetadata(historyState.value.size)
         val record = HistoryRecord(
-            gameId = "web-${jsTimestamp()}-${historyState.value.size + 1}",
+            gameId = metadata.gameId,
             gameScore = request.gameScore,
             gameLevel = request.gameLevel,
             gameDifficulty = request.gameDifficulty,
             gameCategory = request.gameCategory,
             gameSummary = request.gameSummary,
-            gamePlayedTime = timeNow(),
-            gamePlayedDate = dateNow(),
+            gamePlayedTime = metadata.gamePlayedTime,
+            gamePlayedDate = metadata.gamePlayedDate,
         )
         val updated = listOf(record) + historyState.value
         historyState.value = updated
@@ -91,17 +97,9 @@ private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
         window.localStorage.setItem(SETTINGS_KEY, json.encodeToString(settings))
     }
 
-    private fun toDifficulty(value: String): GameDifficulty {
-        return runCatching { GameDifficulty.valueOf(value) }.getOrDefault(GameDifficulty.EASY)
-    }
+    override suspend fun getGameDifficulty(): GameDifficulty = settings.gameDifficulty.toGameDifficulty()
 
-    private fun toCategory(value: String): GameCategory {
-        return runCatching { GameCategory.valueOf(value) }.getOrDefault(GameCategory.COUNTRIES)
-    }
-
-    override suspend fun getGameDifficulty(): GameDifficulty = toDifficulty(settings.gameDifficulty)
-
-    override suspend fun getGameCategory(): GameCategory = toCategory(settings.gameCategory)
+    override suspend fun getGameCategory(): GameCategory = settings.gameCategory.toGameCategory()
 
     override suspend fun setGameDifficulty(gameDifficulty: GameDifficulty) {
         settings = settings.copy(gameDifficulty = gameDifficulty.name)
@@ -131,71 +129,3 @@ private class WasmNoOpBackgroundAudioController : BackgroundAudioController {
 private class WasmNoOpGameSoundEffectPlayer : GameSoundEffectPlayer {
     override fun play(soundEffect: GameSoundEffect) = Unit
 }
-
-@Serializable
-private data class StoredHistoryRecord(
-    val gameId: String,
-    val gameScore: Int,
-    val gameLevel: Int,
-    val gameDifficulty: String,
-    val gameCategory: String,
-    val gameSummary: Boolean,
-    val gamePlayedTime: String,
-    val gamePlayedDate: String,
-) {
-    fun toDomain(): HistoryRecord {
-        val difficulty = runCatching { GameDifficulty.valueOf(gameDifficulty) }
-            .getOrDefault(GameDifficulty.EASY)
-        val category = runCatching { GameCategory.valueOf(gameCategory) }
-            .getOrDefault(GameCategory.COUNTRIES)
-        return HistoryRecord(
-            gameId = gameId,
-            gameScore = gameScore,
-            gameLevel = gameLevel,
-            gameDifficulty = difficulty,
-            gameCategory = category,
-            gameSummary = gameSummary,
-            gamePlayedTime = gamePlayedTime,
-            gamePlayedDate = gamePlayedDate,
-        )
-    }
-
-    companion object {
-        fun fromDomain(value: HistoryRecord): StoredHistoryRecord {
-            return StoredHistoryRecord(
-                gameId = value.gameId,
-                gameScore = value.gameScore,
-                gameLevel = value.gameLevel,
-                gameDifficulty = value.gameDifficulty.name,
-                gameCategory = value.gameCategory.name,
-                gameSummary = value.gameSummary,
-                gamePlayedTime = value.gamePlayedTime,
-                gamePlayedDate = value.gamePlayedDate,
-            )
-        }
-    }
-}
-
-@Serializable
-private data class StoredSettings(
-    val gameDifficulty: String = GameDifficulty.EASY.name,
-    val gameCategory: String = GameCategory.COUNTRIES.name,
-)
-
-@JsName("Date")
-private external class JsDate {
-    constructor()
-
-    fun toLocaleDateString(): String
-    fun toLocaleTimeString(): String
-
-    companion object {
-        fun now(): Double
-    }
-}
-
-private fun jsTimestamp(): String = JsDate.now().toLong().toString()
-
-private fun dateNow(): String = JsDate().toLocaleDateString()
-
-private fun timeNow(): String = JsDate().toLocaleTimeString()

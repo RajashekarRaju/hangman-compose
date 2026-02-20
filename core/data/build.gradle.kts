@@ -2,6 +2,7 @@ plugins {
     id("hangman.kmp.library")
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidx.room)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -10,6 +11,8 @@ kotlin {
             dependencies {
                 implementation(project(":game-core"))
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.koin.core)
             }
         }
 
@@ -27,6 +30,24 @@ kotlin {
 
         val desktopMain by getting {
             dependsOn(jvmSharedMain)
+        }
+
+        val iosMain by creating {
+            dependsOn(commonMain)
+        }
+
+        val iosArm64Main by getting {
+            dependsOn(iosMain)
+        }
+
+        val iosSimulatorArm64Main by getting {
+            dependsOn(iosMain)
+        }
+
+        val wasmJsMain by getting {
+            dependencies {
+                implementation(libs.kotlinx.browser)
+            }
         }
     }
 }

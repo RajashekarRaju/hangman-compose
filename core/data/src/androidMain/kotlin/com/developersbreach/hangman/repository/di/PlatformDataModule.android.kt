@@ -1,4 +1,4 @@
-package com.developersbreach.hangman.composeapp
+package com.developersbreach.hangman.repository.di
 
 import com.developersbreach.hangman.audio.AndroidBackgroundAudioController
 import com.developersbreach.hangman.audio.AndroidGameSoundEffectPlayer
@@ -14,7 +14,7 @@ import com.developersbreach.hangman.repository.database.getDatabaseInstance
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-actual fun platformRepositoryModule(): Module = module {
+actual fun platformDataModule(): Module = module {
     single { getDatabaseInstance(get()) }
     single { get<GameDatabase>().gameSettingsDao }
 
