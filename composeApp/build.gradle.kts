@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
 plugins {
     id("hangman.kmp.compose-library")
     alias(libs.plugins.kotlin.serialization)
@@ -5,6 +7,17 @@ plugins {
 
 kotlin {
     compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
+
+    targets
+        .withType<KotlinNativeTarget>()
+        .matching { it.konanTarget.family.isAppleFamily }
+        .configureEach {
+            binaries.framework {
+                baseName = "ComposeApp"
+                isStatic = true
+                binaryOption("bundleId", "com.developersbreach.hangman.composeapp")
+            }
+        }
 
     sourceSets {
         val desktopMain by getting
