@@ -17,10 +17,13 @@ import com.developersbreach.hangman.repository.storage.toDomain
 import com.developersbreach.hangman.repository.storage.toGameCategory
 import com.developersbreach.hangman.repository.storage.toGameDifficulty
 import com.developersbreach.hangman.repository.storage.toStored
+import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.Json
+import org.w3c.dom.HTMLAudioElement
+import org.w3c.dom.events.Event
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -29,8 +32,8 @@ actual fun platformDataModule(): Module = module {
     single<HistoryRepository> { get<WasmLocalStorageGameRepository>() }
     single<GameSessionRepository> { get<WasmLocalStorageGameRepository>() }
     single<GameSettingsRepository> { WasmLocalStorageGameSettingsRepository() }
-    single<BackgroundAudioController> { WasmNoOpBackgroundAudioController() }
-    single<GameSoundEffectPlayer> { WasmNoOpGameSoundEffectPlayer() }
+    single<BackgroundAudioController> { WasmBackgroundAudioController() }
+    single<GameSoundEffectPlayer> { WasmGameSoundEffectPlayer() }
 }
 
 private const val HISTORY_KEY = "hangman.history.v1"
@@ -112,20 +115,72 @@ private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
     }
 }
 
-private class WasmNoOpBackgroundAudioController : BackgroundAudioController {
-    private var playing = false
+private class WasmBackgroundAudioController : BackgroundAudioController {
+    private val player = createAudioPlayer("game_background_music.mp3", loop = true).apply {
+        volume = 0.35
+    }
+    private var shouldBePlaying = false
+    private var userInteracted = false
+    private var gestureListenerRegistered = false
+    private val gestureListener: (Event) -> Unit = {
+        userInteracted = true
+        unregisterGestureListeners()
+        if (shouldBePlaying) {
+            player.play()
+        }
+    }
 
     override fun playLoop() {
-        playing = true
+        shouldBePlaying = true
+        when {
+            userInteracted -> player.play()
+            else -> registerGestureListeners()
+        }
     }
 
     override fun stop() {
-        playing = false
+        shouldBePlaying = false
+        player.pause()
+        player.currentTime = 0.0
     }
 
-    override fun isPlaying(): Boolean = playing
+    override fun isPlaying(): Boolean = !player.paused
+
+    private fun registerGestureListeners() {
+        if (gestureListenerRegistered) return
+        gestureListenerRegistered = true
+        document.addEventListener("click", gestureListener)
+        document.addEventListener("touchstart", gestureListener)
+        document.addEventListener("keydown", gestureListener)
+    }
+
+    private fun unregisterGestureListeners() {
+        if (!gestureListenerRegistered) return
+        gestureListenerRegistered = false
+        document.removeEventListener("click", gestureListener)
+        document.removeEventListener("touchstart", gestureListener)
+        document.removeEventListener("keydown", gestureListener)
+    }
 }
 
-private class WasmNoOpGameSoundEffectPlayer : GameSoundEffectPlayer {
-    override fun play(soundEffect: GameSoundEffect) = Unit
+private class WasmGameSoundEffectPlayer : GameSoundEffectPlayer {
+    private val players: Map<GameSoundEffect, HTMLAudioElement> =
+        GameSoundEffect.entries.associateWith { soundEffect ->
+            createAudioPlayer("${soundEffect.resourceKey}.mp3")
+        }
+
+    override fun play(soundEffect: GameSoundEffect) {
+        val player = players[soundEffect] ?: return
+        player.pause()
+        player.currentTime = 0.0
+        player.play()
+    }
+}
+
+private fun createAudioPlayer(src: String, loop: Boolean = false): HTMLAudioElement {
+    return (document.createElement("audio") as HTMLAudioElement).apply {
+        this.src = src
+        this.loop = loop
+        this.preload = "auto"
+    }
 }

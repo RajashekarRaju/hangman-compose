@@ -44,6 +44,9 @@ kotlin {
         }
 
         val wasmJsMain by getting
+        wasmJsMain.resources.srcDir(project(":core:data").projectDir.resolve(
+            "src/androidMain/res/raw")
+        )
         wasmJsMain.dependencies {
 
         }

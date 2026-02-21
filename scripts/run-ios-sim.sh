@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DEVICE_NAME="${1:-${DEVICE_NAME:-iPhone 17 Pro}}"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+
+DEVICE_NAME="iPhone 17 Pro"
 CONFIGURATION="${CONFIGURATION:-Debug}"
 DERIVED_DATA_PATH="${DERIVED_DATA_PATH:-/tmp/hangman-ios-derived}"
-PROJECT_PATH="${PROJECT_PATH:-iosApp/iosApp.xcodeproj}"
+PROJECT_PATH="${PROJECT_PATH:-$ROOT_DIR/iosApp/iosApp.xcodeproj}"
 SCHEME="${SCHEME:-iosApp}"
 BUNDLE_ID="${BUNDLE_ID:-com.developersbreach.hangman.iosApp}"
 
@@ -23,9 +26,16 @@ if [ ! -d "$PROJECT_PATH" ]; then
   exit 1
 fi
 
-UDID="$({ xcrun simctl list devices available | grep -F "$DEVICE_NAME (" || true; } | head -n 1 | sed -E 's/.*\(([A-F0-9-]+)\) \((Booted|Shutdown)\).*/\1/')"
+cd "$ROOT_DIR"
 
-if [ -z "$UDID" ]; then
+BOOTED_UDID="$({ xcrun simctl list devices available | grep ' (Booted)' || true; } | head -n 1 | sed -E 's/.*\(([A-F0-9-]+)\) \(Booted\).*/\1/')"
+TARGET_UDID="$({ xcrun simctl list devices available | grep -F "$DEVICE_NAME (" || true; } | head -n 1 | sed -E 's/.*\(([A-F0-9-]+)\) \((Booted|Shutdown)\).*/\1/')"
+
+if [ -n "$BOOTED_UDID" ]; then
+  UDID="$BOOTED_UDID"
+elif [ -n "$TARGET_UDID" ]; then
+  UDID="$TARGET_UDID"
+else
   echo "No available simulator found for device name: $DEVICE_NAME"
   echo "Available simulators:"
   xcrun simctl list devices available
@@ -33,8 +43,8 @@ if [ -z "$UDID" ]; then
 fi
 
 echo "Using simulator: $DEVICE_NAME ($UDID)"
-open -a Simulator
 xcrun simctl boot "$UDID" >/dev/null 2>&1 || true
+open -a Simulator
 xcrun simctl bootstatus "$UDID" -b
 
 echo "Building iOS app..."

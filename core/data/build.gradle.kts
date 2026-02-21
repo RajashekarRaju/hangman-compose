@@ -30,6 +30,12 @@ kotlin {
 
         val desktopMain by getting {
             dependsOn(jvmSharedMain)
+            resources.srcDir("src/androidMain/res/raw")
+            dependencies {
+                implementation(libs.kmp.soundlibs.mp3spi)
+                implementation(libs.kmp.soundlibs.tritonus.share)
+                implementation(libs.kmp.soundlibs.jlayer)
+            }
         }
 
         val iosMain by creating {

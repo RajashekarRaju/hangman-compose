@@ -2,7 +2,6 @@ package com.developersbreach.hangman.audio
 
 import android.app.Application
 import android.media.MediaPlayer
-import com.developersbreach.hangman.core.data.R
 
 class AndroidGameSoundEffectPlayer(
     private val application: Application,
@@ -11,12 +10,12 @@ class AndroidGameSoundEffectPlayer(
     private var mediaPlayer: MediaPlayer? = null
 
     override fun play(soundEffect: GameSoundEffect) {
-        val audioRes = when (soundEffect) {
-            GameSoundEffect.LEVEL_WON -> R.raw.level_won
-            GameSoundEffect.GAME_WON -> R.raw.game_won
-            GameSoundEffect.GAME_LOST -> R.raw.game_lost
-            GameSoundEffect.ALPHABET_TAP -> R.raw.alphabet_tap
-        }
+        val audioRes = application.resources.getIdentifier(
+            /* name = */ soundEffect.resourceKey,
+            /* defType = */ "raw",
+            /* defPackage = */ application.packageName,
+        )
+        if (audioRes == 0) return
 
         mediaPlayer?.release()
         mediaPlayer = MediaPlayer.create(application.applicationContext, audioRes).also { player ->

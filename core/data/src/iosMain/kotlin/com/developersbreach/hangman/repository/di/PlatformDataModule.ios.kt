@@ -17,20 +17,24 @@ import com.developersbreach.hangman.repository.storage.toDomain
 import com.developersbreach.hangman.repository.storage.toGameCategory
 import com.developersbreach.hangman.repository.storage.toGameDifficulty
 import com.developersbreach.hangman.repository.storage.toStored
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.Json
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import platform.AVFAudio.AVAudioPlayer
+import platform.Foundation.NSBundle
 import platform.Foundation.NSUserDefaults
+import platform.Foundation.NSURL
 
 actual fun platformDataModule(): Module = module {
     single { IosUserDefaultsGameRepository() }
     single<HistoryRepository> { get<IosUserDefaultsGameRepository>() }
     single<GameSessionRepository> { get<IosUserDefaultsGameRepository>() }
     single<GameSettingsRepository> { IosUserDefaultsGameSettingsRepository() }
-    single<BackgroundAudioController> { IosNoOpBackgroundAudioController() }
-    single<GameSoundEffectPlayer> { IosNoOpGameSoundEffectPlayer() }
+    single<BackgroundAudioController> { IosBackgroundAudioController() }
+    single<GameSoundEffectPlayer> { IosGameSoundEffectPlayer() }
 }
 
 private const val HISTORY_KEY = "hangman.history.v1"
@@ -113,20 +117,53 @@ private class IosUserDefaultsGameSettingsRepository : GameSettingsRepository {
     }
 }
 
-private class IosNoOpBackgroundAudioController : BackgroundAudioController {
-    private var playing = false
+private class IosBackgroundAudioController : BackgroundAudioController {
+
+    private val player = createAudioPlayer("game_background_music.mp3")?.apply {
+        numberOfLoops = -1
+        volume = 0.35f
+    }
 
     override fun playLoop() {
-        playing = true
+        player?.play()
     }
 
     override fun stop() {
-        playing = false
+        player?.stop()
+        player?.currentTime = 0.0
     }
 
-    override fun isPlaying(): Boolean = playing
+    override fun isPlaying(): Boolean = player?.playing == true
 }
 
-private class IosNoOpGameSoundEffectPlayer : GameSoundEffectPlayer {
-    override fun play(soundEffect: GameSoundEffect) = Unit
+private class IosGameSoundEffectPlayer : GameSoundEffectPlayer {
+    private val players: Map<GameSoundEffect, AVAudioPlayer?> =
+        GameSoundEffect.entries.associateWith { sound ->
+            createAudioPlayer("${sound.resourceKey}.mp3")
+        }
+
+    override fun play(soundEffect: GameSoundEffect) {
+        val player = players[soundEffect] ?: return
+        player.stop()
+        player.currentTime = 0.0
+        player.play()
+    }
+}
+
+@OptIn(ExperimentalForeignApi::class)
+private fun createAudioPlayer(fileName: String): AVAudioPlayer? {
+    val baseName = fileName.substringBeforeLast('.')
+    val extension = fileName.substringAfterLast('.', missingDelimiterValue = "")
+    val path = NSBundle.mainBundle.pathForResource(baseName, extension)
+    if (path == null) {
+        println("iOS audio resource not found in bundle: $fileName")
+        return null
+    }
+    return runCatching {
+        AVAudioPlayer(contentsOfURL = NSURL.fileURLWithPath(path), error = null).apply {
+            prepareToPlay()
+        }
+    }.onFailure { error ->
+        println("Failed to load iOS audio resource '$fileName': ${error.message}")
+    }.getOrNull()
 }
