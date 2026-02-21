@@ -83,6 +83,26 @@ fun rememberInfiniteRotation(
 }
 
 @Composable
+fun rememberCreepyPhase(
+    durationMillis: Int = 3200,
+): Float {
+    val transition = rememberInfiniteTransition(label = "CreepyPhaseTransition")
+    val phase by transition.animateFloat(
+        label = "CreepyPhase",
+        initialValue = 0f,
+        targetValue = (2f * kotlin.math.PI).toFloat(),
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = durationMillis,
+                easing = LinearEasing,
+            ),
+            repeatMode = RepeatMode.Restart,
+        ),
+    )
+    return phase
+}
+
+@Composable
 fun SparkPulse(
     modifier: Modifier = Modifier,
     sparkColor: Color = HangmanTheme.colorScheme.primary.copy(alpha = 0.50f),

@@ -13,6 +13,7 @@ kotlin {
             implementation(project(":game-core"))
             implementation(project(":core:designsystem"))
             implementation(project(":core:data"))
+            implementation(project(":feature:common-ui"))
 
             implementation(libs.compose.runtime)
             implementation(libs.compose.ui)
@@ -29,4 +30,8 @@ kotlin {
 
 android {
     namespace = "com.developersbreach.hangman.feature.onboarding"
+}
+
+dependencies {
+    debugImplementation(libs.compose.ui.tooling)
 }

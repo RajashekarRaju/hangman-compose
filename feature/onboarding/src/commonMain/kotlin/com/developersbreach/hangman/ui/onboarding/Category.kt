@@ -13,16 +13,25 @@ import com.developersbreach.hangman.feature.onboarding.generated.resources.onboa
 import org.jetbrains.compose.resources.stringResource
 
 data class Category(
-    val categoryId: Int,
+    val category: GameCategory,
     val categoryName: String
 )
 
 @Composable
 internal fun categoryOptions(): List<Category> {
     return listOf(
-        Category(0, stringResource(Res.string.onboarding_category_countries)),
-        Category(1, stringResource(Res.string.onboarding_category_languages)),
-        Category(2, stringResource(Res.string.onboarding_category_companies))
+        Category(
+            category = GameCategory.COUNTRIES,
+            categoryName = stringResource(Res.string.onboarding_category_countries)
+        ),
+        Category(
+            category = GameCategory.LANGUAGES,
+            categoryName = stringResource(Res.string.onboarding_category_languages)
+        ),
+        Category(
+            category = GameCategory.COMPANIES,
+            categoryName = stringResource(Res.string.onboarding_category_companies)
+        )
     )
 }
 

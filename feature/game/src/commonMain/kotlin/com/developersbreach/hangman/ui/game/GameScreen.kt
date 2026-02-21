@@ -4,6 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.developersbreach.game.core.alphabetsList
+import com.developersbreach.hangman.ui.common.HangmanInstructionsDialog
+import com.developersbreach.hangman.ui.preview.HangmanScreenPreviews
+import com.developersbreach.hangman.ui.theme.HangmanTheme
+import com.developersbreach.hangman.ui.theme.ThemePaletteId
+import com.developersbreach.hangman.ui.theme.ThemePalettes
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -41,10 +47,10 @@ fun GameScreen(
     }
 
     if (uiState.showInstructionsDialog) {
-        GameInstructionsInfoDialog(
-            gameDifficulty = uiState.gameDifficulty,
-            gameCategory = uiState.gameCategory,
-            onDismiss = { viewModel.onEvent(GameEvent.ToggleInstructionsDialog) },
+        HangmanInstructionsDialog(
+            difficultyValue = difficultyLabel(uiState.gameDifficulty),
+            categoryValue = categoryLabel(uiState.gameCategory),
+            onDismissRequest = { viewModel.onEvent(GameEvent.ToggleInstructionsDialog) },
         )
     }
 
@@ -55,8 +61,23 @@ fun GameScreen(
         )
     }
 
-    GameScreenUI(
-        uiState = uiState,
-        onEvent = viewModel::onEvent,
-    )
+    uiState.GameScreenUI(onEvent = viewModel::onEvent)
+}
+
+@HangmanScreenPreviews
+@Composable
+private fun GameScreenPreviewContent() {
+    HangmanTheme(
+        darkTheme = true,
+        palette = ThemePalettes.byId(ThemePaletteId.ORIGINAL),
+    ) {
+        GameUiState(
+            currentPlayerLevel = 2,
+            attemptsLeftToGuess = 5,
+            pointsScoredOverall = 4,
+            maxLevelReached = 5,
+            alphabetsList = alphabetsList(),
+            playerGuesses = listOf("H", "A", "N"),
+        ).GameScreenUI {}
+    }
 }

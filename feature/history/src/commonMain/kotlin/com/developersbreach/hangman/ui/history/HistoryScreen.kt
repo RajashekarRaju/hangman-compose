@@ -4,12 +4,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.developersbreach.game.core.GameCategory
+import com.developersbreach.game.core.GameDifficulty
+import com.developersbreach.hangman.repository.model.HistoryRecord
+import com.developersbreach.hangman.ui.preview.HangmanScreenPreviews
+import com.developersbreach.hangman.ui.theme.HangmanTheme
+import com.developersbreach.hangman.ui.theme.ThemePaletteId
+import com.developersbreach.hangman.ui.theme.ThemePalettes
 import kotlinx.coroutines.flow.collectLatest
 
-/**
- * History screen, can be navigated from onboarding screen.
- * This screen has it's own ViewModel [HistoryViewModel]
- */
 @Composable
 fun HistoryScreen(
     navigateUp: () -> Unit,
@@ -25,8 +28,32 @@ fun HistoryScreen(
         }
     }
 
-    HistoryScreenUI(
-        uiState = uiState,
-        onEvent = viewModel::onEvent
-    )
+    uiState.HistoryScreenUI(onEvent = viewModel::onEvent)
+}
+
+@HangmanScreenPreviews
+@Composable
+private fun HistoryScreenUIPreview() {
+    HangmanTheme(
+        darkTheme = true,
+        palette = ThemePalettes.byId(ThemePaletteId.ORIGINAL)
+    ) {
+        HistoryUiState(
+            gameHistoryList = listOf(
+                HistoryListItemUiState(
+                    history = HistoryRecord(
+                        gameId = "atomorum",
+                        gameScore = 2913,
+                        gameLevel = 4,
+                        gameDifficulty = GameDifficulty.HARD,
+                        gameCategory = GameCategory.LANGUAGES,
+                        gameSummary = false,
+                        gamePlayedTime = "09:41 PM",
+                        gamePlayedDate = "14 Feb"
+                    ),
+                    levelProgress = 0.8f,
+                )
+            )
+        ).HistoryScreenUI {}
+    }
 }

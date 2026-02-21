@@ -13,13 +13,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/**
- * ViewModel for screen [HistoryScreen].
- * Initialized with koin.
- */
 class HistoryViewModel(
     private val repository: HistoryRepository
 ) : ViewModel() {
+
     private val _uiState = MutableStateFlow(HistoryUiState())
     val uiState: StateFlow<HistoryUiState> = _uiState.asStateFlow()
 
@@ -27,10 +24,18 @@ class HistoryViewModel(
     val effects: SharedFlow<HistoryEffect> = _effects.asSharedFlow()
 
     init {
+        getGameHistory()
+    }
+
+    private fun getGameHistory() {
         viewModelScope.launch {
             repository.observeHistory().collect { gameHistoryList ->
                 _uiState.update { currentState ->
-                    currentState.copy(gameHistoryList = gameHistoryList)
+                    currentState.copy(
+                        gameHistoryList = gameHistoryList
+                            .asReversed()
+                            .map { it.toHistoryListItemUiState() }
+                    )
                 }
             }
         }

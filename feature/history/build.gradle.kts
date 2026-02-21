@@ -26,6 +26,10 @@ kotlin {
     }
 }
 
+dependencies {
+    add("debugImplementation", libs.compose.ui.tooling)
+}
+
 android {
     namespace = "com.developersbreach.hangman.feature.history"
 }

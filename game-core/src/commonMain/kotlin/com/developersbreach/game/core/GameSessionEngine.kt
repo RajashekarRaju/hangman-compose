@@ -2,8 +2,8 @@ package com.developersbreach.game.core
 
 class GameSessionEngine(
     private val guessingWordsForCurrentGame: List<Words>,
-    private val maxAttempts: Int = 8,
-    private val levelsPerGame: Int = 5
+    private val maxAttempts: Int = MAX_ATTEMPTS_PER_LEVEL,
+    private val levelsPerGame: Int = LEVELS_PER_GAME
 ) {
     private var attemptsLeftToGuess: Int = maxAttempts
     private var pointsScoredPerWord: Int = 0

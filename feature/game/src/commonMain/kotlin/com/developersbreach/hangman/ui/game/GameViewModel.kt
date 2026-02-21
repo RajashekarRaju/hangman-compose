@@ -11,6 +11,8 @@ import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -33,6 +35,7 @@ class GameViewModel(
     val effects: SharedFlow<GameEffect> = _effects.asSharedFlow()
 
     private var gameSessionEngine: GameSessionEngine? = null
+    private var levelTimerJob: Job? = null
 
     init {
         hydrateGameSession()
@@ -84,19 +87,29 @@ class GameViewModel(
             }
 
             syncState(gameSessionEngine!!.snapshot())
+            resetLevelTimer()
         }
     }
 
     private fun checkIfLetterMatches(alphabetId: Int) {
         val engine = gameSessionEngine ?: return
         val update = engine.guessAlphabet(alphabetId)
+        processSessionUpdate(update = update, playTapSound = true)
+    }
+
+    private fun processSessionUpdate(
+        update: com.developersbreach.game.core.GameSessionUpdate,
+        playTapSound: Boolean,
+    ) {
         syncState(update.state)
 
         if (update.levelCompleted && !update.gameWon) {
             soundEffectPlayer.play(GameSoundEffect.LEVEL_WON)
+            resetLevelTimer()
         }
 
         if (update.gameWon) {
+            levelTimerJob?.cancel()
             soundEffectPlayer.play(GameSoundEffect.GAME_WON)
             viewModelScope.launch {
                 delay(500)
@@ -105,13 +118,16 @@ class GameViewModel(
         }
 
         if (update.gameLost) {
+            levelTimerJob?.cancel()
             viewModelScope.launch {
                 soundEffectPlayer.play(GameSoundEffect.GAME_LOST)
                 saveCurrentGameToHistory()
             }
         }
 
-        soundEffectPlayer.play(GameSoundEffect.ALPHABET_TAP)
+        if (playTapSound) {
+            soundEffectPlayer.play(GameSoundEffect.ALPHABET_TAP)
+        }
     }
 
     private fun syncState(state: GameSessionState) {
@@ -139,6 +155,62 @@ class GameViewModel(
         }
     }
 
+    private fun resetLevelTimer() {
+        val totalMillis = LEVEL_TIMER_TOTAL_MILLIS
+        _uiState.update { current ->
+            current.copy(
+                levelTimeTotalMillis = totalMillis,
+                levelTimeRemainingMillis = totalMillis,
+            )
+        }
+        startLevelTimerIfNeeded()
+    }
+
+    private fun startLevelTimerIfNeeded() {
+        levelTimerJob?.cancel()
+        levelTimerJob = viewModelScope.launch {
+            while (isActive) {
+                delay(TIMER_TICK_MILLIS)
+                if (shouldPauseTimer()) continue
+
+                val nextRemaining = (_uiState.value.levelTimeRemainingMillis - TIMER_TICK_MILLIS)
+                    .coerceAtLeast(0L)
+                _uiState.update { current ->
+                    current.copy(levelTimeRemainingMillis = nextRemaining)
+                }
+
+                if (nextRemaining == 0L) {
+                    onTimerExpired()
+                    break
+                }
+            }
+        }
+    }
+
+    private fun onTimerExpired() {
+        levelTimerJob?.cancel()
+        _uiState.update { current ->
+            current.copy(
+                revealGuessingWord = true,
+                showInstructionsDialog = false,
+                showExitDialog = false,
+                attemptsLeftToGuess = 0,
+            )
+        }
+        viewModelScope.launch {
+            soundEffectPlayer.play(GameSoundEffect.GAME_LOST)
+            saveCurrentGameToHistory()
+        }
+    }
+
+    private fun shouldPauseTimer(): Boolean {
+        val state = _uiState.value
+        return state.showExitDialog ||
+            state.showInstructionsDialog ||
+            state.gameOverByWinning ||
+            state.revealGuessingWord
+    }
+
     private suspend fun saveCurrentGameToHistory() {
         val state = _uiState.value
         sessionRepository.saveCompletedGame(
@@ -156,5 +228,15 @@ class GameViewModel(
         viewModelScope.launch {
             _effects.emit(effect)
         }
+    }
+
+    override fun onCleared() {
+        levelTimerJob?.cancel()
+        super.onCleared()
+    }
+
+    companion object {
+        private const val TIMER_TICK_MILLIS = 100L
+        private const val LEVEL_TIMER_TOTAL_MILLIS = 60_000L
     }
 }

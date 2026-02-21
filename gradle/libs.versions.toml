@@ -37,6 +37,7 @@ compose-material3 = { module = "org.jetbrains.compose.material3:material3", vers
 jetbrains-compose-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "jetbrains-material-icons-extended" }
 
 compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose-multiplatform" }
+compose-ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "compose-multiplatform" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
 jetbrains-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation-compose" }

@@ -16,57 +16,57 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DividerDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ProgressIndicatorDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.developersbreach.game.core.GameCategory
+import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.feature.history.generated.resources.Res
+import com.developersbreach.hangman.feature.history.generated.resources.history_category_companies
+import com.developersbreach.hangman.feature.history.generated.resources.history_category_countries
+import com.developersbreach.hangman.feature.history.generated.resources.history_category_languages
 import com.developersbreach.hangman.feature.history.generated.resources.history_cd_delete_item
+import com.developersbreach.hangman.feature.history.generated.resources.history_difficulty_easy
+import com.developersbreach.hangman.feature.history.generated.resources.history_difficulty_hard
+import com.developersbreach.hangman.feature.history.generated.resources.history_difficulty_medium
 import com.developersbreach.hangman.feature.history.generated.resources.history_empty_state
 import com.developersbreach.hangman.feature.history.generated.resources.history_summary_lost
 import com.developersbreach.hangman.feature.history.generated.resources.history_summary_won
-import com.developersbreach.game.core.GameCategory
-import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.repository.model.HistoryRecord
 import com.developersbreach.hangman.ui.components.AnimatedEnter
 import com.developersbreach.hangman.ui.components.BodyLargeText
 import com.developersbreach.hangman.ui.components.BodyMediumText
 import com.developersbreach.hangman.ui.components.BodySmallText
+import com.developersbreach.hangman.ui.components.HangmanCircularProgress
+import com.developersbreach.hangman.ui.components.HangmanDivider
+import com.developersbreach.hangman.ui.components.HangmanIcon
+import com.developersbreach.hangman.ui.components.HangmanIconActionButton
+import com.developersbreach.hangman.ui.components.HangmanScaffold
+import com.developersbreach.hangman.ui.components.HangmanSwipeToDismissItem
 import com.developersbreach.hangman.ui.components.TitleLargeText
 import com.developersbreach.hangman.ui.components.TitleMediumText
+import com.developersbreach.hangman.ui.components.creepyOutline
+import com.developersbreach.hangman.ui.components.rememberCreepyPhase
 import com.developersbreach.hangman.ui.theme.HangmanTheme
-import com.developersbreach.hangman.ui.theme.ThemePaletteId
-import com.developersbreach.hangman.ui.theme.ThemePalettes
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun HistoryScreenUI(
-    uiState: HistoryUiState,
+fun HistoryUiState.HistoryScreenUI(
     onEvent: (HistoryEvent) -> Unit
 ) {
-    Scaffold(
+    HangmanScaffold(
         topBar = {
             HistoryAppBar(
                 navigateUp = { onEvent(HistoryEvent.NavigateUpClicked) },
-                showDeleteIconInAppBar = uiState.showDeleteIconInAppBar,
+                showDeleteIconInAppBar = showDeleteIconInAppBar,
                 deleteAllGameHistoryData = { onEvent(HistoryEvent.DeleteAllClicked) }
             )
         },
@@ -81,14 +81,14 @@ fun HistoryScreenUI(
         ) {
             AnimatedEnter {
                 HistoryScreenContent(
-                    gameHistoryList = uiState.gameHistoryList,
+                    gameHistoryList = gameHistoryList,
                     onClickDeleteSelectedGameHistory = { history ->
                         onEvent(HistoryEvent.DeleteHistoryItemClicked(history))
                     }
                 )
             }
 
-            if (uiState.gameHistoryList.isEmpty()) {
+            if (gameHistoryList.isEmpty()) {
                 AnimatedEnter(offsetY = 20.dp) {
                     ShowEmptyHistoryMessage(
                         modifier = Modifier
@@ -113,40 +113,31 @@ private fun historyBackgroundGradient(): Brush {
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun HistoryScreenContent(
-    gameHistoryList: List<HistoryRecord>,
+    gameHistoryList: List<HistoryListItemUiState>,
     onClickDeleteSelectedGameHistory: (history: HistoryRecord) -> Unit
 ) {
+    val listCreepyPhase = rememberCreepyPhase(durationMillis = 3900)
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(
-            items = gameHistoryList.reversed(),
-            key = { it.gameId }
-        ) { history ->
-            val dismissState = rememberSwipeToDismissBoxState(
-                confirmValueChange = { value ->
-                    if (value == SwipeToDismissBoxValue.EndToStart) {
-                        onClickDeleteSelectedGameHistory(history)
-                        true
-                    } else {
-                        false
-                    }
-                }
-            )
-
-            SwipeToDismissBox(
-                state = dismissState,
-                enableDismissFromStartToEnd = false,
-                backgroundContent = { DeleteHistorySwipeBackground() }
+            items = gameHistoryList,
+            key = { it.history.gameId }
+        ) { item ->
+            val history = item.history
+            HangmanSwipeToDismissItem(
+                dismissKey = history.gameId,
+                onDismissed = { onClickDeleteSelectedGameHistory(history) },
             ) {
                 AnimatedEnter(offsetY = 12.dp) {
                     ItemGameHistory(
                         history = history,
-                        onDeleteClick = { onClickDeleteSelectedGameHistory(history) }
+                        levelProgress = item.levelProgress,
+                        onDeleteClick = { onClickDeleteSelectedGameHistory(history) },
+                        phase = listCreepyPhase,
                     )
                 }
             }
@@ -155,107 +146,103 @@ private fun HistoryScreenContent(
 }
 
 @Composable
-private fun DeleteHistorySwipeBackground() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(HangmanTheme.shapes.medium)
-            .background(HangmanTheme.colorScheme.error.copy(alpha = 0.12f)),
-        contentAlignment = Alignment.CenterEnd
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.Delete,
-            contentDescription = null,
-            tint = HangmanTheme.colorScheme.error,
-            modifier = Modifier.padding(horizontal = 20.dp)
-        )
-    }
-}
-
-@Composable
 private fun ItemGameHistory(
     history: HistoryRecord,
-    onDeleteClick: () -> Unit
+    levelProgress: Float,
+    onDeleteClick: () -> Unit,
+    phase: Float,
 ) {
     val summary = if (history.gameSummary) {
         stringResource(Res.string.history_summary_won)
     } else {
         stringResource(Res.string.history_summary_lost)
     }
-    val levelProgress = historyLevelProgress(history.gameLevel)
-
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = HangmanTheme.colorScheme.surfaceContainer,
-            contentColor = HangmanTheme.colorScheme.onSurface
-        ),
-        modifier = Modifier.fillMaxWidth()
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .fillMaxWidth()
+            .background(HangmanTheme.colorScheme.surfaceContainer)
+            .creepyOutline(
+                seed = history.gameId.hashCode(),
+                threshold = 0.09f,
+                fillColor = Color.Transparent,
+                outlineColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.32f),
+                phase = phase + 0.35f,
+            )
+            .padding(28.dp)
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    LevelProgress(level = history.gameLevel, progress = levelProgress)
-                    Column {
-                        TitleLargeText(
-                            text = summary,
-                            color = HangmanTheme.colorScheme.primary
-                        )
-                        BodyLargeText(
-                            text = history.gameDifficulty.name,
-                            color = HangmanTheme.colorScheme.onSurface
-                        )
-                    }
-                }
-
-                IconButton(onClick = onDeleteClick) {
-                    Icon(
-                        imageVector = Icons.Outlined.Delete,
-                        contentDescription = stringResource(Res.string.history_cd_delete_item),
-                        tint = HangmanTheme.colorScheme.primary
+                LevelProgress(level = history.gameLevel, progress = levelProgress)
+                Column {
+                    TitleLargeText(
+                        text = summary,
+                        color = HangmanTheme.colorScheme.primary
+                    )
+                    BodyLargeText(
+                        text = stringResource(history.gameDifficulty.labelRes()),
+                        color = HangmanTheme.colorScheme.onSurface
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            HangmanIconActionButton(
+                onClick = onDeleteClick,
+                seed = history.gameId.hashCode() + 11,
+                threshold = 0.16f,
+                fillColor = Color.Transparent,
+                outlineColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.42f),
+            ) {
+                HangmanIcon(
+                    imageVector = Icons.Outlined.Delete,
+                    contentDescription = stringResource(Res.string.history_cd_delete_item),
+                    tint = HangmanTheme.colorScheme.primary
+                )
+            }
+        }
 
-            HorizontalDivider(
-                modifier = Modifier
-                    .clip(HangmanTheme.shapes.small)
-                    .fillMaxWidth(),
-                thickness = DividerDefaults.Thickness,
-                color = HangmanTheme.colorScheme.outlineVariant,
+        Spacer(modifier = Modifier.height(8.dp))
+
+        HangmanDivider(
+            modifier = Modifier
+                .clip(HangmanTheme.shapes.small)
+                .fillMaxWidth(),
+            seed = history.gameId.hashCode() + 12,
+            threshold = 0.06f,
+            outlineColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.24f),
+            thickness = 1.dp,
+            color = HangmanTheme.colorScheme.outlineVariant,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
+        ) {
+            BodyMediumText(
+                text = stringResource(history.gameCategory.labelRes()),
+                letterSpacing = 2.sp,
+                color = HangmanTheme.colorScheme.secondary
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
-            ) {
-                BodyMediumText(
-                    text = history.gameCategory.name,
-                    letterSpacing = 2.sp,
-                    color = HangmanTheme.colorScheme.secondary
+            Column(horizontalAlignment = Alignment.End) {
+                BodySmallText(
+                    text = history.gamePlayedTime,
+                    color = HangmanTheme.colorScheme.onSurfaceVariant
                 )
-
-                Column(horizontalAlignment = Alignment.End) {
-                    BodySmallText(
-                        text = history.gamePlayedTime,
-                        color = HangmanTheme.colorScheme.onSurfaceVariant
-                    )
-                    BodySmallText(
-                        text = history.gamePlayedDate,
-                        color = HangmanTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                BodySmallText(
+                    text = history.gamePlayedDate,
+                    color = HangmanTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }
@@ -263,23 +250,26 @@ private fun ItemGameHistory(
 
 @Composable
 private fun LevelProgress(level: Int, progress: Float) {
-    Box(modifier = Modifier.size(44.dp), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(
-            progress = { 1f },
+    Box(
+        modifier = Modifier.size(44.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        HangmanCircularProgress(
+            progress = 1f,
             modifier = Modifier.fillMaxSize(),
-            color = HangmanTheme.colorScheme.primary.copy(alpha = 0.22f),
+            indicatorColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.22f),
             strokeWidth = 2.dp,
             trackColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.10f),
-            strokeCap = ProgressIndicatorDefaults.CircularDeterminateStrokeCap,
+            strokeCap = StrokeCap.Round,
         )
 
-        CircularProgressIndicator(
-            progress = { progress },
+        HangmanCircularProgress(
+            progress = progress,
             modifier = Modifier.fillMaxSize(),
-            color = HangmanTheme.colorScheme.primary,
+            indicatorColor = HangmanTheme.colorScheme.primary,
             strokeWidth = 2.dp,
-            trackColor = androidx.compose.ui.graphics.Color.Transparent,
-            strokeCap = ProgressIndicatorDefaults.CircularDeterminateStrokeCap,
+            trackColor = Color.Transparent,
+            strokeCap = StrokeCap.Round,
         )
 
         TitleMediumText(
@@ -288,11 +278,6 @@ private fun LevelProgress(level: Int, progress: Float) {
             textAlign = TextAlign.Center
         )
     }
-}
-
-private fun historyLevelProgress(level: Int): Float {
-    if (level <= 0) return 0f
-    return (level.coerceAtMost(5)) / 5f
 }
 
 @Composable
@@ -305,29 +290,18 @@ private fun ShowEmptyHistoryMessage(modifier: Modifier = Modifier) {
     )
 }
 
-@Preview
-@Composable
-private fun HistoryScreenUIPreview() {
-    HangmanTheme(
-        darkTheme = true,
-        palette = ThemePalettes.byId(ThemePaletteId.ORIGINAL)
-    ) {
-        HistoryScreenUI(
-            uiState = HistoryUiState(
-                gameHistoryList = listOf(
-                    HistoryRecord(
-                        gameId = "atomorum",
-                        gameScore = 2913,
-                        gameLevel = 4,
-                        gameDifficulty = GameDifficulty.HARD,
-                        gameCategory = GameCategory.LANGUAGES,
-                        gameSummary = false,
-                        gamePlayedTime = "09:41 PM",
-                        gamePlayedDate = "14 Feb"
-                    )
-                )
-            ),
-            onEvent = {}
-        )
+private fun GameDifficulty.labelRes(): StringResource {
+    return when (this) {
+        GameDifficulty.EASY -> Res.string.history_difficulty_easy
+        GameDifficulty.MEDIUM -> Res.string.history_difficulty_medium
+        GameDifficulty.HARD -> Res.string.history_difficulty_hard
+    }
+}
+
+private fun GameCategory.labelRes(): StringResource {
+    return when (this) {
+        GameCategory.COUNTRIES -> Res.string.history_category_countries
+        GameCategory.LANGUAGES -> Res.string.history_category_languages
+        GameCategory.COMPANIES -> Res.string.history_category_companies
     }
 }
