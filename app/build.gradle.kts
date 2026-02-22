@@ -86,16 +86,9 @@ kotlin {
 
 dependencies {
     implementation(project(":composeApp"))
-    implementation(project(":game-core"))
-    implementation(project(":core:data"))
-    implementation(project(":feature:onboarding"))
-    implementation(project(":feature:history"))
-    implementation(project(":feature:game"))
-    implementation(project(":core:designsystem"))
 
     // Core Android + Compose UI
     implementation(libs.androidx.core.ktx)
-    implementation(libs.google.material)
     implementation(libs.androidx.activity.compose)
 
     // DI
@@ -105,7 +98,6 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics.ktx)
     implementation(libs.firebase.crashlytics.ktx)
-    implementation(project(":navigation"))
 
     // Instrumentation tests
     androidTestImplementation(libs.androidx.test.ext.junit.ktx)

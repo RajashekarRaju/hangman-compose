@@ -10,7 +10,6 @@ ksp = "2.3.2"
 compose-multiplatform = "1.10.1"
 
 androidx-core-ktx = "1.17.0"
-material = "1.13.0"
 compose-material3 = "1.9.0"
 jetbrains-material-icons-extended = "1.7.3"
 activity-compose = "1.12.4"
@@ -29,7 +28,6 @@ firebase-crashlytics-plugin = "3.0.6"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core-ktx" }
-google-material = { module = "com.google.android.material:material", version.ref = "material" }
 
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }

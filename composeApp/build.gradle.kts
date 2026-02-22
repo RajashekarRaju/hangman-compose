@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     id("hangman.kmp.compose-library")
-    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -35,7 +34,6 @@ kotlin {
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
             implementation(libs.compose.components.resources)
-            implementation(libs.kotlinx.serialization.json)
             implementation(libs.koin.compose.viewmodel)
         }
         desktopMain.dependencies {
