@@ -3,15 +3,18 @@ package com.developersbreach.hangman.ui.history
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.game.core.HintType
+import com.developersbreach.hangman.feature.common.ui.generated.resources.Res as CommonRes
+import com.developersbreach.hangman.feature.common.ui.generated.resources.category_animals
+import com.developersbreach.hangman.feature.common.ui.generated.resources.category_companies
+import com.developersbreach.hangman.feature.common.ui.generated.resources.category_countries
+import com.developersbreach.hangman.feature.common.ui.generated.resources.category_languages
+import com.developersbreach.hangman.feature.common.ui.generated.resources.difficulty_easy
+import com.developersbreach.hangman.feature.common.ui.generated.resources.difficulty_hard
+import com.developersbreach.hangman.feature.common.ui.generated.resources.difficulty_medium
+import com.developersbreach.hangman.feature.common.ui.generated.resources.difficulty_very_hard
 import com.developersbreach.hangman.repository.model.HistoryRecord
 import com.developersbreach.game.core.LEVELS_PER_GAME
-import com.developersbreach.hangman.feature.history.generated.resources.Res
-import com.developersbreach.hangman.feature.history.generated.resources.history_category_companies
-import com.developersbreach.hangman.feature.history.generated.resources.history_category_countries
-import com.developersbreach.hangman.feature.history.generated.resources.history_category_languages
-import com.developersbreach.hangman.feature.history.generated.resources.history_difficulty_easy
-import com.developersbreach.hangman.feature.history.generated.resources.history_difficulty_hard
-import com.developersbreach.hangman.feature.history.generated.resources.history_difficulty_medium
+import com.developersbreach.hangman.feature.history.generated.resources.Res as HistoryRes
 import com.developersbreach.hangman.feature.history.generated.resources.history_hint_type_eliminate_letters
 import com.developersbreach.hangman.feature.history.generated.resources.history_hint_type_reveal_letter
 import org.jetbrains.compose.resources.StringResource
@@ -42,23 +45,25 @@ private fun historyLevelProgress(level: Int): Float {
 
 internal fun GameDifficulty.labelRes(): StringResource {
     return when (this) {
-        GameDifficulty.EASY -> Res.string.history_difficulty_easy
-        GameDifficulty.MEDIUM -> Res.string.history_difficulty_medium
-        GameDifficulty.HARD -> Res.string.history_difficulty_hard
+        GameDifficulty.EASY -> CommonRes.string.difficulty_easy
+        GameDifficulty.MEDIUM -> CommonRes.string.difficulty_medium
+        GameDifficulty.HARD -> CommonRes.string.difficulty_hard
+        GameDifficulty.VERY_HARD -> CommonRes.string.difficulty_very_hard
     }
 }
 
 internal fun GameCategory.labelRes(): StringResource {
     return when (this) {
-        GameCategory.COUNTRIES -> Res.string.history_category_countries
-        GameCategory.LANGUAGES -> Res.string.history_category_languages
-        GameCategory.COMPANIES -> Res.string.history_category_companies
+        GameCategory.COUNTRIES -> CommonRes.string.category_countries
+        GameCategory.LANGUAGES -> CommonRes.string.category_languages
+        GameCategory.COMPANIES -> CommonRes.string.category_companies
+        GameCategory.ANIMALS -> CommonRes.string.category_animals
     }
 }
 
 internal fun HintType.labelRes(): StringResource {
     return when (this) {
-        HintType.REVEAL_LETTER -> Res.string.history_hint_type_reveal_letter
-        HintType.ELIMINATE_LETTERS -> Res.string.history_hint_type_eliminate_letters
+        HintType.REVEAL_LETTER -> HistoryRes.string.history_hint_type_reveal_letter
+        HintType.ELIMINATE_LETTERS -> HistoryRes.string.history_hint_type_eliminate_letters
     }
 }

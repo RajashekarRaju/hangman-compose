@@ -6,12 +6,6 @@
     <string name="history_summary_won">WON</string>
     <string name="history_summary_lost">LOST</string>
     <string name="history_empty_state">No games played yet</string>
-    <string name="history_difficulty_easy">Easy</string>
-    <string name="history_difficulty_medium">Medium</string>
-    <string name="history_difficulty_hard">Hard</string>
-    <string name="history_category_countries">Countries</string>
-    <string name="history_category_languages">Languages</string>
-    <string name="history_category_companies">Companies</string>
     <string name="history_hints_used">Hints used: %1$d</string>
     <string name="history_hint_types_used">Hint types: %1$s</string>
     <string name="history_hint_type_reveal_letter">Reveal</string>

@@ -26,12 +26,4 @@
     <string name="game_hint_unavailable_no_letters">No hidden letters left to reveal.</string>
     <string name="game_hint_unavailable_no_elimination">No wrong letters available to eliminate.</string>
     <string name="game_hint_unavailable_game_over">Hints are disabled because the game is over.</string>
-
-    <string name="game_difficulty_easy">Easy</string>
-    <string name="game_difficulty_medium">Medium</string>
-    <string name="game_difficulty_hard">Hard</string>
-
-    <string name="game_category_countries">Countries</string>
-    <string name="game_category_languages">Languages</string>
-    <string name="game_category_companies">Companies</string>
 </resources>

@@ -284,10 +284,6 @@ class GameSessionEngine(
         markAlphabetAsGuessed(alphabetId)
     }
 
-    private fun String.playableLetterCount(): Int {
-        return count { character -> character.isLetter() }
-    }
-
     private companion object {
         const val UNGUESSED_SLOT = ""
         const val WORD_SEPARATOR = " "

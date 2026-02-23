@@ -45,8 +45,8 @@ fun AdjustGameDifficultyDialog(
         CreepySlider(
             value = sliderDifficultyPosition,
             onValueChange = onSliderPositionChanged,
-            valueRange = 1.0f..3.0f,
-            steps = 1,
+            valueRange = 1.0f..4.0f,
+            steps = 2,
             onValueChangeFinished = { onDifficultyConfirmed(selectedDifficulty) },
             seed = 1201,
             trackCreepiness = 1f,

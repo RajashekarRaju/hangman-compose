@@ -4,26 +4,18 @@ fun getFilteredWordsByGameDifficulty(
     gameDifficulty: GameDifficulty,
     gameCategory: GameCategory
 ): List<Words> {
-    val wordsList = ArrayList<Words>()
-    with(
-        when (gameCategory) {
-            GameCategory.COUNTRIES -> countryData()
-            GameCategory.LANGUAGES -> languageData()
-            GameCategory.COMPANIES -> companyData()
-        }
-    ) {
-        when (gameDifficulty) {
-            GameDifficulty.EASY -> this.filterWordsByLength(4..5)
-            GameDifficulty.MEDIUM -> this.filterWordsByLength(6..7)
-            GameDifficulty.HARD -> this.filterWordsByLength(8..10)
-        }.forEach { word ->
-            wordsList.add(
-                Words(wordName = word)
-            )
-        }
+    val words = WORD_CATALOG.wordsFor(gameCategory)
+    val selectedRange = gameDifficulty.wordLengthRange()
+    val selectedPool = words.filterWordsByLength(selectedRange)
+    val finalPool = when {
+        selectedPool.size == LEVELS_PER_GAME -> selectedPool
+        gameDifficulty == GameDifficulty.VERY_HARD ->
+            words.filterWordsByLength(GameDifficulty.HARD.wordLengthRange())
+        else -> selectedPool
     }
 
-    return wordsList
+    return finalPool
+        .map { word -> Words(wordName = word) }
 }
 
 private fun List<String>.filterWordsByLength(
@@ -31,8 +23,4 @@ private fun List<String>.filterWordsByLength(
     numberOfWords: Int = 5
 ): List<String> {
     return this.filter { it.playableLetterCount() in range }.shuffled().take(numberOfWords)
-}
-
-private fun String.playableLetterCount(): Int {
-    return count { character -> character.isLetter() }
 }

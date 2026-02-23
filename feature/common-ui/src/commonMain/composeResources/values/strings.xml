@@ -1,4 +1,14 @@
 <resources>
+    <string name="difficulty_easy">Easy</string>
+    <string name="difficulty_medium">Medium</string>
+    <string name="difficulty_hard">Hard</string>
+    <string name="difficulty_very_hard">Very Hard</string>
+
+    <string name="category_countries">Countries</string>
+    <string name="category_languages">Languages</string>
+    <string name="category_companies">Companies</string>
+    <string name="category_animals">Animals</string>
+
     <string name="instructions_dialog_title">Instructions</string>
     <string name="instructions_dialog_subtitle">Guess the name of the %1$s.</string>
     <string name="instructions_label_difficulty">Difficulty: %1$s</string>
@@ -9,10 +19,10 @@
         You start each level with 8 attempts. Attempts reset when you enter the next level.\n
         Wrong letter guesses reduce attempts by 1. Correct guesses do not reduce attempts.\n
         Level points are based on the word length and are added to your total score.\n
-        Hints are optional and limited per level. Easy gives 2 hints, Medium and Hard give 1 hint.\n
+        Hints are optional and limited per level. Easy gives 2 hints, Medium/Hard/Very Hard give 1 hint.\n
         Available hint types are Reveal Letter and Eliminate Letters.\n
         Using hints does not reduce points. Hints only consume your level hint credits.\n
-        You can play with 3 categories: Countries, Languages, and Companies.\n
+        You can play with 4 categories: Countries, Languages, Companies, Animals.\n
         Your completed game results are saved in History.
     </string>
 </resources>

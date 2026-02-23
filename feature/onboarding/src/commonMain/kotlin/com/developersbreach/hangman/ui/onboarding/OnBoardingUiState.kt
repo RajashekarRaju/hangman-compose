@@ -32,4 +32,5 @@ private val DIFFICULTY_TO_SLIDER_VALUE = mapOf(
     GameDifficulty.EASY to 1f,
     GameDifficulty.MEDIUM to 2f,
     GameDifficulty.HARD to 3f,
+    GameDifficulty.VERY_HARD to 4f,
 )

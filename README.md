@@ -16,6 +16,21 @@ Play now: [https://rajashekarraju.github.io/hangman-compose/](https://rajashekar
 <img src="https://play.google.com/intl/en_gb/badges/static/images/badges/en_badge_web_generic.png" width=240 />
 </a>
 
+### Android Packages (Auto-Updated on `master`)
+
+[![Build Packages](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/packages.yml/badge.svg)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/packages.yml)
+
+- Android APK: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/latest/download/hangman-android.apk)
+
+### Desktop Installers (Auto-Updated on `master`)
+
+[![Build Packages](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/packages.yml/badge.svg)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/packages.yml)
+
+- macOS (DMG): [Download](https://github.com/RajashekarRaju/hangman-compose/releases/latest/download/hangman-macos.dmg)
+- Windows (MSI): [Download](https://github.com/RajashekarRaju/hangman-compose/releases/latest/download/hangman-windows.msi)
+- Linux (DEB): [Download](https://github.com/RajashekarRaju/hangman-compose/releases/latest/download/hangman-linux.deb)
+- Linux (RPM): [Download](https://github.com/RajashekarRaju/hangman-compose/releases/latest/download/hangman-linux.rpm)
+
 ## :sparkler: What's New: v0.1.0
 
 - [x] Players will be challenged with unique words only.
@@ -52,39 +67,6 @@ Play now: [https://rajashekarraju.github.io/hangman-compose/](https://rajashekar
 | Game Won Dialog | Game Lost Dialog | Game Exit |
 | <img src="/assets/game_won_red.png" width="200"/> | <img src="/assets/game_lost_red.png" width="200" /> | <img src="/assets/exit_red.png" width="200" /> |
 
-## :hourglass_flowing_sand: Experiencing slow game performance ?
-
-Rendering times with Compose is slower compared to XML. I've added few references below which could
-help you improve app performance.
-
-- Change app module to choose build variant Release mode.
-- Enable R8 and disable debug to speed up the performance
-
-#### References :bookmark_tabs:
-
-- Article by William Shelor - [Measuring Render Performance with Jetpack Compose](https://engineering.premise.com/measuring-render-performance-with-jetpack-compose-c0bf5814933).
-- Article by Chris Banes - [Composable Metrics](https://chris.banes.dev/composable-metrics/)
-
-## :jack_o_lantern: Teal/Red Theme Colors
-
-```kotlin
-val TealColorPalette = lightColors(
-  primary = tealPrimary,
-  background = tealBackground,
-  onBackground = tealOnBackground,
-  surface = tealSurface,
-  onSurface = tealOnSurface
-)
-
-val RedColorPalette = darkColors(
-  primary = redPrimary,
-  background = redBackground,
-  onBackground = redOnBackground,
-  surface = redSurface,
-  onSurface = redOnSurface
-)
-```
-
 ## :bulb: Motivation and Context
 
 `Jetpack Compose` is Android’s modern toolkit for building native UI. It enables you to quickly
@@ -96,6 +78,8 @@ referring to lot of official jetpack compose samples which are available in GitH
 Best of all we got to do this in `Kotlin` way. Excited and long way to go from here.
 
 ## :loudspeaker: What To Contribute ?
+
+### See full contribution details in [Contributions](CONTRIBUTING.md)
 
 * Have a cool idea or feature
   request? [Start a discussion](https://github.com/RajashekarRaju/hangman-compose/discussions).
