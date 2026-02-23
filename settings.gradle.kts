@@ -6,6 +6,8 @@ pluginManagement {
     }
 }
 
+includeBuild("build-logic")
+
 dependencyResolutionManagement {
     repositories {
         google()
@@ -17,8 +19,10 @@ rootProject.name = "Hangman"
 include(":app")
 include(":game-core")
 include(":composeApp")
+include(":navigation")
 include(":core:designsystem")
 include(":core:data")
 include(":feature:onboarding")
 include(":feature:game")
 include(":feature:history")
+include(":feature:common-ui")

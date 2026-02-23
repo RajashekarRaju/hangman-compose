@@ -4,35 +4,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.developersbreach.hangman.feature.history.generated.resources.Res
 import com.developersbreach.hangman.feature.history.generated.resources.history_app_bar_title
 import com.developersbreach.hangman.feature.history.generated.resources.history_cd_delete_all
 import com.developersbreach.hangman.feature.history.generated.resources.history_cd_navigate_up
+import com.developersbreach.hangman.ui.components.HangmanIcon
+import com.developersbreach.hangman.ui.components.HangmanIconActionButton
+import com.developersbreach.hangman.ui.components.HangmanTopAppBar
 import com.developersbreach.hangman.ui.components.TitleMediumText
 import com.developersbreach.hangman.ui.theme.HangmanTheme
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryAppBar(
     navigateUp: () -> Unit,
     showDeleteIconInAppBar: Boolean,
     deleteAllGameHistoryData: () -> Unit
 ) {
-    TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = HangmanTheme.colorScheme.background,
-            titleContentColor = HangmanTheme.colorScheme.onBackground,
-            navigationIconContentColor = HangmanTheme.colorScheme.primary,
-            actionIconContentColor = HangmanTheme.colorScheme.primary
-        ),
+    HangmanTopAppBar(
         modifier = Modifier.fillMaxWidth(),
         title = {
             TitleMediumText(
@@ -41,8 +32,12 @@ fun HistoryAppBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = navigateUp) {
-                Icon(
+            HangmanIconActionButton(
+                onClick = navigateUp,
+                seed = 1001,
+                threshold = 0.12f,
+            ) {
+                HangmanIcon(
                     imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                     contentDescription = stringResource(Res.string.history_cd_navigate_up)
                 )
@@ -50,8 +45,12 @@ fun HistoryAppBar(
         },
         actions = {
             if (showDeleteIconInAppBar) {
-                IconButton(onClick = deleteAllGameHistoryData) {
-                    Icon(
+                HangmanIconActionButton(
+                    onClick = deleteAllGameHistoryData,
+                    seed = 1002,
+                    threshold = 0.16f,
+                ) {
+                    HangmanIcon(
                         imageVector = Icons.Outlined.Delete,
                         contentDescription = stringResource(Res.string.history_cd_delete_all)
                     )

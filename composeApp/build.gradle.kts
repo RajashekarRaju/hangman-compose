@@ -1,35 +1,29 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.compose.multiplatform)
+    id("hangman.kmp.compose-library")
 }
 
 kotlin {
-    jvmToolchain(21)
     compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
-    jvm("desktop") {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
+
+    targets
+        .withType<KotlinNativeTarget>()
+        .matching { it.konanTarget.family.isAppleFamily }
+        .configureEach {
+            binaries.framework {
+                baseName = "ComposeApp"
+                isStatic = true
+                binaryOption("bundleId", "com.developersbreach.hangman.composeapp")
+            }
         }
-    }
-
-    androidTarget()
-
-    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
 
     sourceSets {
         val desktopMain by getting
 
         commonMain.dependencies {
             implementation(project(":game-core"))
+            implementation(project(":navigation"))
             implementation(project(":core:designsystem"))
             implementation(project(":core:data"))
             implementation(project(":feature:onboarding"))
@@ -40,8 +34,6 @@ kotlin {
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
             implementation(libs.compose.components.resources)
-            implementation(libs.jetbrains.navigation)
-            implementation(libs.kotlinx.serialization.json)
             implementation(libs.koin.compose.viewmodel)
         }
         desktopMain.dependencies {
@@ -50,6 +42,9 @@ kotlin {
         }
 
         val wasmJsMain by getting
+        wasmJsMain.resources.srcDir(project(":core:data").projectDir.resolve(
+            "src/androidMain/res/raw")
+        )
         wasmJsMain.dependencies {
 
         }
@@ -58,14 +53,38 @@ kotlin {
 
 android {
     namespace = "com.developersbreach.hangman.composeapp"
-    compileSdk = 36
+}
 
-    defaultConfig {
-        minSdk = 24
-    }
+compose.desktop {
+    application {
+        mainClass = "com.developersbreach.hangman.composeapp.DesktopMainKt"
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        buildTypes {
+            release {
+                proguard {
+                    isEnabled.set(false)
+                }
+            }
+        }
+
+        nativeDistributions {
+            packageName = "Hangman"
+            packageVersion = "1.0.2"
+            description = "Hangman"
+            vendor = "Developers Breach"
+
+            macOS {
+                packageVersion = "1.0.2"
+                dmgPackageVersion = "1.0.2"
+            }
+
+            modules("java.naming")
+            targetFormats(
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Rpm,
+            )
+        }
     }
 }

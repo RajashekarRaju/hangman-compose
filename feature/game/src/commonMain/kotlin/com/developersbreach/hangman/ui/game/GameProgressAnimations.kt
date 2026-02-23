@@ -11,18 +11,8 @@ import androidx.compose.runtime.getValue
 fun animateCurrentLevelProgress(
     currentPlayerLevel: Int
 ): Float {
-    val currentLevelProgress = when (currentPlayerLevel.coerceIn(0, 5)) {
-        0 -> 0f
-        1 -> 0.2f
-        2 -> 0.4f
-        3 -> 0.6f
-        4 -> 0.8f
-        5 -> 1f
-        else -> 0f
-    }
-
     return animateToTargetState(
-        targetProgressValue = currentLevelProgress
+        targetProgressValue = levelProgress(currentPlayerLevel)
     )
 }
 
@@ -30,21 +20,8 @@ fun animateCurrentLevelProgress(
 fun animateAttemptsLeftProgress(
     attemptsLeft: Int
 ): Float {
-    val currentAttemptsLeftProgress = when (attemptsLeft.coerceIn(0, 8)) {
-        8 -> 0f
-        7 -> 0.13f
-        6 -> 0.25f
-        5 -> 0.37f
-        4 -> 0.50f
-        3 -> 0.63f
-        2 -> 0.75f
-        1 -> 0.87f
-        0 -> 1f
-        else -> 0f
-    }
-
     return animateToTargetState(
-        targetProgressValue = currentAttemptsLeftProgress
+        targetProgressValue = attemptsUsedProgress(attemptsLeft)
     )
 }
 

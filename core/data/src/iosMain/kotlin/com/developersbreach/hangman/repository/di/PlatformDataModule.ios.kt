@@ -1,0 +1,171 @@
+package com.developersbreach.hangman.repository.di
+
+import com.developersbreach.game.core.GameCategory
+import com.developersbreach.game.core.GameDifficulty
+import com.developersbreach.hangman.audio.BackgroundAudioController
+import com.developersbreach.hangman.audio.GameSoundEffect
+import com.developersbreach.hangman.audio.GameSoundEffectPlayer
+import com.developersbreach.hangman.repository.GameSessionRepository
+import com.developersbreach.hangman.repository.GameSettingsRepository
+import com.developersbreach.hangman.repository.HistoryRepository
+import com.developersbreach.hangman.repository.metadata.generateHistoryMetadata
+import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
+import com.developersbreach.hangman.repository.model.HistoryRecord
+import com.developersbreach.hangman.repository.storage.StoredHistoryRecord
+import com.developersbreach.hangman.repository.storage.StoredSettings
+import com.developersbreach.hangman.repository.storage.toDomain
+import com.developersbreach.hangman.repository.storage.toGameCategory
+import com.developersbreach.hangman.repository.storage.toGameDifficulty
+import com.developersbreach.hangman.repository.storage.toStored
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.serialization.json.Json
+import org.koin.core.module.Module
+import org.koin.dsl.module
+import platform.AVFAudio.AVAudioPlayer
+import platform.Foundation.NSBundle
+import platform.Foundation.NSUserDefaults
+import platform.Foundation.NSURL
+
+actual fun platformDataModule(): Module = module {
+    single { IosUserDefaultsGameRepository() }
+    single<HistoryRepository> { get<IosUserDefaultsGameRepository>() }
+    single<GameSessionRepository> { get<IosUserDefaultsGameRepository>() }
+    single<GameSettingsRepository> { IosUserDefaultsGameSettingsRepository() }
+    single<BackgroundAudioController> { IosBackgroundAudioController() }
+    single<GameSoundEffectPlayer> { IosGameSoundEffectPlayer() }
+}
+
+private const val HISTORY_KEY = "hangman.history.v1"
+private const val SETTINGS_KEY = "hangman.settings.v1"
+
+private val json = Json { ignoreUnknownKeys = true }
+private val defaults = NSUserDefaults.standardUserDefaults
+
+private class IosUserDefaultsGameRepository : HistoryRepository, GameSessionRepository {
+    private val historyState = MutableStateFlow(loadHistory())
+
+    private fun loadHistory(): List<HistoryRecord> {
+        val raw = defaults.stringForKey(HISTORY_KEY) ?: return emptyList()
+        val stored = runCatching {
+            json.decodeFromString<List<StoredHistoryRecord>>(raw)
+        }.getOrDefault(emptyList())
+        return stored.map { it.toDomain() }
+    }
+
+    private fun persist(history: List<HistoryRecord>) {
+        val payload = json.encodeToString(history.map { it.toStored() })
+        defaults.setObject(payload, forKey = HISTORY_KEY)
+    }
+
+    override fun observeHistory(): Flow<List<HistoryRecord>> = historyState
+
+    override suspend fun deleteHistoryItem(history: HistoryRecord) {
+        val updated = historyState.value.filterNot { it.gameId == history.gameId }
+        historyState.value = updated
+        persist(updated)
+    }
+
+    override suspend fun deleteAllHistory() {
+        historyState.value = emptyList()
+        defaults.removeObjectForKey(HISTORY_KEY)
+    }
+
+    override suspend fun saveCompletedGame(request: GameHistoryWriteRequest) {
+        val metadata = generateHistoryMetadata(historyState.value.size)
+        val record = HistoryRecord(
+            gameId = metadata.gameId,
+            gameScore = request.gameScore,
+            gameLevel = request.gameLevel,
+            gameDifficulty = request.gameDifficulty,
+            gameCategory = request.gameCategory,
+            gameSummary = request.gameSummary,
+            gamePlayedTime = metadata.gamePlayedTime,
+            gamePlayedDate = metadata.gamePlayedDate,
+            hintsUsed = request.hintsUsed,
+            hintTypesUsed = request.hintTypesUsed,
+        )
+        val updated = listOf(record) + historyState.value
+        historyState.value = updated
+        persist(updated)
+    }
+}
+
+private class IosUserDefaultsGameSettingsRepository : GameSettingsRepository {
+    private var settings: StoredSettings = loadSettings()
+
+    private fun loadSettings(): StoredSettings {
+        val raw = defaults.stringForKey(SETTINGS_KEY) ?: return StoredSettings()
+        return runCatching { json.decodeFromString<StoredSettings>(raw) }.getOrDefault(StoredSettings())
+    }
+
+    private fun persist() {
+        defaults.setObject(json.encodeToString(settings), forKey = SETTINGS_KEY)
+    }
+
+    override suspend fun getGameDifficulty(): GameDifficulty = settings.gameDifficulty.toGameDifficulty()
+
+    override suspend fun getGameCategory(): GameCategory = settings.gameCategory.toGameCategory()
+
+    override suspend fun setGameDifficulty(gameDifficulty: GameDifficulty) {
+        settings = settings.copy(gameDifficulty = gameDifficulty.name)
+        persist()
+    }
+
+    override suspend fun setGameCategory(gameCategory: GameCategory) {
+        settings = settings.copy(gameCategory = gameCategory.name)
+        persist()
+    }
+}
+
+private class IosBackgroundAudioController : BackgroundAudioController {
+
+    private val player = createAudioPlayer("game_background_music.mp3")?.apply {
+        numberOfLoops = -1
+        volume = 0.35f
+    }
+
+    override fun playLoop() {
+        player?.play()
+    }
+
+    override fun stop() {
+        player?.stop()
+        player?.currentTime = 0.0
+    }
+
+    override fun isPlaying(): Boolean = player?.playing == true
+}
+
+private class IosGameSoundEffectPlayer : GameSoundEffectPlayer {
+    private val players: Map<GameSoundEffect, AVAudioPlayer?> =
+        GameSoundEffect.entries.associateWith { sound ->
+            createAudioPlayer("${sound.resourceKey}.mp3")
+        }
+
+    override fun play(soundEffect: GameSoundEffect) {
+        val player = players[soundEffect] ?: return
+        player.stop()
+        player.currentTime = 0.0
+        player.play()
+    }
+}
+
+@OptIn(ExperimentalForeignApi::class)
+private fun createAudioPlayer(fileName: String): AVAudioPlayer? {
+    val baseName = fileName.substringBeforeLast('.')
+    val extension = fileName.substringAfterLast('.', missingDelimiterValue = "")
+    val path = NSBundle.mainBundle.pathForResource(baseName, extension)
+    if (path == null) {
+        println("iOS audio resource not found in bundle: $fileName")
+        return null
+    }
+    return runCatching {
+        AVAudioPlayer(contentsOfURL = NSURL.fileURLWithPath(path), error = null).apply {
+            prepareToPlay()
+        }
+    }.onFailure { error ->
+        println("Failed to load iOS audio resource '$fileName': ${error.message}")
+    }.getOrNull()
+}

@@ -14,8 +14,8 @@ android {
         applicationId = "com.developersbreach.hangman"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
 
         vectorDrawables {
             useSupportLibrary = true
@@ -86,16 +86,9 @@ kotlin {
 
 dependencies {
     implementation(project(":composeApp"))
-    implementation(project(":game-core"))
-    implementation(project(":core:data"))
-    implementation(project(":feature:onboarding"))
-    implementation(project(":feature:history"))
-    implementation(project(":feature:game"))
-    implementation(project(":core:designsystem"))
 
     // Core Android + Compose UI
     implementation(libs.androidx.core.ktx)
-    implementation(libs.google.material)
     implementation(libs.androidx.activity.compose)
 
     // DI

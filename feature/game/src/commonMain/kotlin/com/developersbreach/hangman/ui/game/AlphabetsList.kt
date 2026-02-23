@@ -1,46 +1,57 @@
 package com.developersbreach.hangman.ui.game
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import com.developersbreach.game.core.Alphabet
 import com.developersbreach.hangman.ui.components.SparkPulse
-import com.developersbreach.hangman.ui.components.TitleMediumText
+import com.developersbreach.hangman.ui.components.TitleLargeText
+import com.developersbreach.hangman.ui.components.creepyOutline
 import com.developersbreach.hangman.ui.theme.HangmanTheme
 
 @Composable
 fun AlphabetsList(
     modifier: Modifier,
     alphabetsList: List<Alphabet>,
+    tileSize: Dp,
+    spacing: Dp,
+    contentPadding: Dp,
+    maxGridHeight: Dp,
+    creepinessThreshold: Float = 0.16f,
     onAlphabetClicked: (alphabetId: Int) -> Unit,
 ) {
-    Box(modifier = modifier) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
         LazyVerticalGrid(
-            columns = GridCells.Adaptive(40.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(20.dp),
-            modifier = Modifier.fillMaxWidth(),
+            columns = GridCells.Adaptive(tileSize),
+            horizontalArrangement = Arrangement.spacedBy(spacing, Alignment.CenterHorizontally),
+            verticalArrangement = Arrangement.spacedBy(spacing, Alignment.CenterVertically),
+            contentPadding = PaddingValues(contentPadding),
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(max = maxGridHeight),
         ) {
             items(items = alphabetsList, key = { it.alphabetId }) { alphabet ->
                 ItemAlphabetText(
                     alphabet = alphabet,
                     onAlphabetClicked = onAlphabetClicked,
+                    tileSize = tileSize,
+                    creepinessThreshold = creepinessThreshold,
                 )
             }
         }
@@ -51,14 +62,20 @@ fun AlphabetsList(
 private fun ItemAlphabetText(
     alphabet: Alphabet,
     onAlphabetClicked: (alphabetId: Int) -> Unit,
+    tileSize: Dp,
+    creepinessThreshold: Float,
 ) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .alpha(if (!alphabet.isAlphabetGuessed) 1f else 0.25f)
-            .clip(CircleShape)
-            .size(40.dp)
-            .background(color = HangmanTheme.colorScheme.primary.copy(alpha = 0.12f))
+            .size(tileSize)
+            .creepyOutline(
+                seed = alphabet.alphabetId,
+                threshold = creepinessThreshold,
+                fillColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.10f),
+                outlineColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.25f),
+            )
             .clickable(
                 enabled = !alphabet.isAlphabetGuessed,
                 onClick = { onAlphabetClicked(alphabet.alphabetId) },
@@ -66,12 +83,12 @@ private fun ItemAlphabetText(
     ) {
         if (alphabet.isAlphabetGuessed) {
             SparkPulse(
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier.size(tileSize),
                 sparkColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.50f),
             )
         }
 
-        TitleMediumText(
+        TitleLargeText(
             text = alphabet.alphabet,
             color = HangmanTheme.colorScheme.primary,
             textAlign = TextAlign.Center,

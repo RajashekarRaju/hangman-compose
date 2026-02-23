@@ -1,9 +1,12 @@
 <resources>
     <string name="game_cd_close_game">Close game</string>
     <string name="game_cd_open_instructions">Open game instructions dialog</string>
+    <string name="game_cd_open_hints">Open hints dialog</string>
 
     <string name="game_current_level">Level %1$d/%2$d</string>
     <string name="game_current_points">Points %1$d</string>
+    <string name="game_hint_counter">%1$d Left</string>
+    <string name="game_hint_cooldown">Hint cooldown</string>
 
     <string name="game_exit_title">Exit Game?</string>
     <string name="game_exit_confirm">Exit</string>
@@ -15,17 +18,12 @@
     <string name="game_lost_title">You Lost</string>
     <string name="game_lost_word">The word was: %1$s</string>
     <string name="game_dialog_done">Done</string>
-
-    <string name="game_dialog_instructions_title">Instructions</string>
-    <string name="game_dialog_instructions_subtitle">Guess the name of the %1$s.</string>
-    <string name="game_label_difficulty">Difficulty: %1$s</string>
-    <string name="game_label_category">Category: %1$s</string>
-
-    <string name="game_difficulty_easy">Easy</string>
-    <string name="game_difficulty_medium">Medium</string>
-    <string name="game_difficulty_hard">Hard</string>
-
-    <string name="game_category_countries">Countries</string>
-    <string name="game_category_languages">Languages</string>
-    <string name="game_category_companies">Companies</string>
+    <string name="game_hint_title">Choose a Hint</string>
+    <string name="game_hint_reveal_letter">Reveal</string>
+    <string name="game_hint_eliminate_letters">Eliminate</string>
+    <string name="game_hint_unavailable_title">Hint Unavailable</string>
+    <string name="game_hint_unavailable_no_hints">No hints remaining for this level.</string>
+    <string name="game_hint_unavailable_no_letters">No hidden letters left to reveal.</string>
+    <string name="game_hint_unavailable_no_elimination">No wrong letters available to eliminate.</string>
+    <string name="game_hint_unavailable_game_over">Hints are disabled because the game is over.</string>
 </resources>

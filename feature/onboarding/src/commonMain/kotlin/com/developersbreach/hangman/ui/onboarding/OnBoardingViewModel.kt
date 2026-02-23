@@ -50,12 +50,58 @@ class OnBoardingViewModel(
                 emitEffect(OnBoardingEffect.FinishActivity)
             }
 
+            OnBoardingEvent.OpenDifficultyDialog -> {
+                _uiState.update { current ->
+                    current.copy(
+                        isDifficultyDialogOpen = true,
+                        pendingDifficulty = current.gameDifficulty,
+                        pendingDifficultySliderPosition = current.gameDifficulty.toSliderPosition(),
+                    )
+                }
+            }
+
+            OnBoardingEvent.DismissDifficultyDialog -> {
+                _uiState.update { current ->
+                    current.copy(
+                        isDifficultyDialogOpen = false,
+                        pendingDifficulty = current.gameDifficulty,
+                        pendingDifficultySliderPosition = current.gameDifficulty.toSliderPosition(),
+                    )
+                }
+            }
+
+            is OnBoardingEvent.DifficultySliderPositionChanged -> {
+                val difficulty = event.sliderPosition.toGameDifficulty()
+                _uiState.update { current ->
+                    current.copy(
+                        pendingDifficulty = difficulty,
+                        pendingDifficultySliderPosition = event.sliderPosition,
+                    )
+                }
+            }
+
             is OnBoardingEvent.DifficultyChanged -> {
-                updatePlayerChosenDifficulty(event.sliderPosition)
+                updatePlayerChosenDifficulty(event.difficulty)
+            }
+
+            OnBoardingEvent.OpenCategoryDialog -> {
+                _uiState.update { current -> current.copy(isCategoryDialogOpen = true) }
+            }
+
+            OnBoardingEvent.DismissCategoryDialog -> {
+                _uiState.update { current -> current.copy(isCategoryDialogOpen = false) }
             }
 
             is OnBoardingEvent.CategoryChanged -> {
-                updatePlayerChosenCategory(event.categoryId)
+                updatePlayerChosenCategory(event.category)
+            }
+
+            OnBoardingEvent.OpenInstructionsDialog -> {
+                _uiState.update { current -> current.copy(isInstructionsDialogOpen = true) }
+            }
+
+            OnBoardingEvent.DismissInstructionsDialog -> {
+                _uiState.update { current -> current.copy(isInstructionsDialogOpen = false) }
             }
 
             OnBoardingEvent.ToggleBackgroundMusic -> {
@@ -87,11 +133,14 @@ class OnBoardingViewModel(
 
     private fun hydrateFromPreferences() {
         viewModelScope.launch {
+            val difficulty = settingsRepository.getGameDifficulty()
             _uiState.update { current ->
                 current.copy(
-                    gameDifficulty = settingsRepository.getGameDifficulty(),
+                    gameDifficulty = difficulty,
                     gameCategory = settingsRepository.getGameCategory(),
-                    isBackgroundMusicPlaying = audioController.isPlaying()
+                    isBackgroundMusicPlaying = audioController.isPlaying(),
+                    pendingDifficulty = difficulty,
+                    pendingDifficultySliderPosition = difficulty.toSliderPosition(),
                 )
             }
         }
@@ -111,30 +160,20 @@ class OnBoardingViewModel(
         }
     }
 
-    private fun updatePlayerChosenDifficulty(sliderPosition: Float) {
-        val gameDifficulty = when (sliderPosition) {
-            1.0f -> GameDifficulty.EASY
-            2.0f -> GameDifficulty.MEDIUM
-            3.0f -> GameDifficulty.HARD
-            else -> GameDifficulty.EASY
-        }
-
+    private fun updatePlayerChosenDifficulty(gameDifficulty: GameDifficulty) {
         _uiState.update { current ->
-            current.copy(gameDifficulty = gameDifficulty)
+            current.copy(
+                gameDifficulty = gameDifficulty,
+                pendingDifficulty = gameDifficulty,
+                pendingDifficultySliderPosition = gameDifficulty.toSliderPosition(),
+            )
         }
         viewModelScope.launch {
             settingsRepository.setGameDifficulty(gameDifficulty)
         }
     }
 
-    private fun updatePlayerChosenCategory(category: Int) {
-        val gameCategory = when (category) {
-            0 -> GameCategory.COUNTRIES
-            1 -> GameCategory.LANGUAGES
-            2 -> GameCategory.COMPANIES
-            else -> GameCategory.COUNTRIES
-        }
-
+    private fun updatePlayerChosenCategory(gameCategory: GameCategory) {
         _uiState.update { current ->
             current.copy(gameCategory = gameCategory)
         }

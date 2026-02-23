@@ -1,12 +1,12 @@
 package com.developersbreach.hangman.ui.game
 
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.developersbreach.hangman.ui.components.HangmanCircularProgress
 import com.developersbreach.hangman.ui.theme.HangmanTheme
 
 @Composable
@@ -16,11 +16,11 @@ fun CreateCircularProgressIndicator(
     progressColor: Color = HangmanTheme.colorScheme.primary,
     indicatorSize: Dp,
 ) {
-    CircularProgressIndicator(
-        progress = { currentProgress },
+    HangmanCircularProgress(
+        progress = currentProgress,
+        modifier = Modifier.size(indicatorSize),
         strokeWidth = strokeWidth,
-        color = progressColor,
+        indicatorColor = progressColor,
         trackColor = Color.Transparent,
-        modifier = Modifier.size(size = indicatorSize),
     )
 }

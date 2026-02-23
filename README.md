@@ -1,16 +1,43 @@
 # :video_game: Hangman - Built With Compose :paintbrush:
 
-### Thanks to [Cicero Hellmann](https://github.com/cicerohellmann) For giving this cool idea to build Hangman game with Compose for Android.
+## Multiplatform Hangman built with Compose Multiplatform.
+
+[![Deploy Web (Production)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/pages-production.yml/badge.svg)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/pages-production.yml)
+[![Build Packages](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/packages.yml/badge.svg)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/packages.yml)
+[![Tests](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/tests.yaml/badge.svg)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/tests.yaml)
 
 ![Game Banner](/assets/banner_hangman.png)
 
-## :arrow_down: Download
+## Play / Download
 
-<a href="https://play.google.com/store/apps/details?id=com.developersbreach.hangman&hl=en_IN&gl=US" target="_blank">
-<img src="https://play.google.com/intl/en_gb/badges/static/images/badges/en_badge_web_generic.png" width=240 />
-</a>
+- Web: [https://rajashekarraju.github.io/hangman-compose/](https://rajashekarraju.github.io/hangman-compose/)
+- Desktop installers :
+  - macOS DMG: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/latest/download/hangman-macos.dmg)
+  - Windows MSI: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/latest/download/hangman-windows.msi)
+  - Linux DEB: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/latest/download/hangman-linux.deb)
+  - Linux RPM: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/latest/download/hangman-linux.rpm)
+- Android APK : [Download](https://github.com/RajashekarRaju/hangman-compose/releases/latest/download/hangman-android.apk)
 
-## :sparkler: What's New: v0.1.0
+### Thanks to [Cicero Hellmann](https://github.com/cicerohellmann) For giving this cool idea to build Hangman game with Compose for Android.
+
+## :sparkler: What's New: v0.2.0
+
+- [x] Kotlin Multiplatform architecture (`app`, `composeApp`, `game-core`, `core/*`, `feature/*`, `navigation`)
+- [x] Platform support: Android
+- [x] Platform support: Web (WASM + GitHub Pages)
+- [x] Platform support: Desktop (JVM: macOS/Windows/Linux)
+- [x] Platform support: iOS (Xcode project + simulator flow)
+- [x] Gameplay: 60-second timer per level
+- [x] Gameplay: hints (`Reveal`, `Eliminate`) with cooldown
+- [x] Gameplay: persistent game settings + history
+- [x] Gameplay: scoring improvements
+- [x] Difficulty: Introduced `VERY_HARD` difficulty for words >= 11+ chars
+- [x] Categories: Introduced new categories and extended vocabulary.
+- [x] Responsive game layout (mobile/desktop/web) with previews and shared creepy design system.
+- [x] Cross-platform sound support (Android/Web/Desktop/iOS)
+- [x] Navigation3 update
+
+## Initial Version (v0.1.0)
 
 - [x] Players will be challenged with unique words only.
 - [x] Players can view their score/game history.
@@ -21,108 +48,60 @@
 - [x] Players can to know how many points scored by completing all levels.
 - [x] Persist the game state at any point of the game.
 
-## :roller_coaster: Roadmap: v0.2.0
+## Local Development
 
-- [ ] Support game in landscape mode.
-- [ ] Add more guessing categories.
-- [ ] Players can have hints for each level.
-- [ ] Improve game user experience.
-- [ ] Fix issues for smaller screen devices.
-- [ ] Replace all Shared Preferences with DataStore.
+### Common commands
 
-## :dango: App Overview
+- Run Android app:
+  - `./gradlew :app:assembleDebug`
+- Run Desktop app:
+  - `./gradlew :composeApp:desktopRun`
+- Run Web locally:
+  - `./gradlew :composeApp:wasmJsBrowserDevelopmentRun`
+- Build Web distribution:
+  - `./gradlew :composeApp:wasmJsBrowserDistribution`
+- Run iOS simulator (from repo root, macOS + Xcode required):
+  - `bash scripts/run-ios-sim.sh`
 
+### Tests
 
-| Screen | Red Theme | Teal Theme |
-| :----- | :-: | :--: |
-| **OnBoarding Screen** <br><br> • Default destination for the app.<br> • Players can choose different game categories from dialog.<br> • Players can choose difficulty mode through slider.<br> • Highest score will automatically update from game history data.<br> • Players can mute/unmute game background music.<br> • Players can read the game instructions from dialog.<br> • Shared preferences are used to save game category and difficulty.<br> | <img src="/assets/onboarding_red.png" width="200" /> | <img src="/assets/onboarding_teal.png" width="200" /> |
-| **Game Screen** <br><br> • Destination for playing the game.<br> • Game loads with default game preferences last saved by the player.<br> • Players can check their points and current level.<br> • Players can view the number of attempts left to guess the word.<br> • Once player completes all levels, a dialog will show up with total points scored.<br> • At any level if player loses the game, dialog will be shown with word which isn't guessed correctly.<br> • Can access the game instructions dialog to see which game mode is running.<br> • Players cannot reuse the same letter which is already guessed.<br> • Players cannot directly exit the game, a modal sheet will confirm the exit.<br> • Players can view which letters are correctly being guessed.<br> | <img src="/assets/game_red.png" width="200" /> | <img src="/assets/game_teal.png" width="200" /> |
-| **History Screen** <br><br> • Players can see their whole game history.<br> • Made use of room database to store all the history data.<br> • Each game history item has properties overall score, category, difficulty, level, won/lost info, time/date of play will be saved.<br> • Any specific game item history can be deleted from database by swiping.<br> • When no history is available a simple text message will be shown.<br> • Game progress will be saved only when player loses or wins but not when exits.<br> | <img src="/assets/history_red.png" width="200" /> | <img src="/assets/history_teal.png" width="200" /> |
+- CI-equivalent local test run:
+  - `./gradlew :app:testDebugUnitTest :game-core:desktopTest :feature:onboarding:desktopTest :feature:game:desktopTest :feature:history:desktopTest`
+- Broader KMP module tests:
+  - `./gradlew :composeApp:allTests :core:data:allTests :core:designsystem:allTests :feature:common-ui:allTests :feature:game:allTests :feature:history:allTests :feature:onboarding:allTests :game-core:allTests :navigation:allTests`
 
+## CI / Releases
 
-| Adjust Difficulty Mode | Game Instructions | Game Exit Modal Sheet |
-| :--------------------: | :---------------: | :-------: |
-| <img src="/assets/difficulty_red.png" width="200"/> | <img src="/assets/categories_red.png" width="200" /> | <img src="/assets/instructions_red.png" width="200" /> |
-| Game Won Dialog | Game Lost Dialog | Game Exit |
-| <img src="/assets/game_won_red.png" width="200"/> | <img src="/assets/game_lost_red.png" width="200" /> | <img src="/assets/exit_red.png" width="200" /> |
+- `.github/workflows/tests.yaml`
+  - Runs on pull requests
+  - Runs JVM unit + desktop tests
+  - Runs Android instrumentation on push/workflow_dispatch
+- `.github/workflows/pages-production.yml`
+  - Deploys web app to GitHub Pages
+- `.github/workflows/packages.yml`
+  - On `master` push:
+    - builds Android APK
+    - builds desktop installers (DMG/MSI/DEB/RPM)
+    - updates release artifacts
 
-## :hourglass_flowing_sand: Experiencing slow game performance ?
+## Contributing
 
-Rendering times with Compose is slower compared to XML. I've added few references below which could
-help you improve app performance.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-- Change app module to choose build variant Release mode.
-- Enable R8 and disable debug to speed up the performance
+- Open an issue for bugs.
+- Open a discussion for feature ideas.
+- Send a PR with focused changes and passing checks.
 
-#### References :bookmark_tabs:
+## Credits
 
-- Article by William Shelor - [Measuring Render Performance with Jetpack Compose](https://engineering.premise.com/measuring-render-performance-with-jetpack-compose-c0bf5814933).
-- Article by Chris Banes - [Composable Metrics](https://chris.banes.dev/composable-metrics/)
+- Game sounds: [Pixabay](https://pixabay.com/)
+- Font: [Creepster](https://fonts.google.com/specimen/Creepster#about)
+- Icons/background assets: modified assets from [unDraw](https://undraw.co/) and [iconscout](https://iconscout.com/)
+- Sound license documents: [pixabay-license](https://github.com/RajashekarRaju/hangman-compose/tree/master/pixabay-license)
 
-## :jack_o_lantern: Teal/Red Theme Colors
+## License
 
-```kotlin
-val TealColorPalette = lightColors(
-  primary = tealPrimary,
-  background = tealBackground,
-  onBackground = tealOnBackground,
-  surface = tealSurface,
-  onSurface = tealOnSurface
-)
-
-val RedColorPalette = darkColors(
-  primary = redPrimary,
-  background = redBackground,
-  onBackground = redOnBackground,
-  surface = redSurface,
-  onSurface = redOnSurface
-)
-```
-
-## :bulb: Motivation and Context
-
-`Jetpack Compose` is Android’s modern toolkit for building native UI. It enables you to quickly
-bring your app to life with less code, powerful tools, and intuitive Kotlin APIs.
-
-Understanding to implement own `Theme` `Shape` `Typography` `Color` has became bit easier by
-referring to lot of official jetpack compose samples which are available in GitHub.
-
-Best of all we got to do this in `Kotlin` way. Excited and long way to go from here.
-
-## :loudspeaker: What To Contribute ?
-
-* Have a cool idea or feature
-  request? [Start a discussion](https://github.com/RajashekarRaju/hangman-compose/discussions).
-* Want to contribute or add new feature to app? Send your pull request.
-* Game crashes while playing? Open a new issue, describe the problem.
-
-## :trophy: Credits
-
-### :loud_sound: Game Sounds - [Pixabay.com](https://pixabay.com/)
-
-```
-PIXABAY LICENSE CERTIFICATE
-
-All sounds used in game are only for user experience purpose.
-I do not own any of those audio content. All credit belongs to Music Author
-uploaded to Pixabay.
-```
-
-I hold the licenses for audio files used in this app.
-[Verify all license certificates](https://github.com/RajashekarRaju/hangman-compose/tree/master/pixabay-license).
-
-### :black_nib: Creepster Font
-
-This fonts is licensed under the Open Font License, this is the only font I've used in my app.
-
-You can refer to this font from [Google Fonts](https://fonts.google.com/specimen/Creepster#about).
-
-### :space_invader: Icons
-
-For the background images I have used in game, I have modified and used few icons from
-[unDraw](https://undraw.co/) and [iconscout](https://iconscout.com/).
-
-## :scroll: License
+Apache License 2.0. See [LICENSE](LICENSE).
 
 ```
 Copyright 2022 Rajasekhar K E

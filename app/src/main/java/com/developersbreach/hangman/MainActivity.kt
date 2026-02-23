@@ -6,8 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.developersbreach.hangman.navigation.AppNavigation
-import com.developersbreach.hangman.ui.theme.HangmanTheme
+import com.developersbreach.hangman.composeapp.HangmanRoot
 
 class MainActivity : ComponentActivity() {
 
@@ -18,10 +17,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             // Let game run in immersive fullscreen mode.
             hideSystemBars()
-
-            HangmanTheme {
-                AppNavigation(closeApplication = { finish() })
-            }
+            HangmanRoot(closeApplication = { finish() })
         }
     }
 

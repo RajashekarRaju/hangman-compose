@@ -6,4 +6,8 @@
     <string name="history_summary_won">WON</string>
     <string name="history_summary_lost">LOST</string>
     <string name="history_empty_state">No games played yet</string>
+    <string name="history_hints_used">Hints used: %1$d</string>
+    <string name="history_hint_types_used">Hint types: %1$s</string>
+    <string name="history_hint_type_reveal_letter">Reveal</string>
+    <string name="history_hint_type_eliminate_letters">Eliminate</string>
 </resources>

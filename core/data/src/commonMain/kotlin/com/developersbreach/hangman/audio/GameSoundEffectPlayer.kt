@@ -1,10 +1,12 @@
 package com.developersbreach.hangman.audio
 
-enum class GameSoundEffect {
-    LEVEL_WON,
-    GAME_WON,
-    GAME_LOST,
-    ALPHABET_TAP,
+enum class GameSoundEffect(
+    val resourceKey: String,
+) {
+    LEVEL_WON(resourceKey = "level_won"),
+    GAME_WON(resourceKey = "game_won"),
+    GAME_LOST(resourceKey = "game_lost"),
+    ALPHABET_TAP(resourceKey = "alphabet_tap"),
 }
 
 interface GameSoundEffectPlayer {

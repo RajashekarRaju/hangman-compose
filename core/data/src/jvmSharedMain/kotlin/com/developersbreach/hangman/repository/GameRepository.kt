@@ -1,11 +1,11 @@
 package com.developersbreach.hangman.repository
 
+import com.developersbreach.game.core.HintType
 import com.developersbreach.hangman.repository.database.GameDatabase
 import com.developersbreach.hangman.repository.database.entity.HistoryEntity
+import com.developersbreach.hangman.repository.metadata.generateHistoryMetadata
 import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
 import com.developersbreach.hangman.repository.model.HistoryRecord
-import com.developersbreach.hangman.utils.getDateAndTime
-import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -16,16 +16,18 @@ class GameRepository(
 ) : HistoryRepository, GameSessionRepository {
 
     override suspend fun saveCompletedGame(request: GameHistoryWriteRequest) {
-        val (date, time) = getDateAndTime()
+        val metadata = generateHistoryMetadata()
         val historyEntity = HistoryEntity(
-            gameId = UUID.randomUUID().toString(),
+            gameId = metadata.gameId,
             gameScore = request.gameScore,
             gameLevel = request.gameLevel,
             gameSummary = request.gameSummary,
             gameDifficulty = request.gameDifficulty,
             gameCategory = request.gameCategory,
-            gamePlayedTime = time,
-            gamePlayedDate = date,
+            gamePlayedTime = metadata.gamePlayedTime,
+            gamePlayedDate = metadata.gamePlayedDate,
+            hintsUsed = request.hintsUsed,
+            hintTypesUsed = request.hintTypesUsed.joinToString(separator = ",") { it.name },
         )
 
         withContext(Dispatchers.IO) {
@@ -64,6 +66,12 @@ private fun HistoryEntity.toRecord(): HistoryRecord {
         gameSummary = gameSummary,
         gamePlayedTime = gamePlayedTime,
         gamePlayedDate = gamePlayedDate,
+        hintsUsed = hintsUsed,
+        hintTypesUsed = hintTypesUsed
+            .split(",")
+            .mapNotNull { value ->
+                runCatching { HintType.valueOf(value) }.getOrNull()
+            },
     )
 }
 
@@ -77,5 +85,7 @@ private fun HistoryRecord.toEntity(): HistoryEntity {
         gameSummary = gameSummary,
         gamePlayedTime = gamePlayedTime,
         gamePlayedDate = gamePlayedDate,
+        hintsUsed = hintsUsed,
+        hintTypesUsed = hintTypesUsed.joinToString(separator = ",") { it.name },
     )
 }

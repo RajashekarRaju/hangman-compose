@@ -33,3 +33,5 @@ out/
 !**/src/test/**/out/
 
 .kotlin
+/iosApp/iosApp.xcodeproj/project.xcworkspace/xcuserdata/raj.xcuserdatad/UserInterfaceState.xcuserstate
+/iosApp/iosApp.xcodeproj/xcuserdata/raj.xcuserdatad/xcschemes/xcschememanagement.plist

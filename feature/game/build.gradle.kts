@@ -1,10 +1,5 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.compose.multiplatform)
+    id("hangman.kmp.compose-library")
 }
 
 compose.resources {
@@ -13,31 +8,12 @@ compose.resources {
 }
 
 kotlin {
-    jvmToolchain(21)
-
-    androidTarget {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
-        }
-    }
-
-    jvm("desktop") {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_21)
-        }
-    }
-
-    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-        binaries.executable()
-    }
-
     sourceSets {
         commonMain.dependencies {
             implementation(project(":game-core"))
             implementation(project(":core:designsystem"))
             implementation(project(":core:data"))
+            implementation(project(":feature:common-ui"))
 
             implementation(libs.compose.runtime)
             implementation(libs.compose.ui)
@@ -53,19 +29,18 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
         }
+
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.kotlinx.coroutines.test)
+        }
     }
+}
+
+dependencies {
+    add("debugImplementation", libs.compose.ui.tooling)
 }
 
 android {
     namespace = "com.developersbreach.hangman.feature.game"
-    compileSdk = 36
-
-    defaultConfig {
-        minSdk = 24
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
 }

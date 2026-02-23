@@ -2,8 +2,10 @@ package com.developersbreach.game.core
 
 class GameSessionEngine(
     private val guessingWordsForCurrentGame: List<Words>,
-    private val maxAttempts: Int = 8,
-    private val levelsPerGame: Int = 5
+    private val maxAttempts: Int = MAX_ATTEMPTS_PER_LEVEL,
+    private val levelsPerGame: Int = LEVELS_PER_GAME,
+    private val hintsPerLevel: Int = 1,
+    private val hintEliminationCount: Int = DEFAULT_HINT_ELIMINATION_COUNT,
 ) {
     private var attemptsLeftToGuess: Int = maxAttempts
     private var pointsScoredPerWord: Int = 0
@@ -12,6 +14,9 @@ class GameSessionEngine(
     private var gameOverByWinning: Boolean = false
     private var gameOverByNoAttemptsLeft: Boolean = false
     private val pointsScoredInEachLevel = MutableList(levelsPerGame) { 0 }
+    private var hintsRemaining: Int = hintsPerLevel
+    private var hintsUsedTotal: Int = 0
+    private val hintTypesUsed = linkedSetOf<HintType>()
 
     private var currentWord: String = ""
     private var alphabets: List<Alphabet> = alphabetsList()
@@ -23,6 +28,12 @@ class GameSessionEngine(
         }
         require(maxAttempts > 0) {
             "maxAttempts must be greater than 0."
+        }
+        require(hintsPerLevel >= 0) {
+            "hintsPerLevel must be >= 0."
+        }
+        require(hintEliminationCount > 0) {
+            "hintEliminationCount must be > 0."
         }
         require(guessingWordsForCurrentGame.size >= levelsPerGame) {
             "Expected at least $levelsPerGame words for a game session."
@@ -41,7 +52,10 @@ class GameSessionEngine(
             pointsScoredOverall = pointsScoredOverall,
             gameOverByWinning = gameOverByWinning,
             gameOverByNoAttemptsLeft = gameOverByNoAttemptsLeft,
-            maxLevelReached = levelsPerGame
+            maxLevelReached = levelsPerGame,
+            hintsRemaining = hintsRemaining,
+            hintsUsedTotal = hintsUsedTotal,
+            hintTypesUsed = hintTypesUsed.toSet(),
         )
     }
 
@@ -60,10 +74,27 @@ class GameSessionEngine(
         }
     }
 
+    fun applyHint(type: HintType): GameSessionUpdate {
+        if (!canAcceptGuess()) {
+            return hintErrorUpdate(type, HintError.GAME_ALREADY_FINISHED)
+        }
+        if (hintsRemaining <= 0) {
+            return hintErrorUpdate(type, HintError.NO_HINTS_REMAINING)
+        }
+
+        return when (type) {
+            HintType.REVEAL_LETTER -> applyRevealLetterHint()
+            HintType.ELIMINATE_LETTERS -> applyEliminateLettersHint()
+        }
+    }
+
     private fun resetGuessesForCurrentWord() {
         playerGuesses.clear()
-        repeat(currentWord.length) {
-            playerGuesses.add(" ")
+        currentWord.forEach { character ->
+            when (character) {
+                ' ' -> playerGuesses.add(WORD_SEPARATOR)
+                else -> playerGuesses.add(UNGUESSED_SLOT)
+            }
         }
     }
 
@@ -77,6 +108,18 @@ class GameSessionEngine(
             levelCompleted = false,
             gameWon = false,
             gameLost = false
+        )
+    }
+
+    private fun hintErrorUpdate(type: HintType, error: HintError): GameSessionUpdate {
+        return GameSessionUpdate(
+            state = snapshot(),
+            levelCompleted = false,
+            gameWon = false,
+            gameLost = false,
+            hintType = type,
+            hintApplied = false,
+            hintError = error,
         )
     }
 
@@ -99,7 +142,7 @@ class GameSessionEngine(
 
     private fun handleCorrectGuess(alphabet: Alphabet): GameSessionUpdate {
         revealMatchedAlphabetPositions(alphabet)
-        if (playerGuesses.contains(" ")) {
+        if (playerGuesses.contains(UNGUESSED_SLOT)) {
             return GameSessionUpdate(
                 state = snapshot(),
                 levelCompleted = false,
@@ -128,7 +171,7 @@ class GameSessionEngine(
     }
 
     private fun completeCurrentLevel(): Boolean {
-        pointsScoredPerWord = currentWord.length
+        pointsScoredPerWord = currentWord.playableLetterCount()
         calculateOverallPointsScoredEachLevel()
         attemptsLeftToGuess = maxAttempts
 
@@ -139,6 +182,7 @@ class GameSessionEngine(
         if (currentPlayerLevel < levelsPerGame) {
             currentWord = guessingWordsForCurrentGame[currentPlayerLevel].wordName
             alphabets = alphabets.map { it.copy(isAlphabetGuessed = false) }
+            hintsRemaining = hintsPerLevel
             resetGuessesForCurrentWord()
             return false
         }
@@ -166,5 +210,82 @@ class GameSessionEngine(
             pointsScoredInEachLevel[completedLevelIndex] = pointsScoredPerWord
         }
         pointsScoredOverall = pointsScoredInEachLevel.sum()
+    }
+
+    private fun applyRevealLetterHint(): GameSessionUpdate {
+        val unrevealedIndexes = playerGuesses
+            .withIndex()
+            .filter { it.value == UNGUESSED_SLOT }
+            .map { it.index }
+
+        if (unrevealedIndexes.isEmpty()) {
+            return hintErrorUpdate(HintType.REVEAL_LETTER, HintError.NO_UNREVEALED_LETTERS)
+        }
+
+        val revealedIndex = unrevealedIndexes.first()
+        val revealedCharacter = currentWord[revealedIndex].lowercaseChar().toString()
+        playerGuesses[revealedIndex] = revealedCharacter
+        markAlphabetAsGuessedForLetter(revealedCharacter)
+        consumeHint(HintType.REVEAL_LETTER)
+
+        val isLevelCompleted = !playerGuesses.contains(UNGUESSED_SLOT)
+        val gameWon = if (isLevelCompleted) completeCurrentLevel() else false
+
+        return GameSessionUpdate(
+            state = snapshot(),
+            levelCompleted = isLevelCompleted,
+            gameWon = gameWon,
+            gameLost = false,
+            hintType = HintType.REVEAL_LETTER,
+            hintApplied = true,
+            revealedIndexes = listOf(revealedIndex),
+        )
+    }
+
+    private fun applyEliminateLettersHint(): GameSessionUpdate {
+        val currentWordLower = currentWord.lowercase()
+        val candidates = alphabets.filter { alphabet ->
+            !alphabet.isAlphabetGuessed && !currentWordLower.contains(alphabet.alphabet.lowercase())
+        }
+
+        if (candidates.isEmpty()) {
+            return hintErrorUpdate(HintType.ELIMINATE_LETTERS, HintError.NO_ELIMINATION_CANDIDATES)
+        }
+
+        val eliminated = candidates.take(hintEliminationCount)
+        val eliminatedIds = eliminated.map { it.alphabetId }
+        alphabets = alphabets.map { alphabet ->
+            when (alphabet.alphabetId) {
+                in eliminatedIds -> alphabet.copy(isAlphabetGuessed = true)
+                else -> alphabet
+            }
+        }
+        consumeHint(HintType.ELIMINATE_LETTERS)
+
+        return GameSessionUpdate(
+            state = snapshot(),
+            levelCompleted = false,
+            gameWon = false,
+            gameLost = false,
+            hintType = HintType.ELIMINATE_LETTERS,
+            hintApplied = true,
+            eliminatedAlphabetIds = eliminatedIds,
+        )
+    }
+
+    private fun consumeHint(type: HintType) {
+        hintsRemaining = (hintsRemaining - 1).coerceAtLeast(0)
+        hintsUsedTotal += 1
+        hintTypesUsed += type
+    }
+
+    private fun markAlphabetAsGuessedForLetter(letter: String) {
+        val alphabetId = alphabets.firstOrNull { it.alphabet.lowercase() == letter }?.alphabetId ?: return
+        markAlphabetAsGuessed(alphabetId)
+    }
+
+    private companion object {
+        const val UNGUESSED_SLOT = ""
+        const val WORD_SEPARATOR = " "
     }
 }

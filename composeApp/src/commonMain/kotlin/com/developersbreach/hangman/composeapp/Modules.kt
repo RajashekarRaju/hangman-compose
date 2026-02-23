@@ -3,15 +3,14 @@ package com.developersbreach.hangman.composeapp
 import com.developersbreach.hangman.ui.game.GameViewModel
 import com.developersbreach.hangman.ui.history.HistoryViewModel
 import com.developersbreach.hangman.ui.onboarding.OnBoardingViewModel
+import com.developersbreach.hangman.repository.di.platformDataModule
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
-expect fun platformRepositoryModule(): Module
-
 fun initKoinComponents(): List<Module> {
     return listOf(
-        platformRepositoryModule(),
+        platformDataModule(),
         viewModelModule
     )
 }

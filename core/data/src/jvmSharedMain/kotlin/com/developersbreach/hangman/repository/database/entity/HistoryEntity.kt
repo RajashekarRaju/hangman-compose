@@ -33,4 +33,10 @@ data class HistoryEntity(
 
     @ColumnInfo(name = "column_game_date")
     val gamePlayedDate: String,
+
+    @ColumnInfo(name = "column_hints_used")
+    val hintsUsed: Int,
+
+    @ColumnInfo(name = "column_hint_types_used")
+    val hintTypesUsed: String,
 )

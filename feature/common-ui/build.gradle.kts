@@ -1,0 +1,26 @@
+plugins {
+    id("hangman.kmp.compose-library")
+}
+
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.developersbreach.hangman.feature.common.ui.generated.resources"
+}
+
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":game-core"))
+            implementation(project(":core:designsystem"))
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.components.resources)
+        }
+    }
+}
+
+android {
+    namespace = "com.developersbreach.hangman.feature.common.ui"
+}
