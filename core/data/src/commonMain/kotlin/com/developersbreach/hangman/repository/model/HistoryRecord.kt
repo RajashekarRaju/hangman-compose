@@ -2,6 +2,7 @@ package com.developersbreach.hangman.repository.model
 
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
+import com.developersbreach.game.core.HintType
 
 data class HistoryRecord(
     val gameId: String,
@@ -11,5 +12,7 @@ data class HistoryRecord(
     val gameCategory: GameCategory,
     val gameSummary: Boolean,
     val gamePlayedTime: String,
-    val gamePlayedDate: String
+    val gamePlayedDate: String,
+    val hintsUsed: Int = 0,
+    val hintTypesUsed: List<HintType> = emptyList(),
 )

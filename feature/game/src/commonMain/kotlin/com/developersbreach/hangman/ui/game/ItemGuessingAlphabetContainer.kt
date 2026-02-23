@@ -3,9 +3,11 @@ package com.developersbreach.hangman.ui.game
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,14 +36,18 @@ fun GuessedAlphabetsContainer(
             .padding(horizontal = horizontalPadding),
     ) {
         playerGuesses.forEachIndexed { index, validGuess ->
-            ItemGuessingAlphabetContainer(
-                validGuess = validGuess,
-                creepinessThreshold = creepinessThreshold,
-                seed = validGuess.hashCode() + index,
-                chipSize = chipSize,
-                innerPadding = innerPadding,
-                phase = guessedPhase + index * 0.17f,
-            )
+            when (validGuess) {
+                " " -> Spacer(modifier = Modifier.width(chipSize * 0.55f))
+                else ->
+                    ItemGuessingAlphabetContainer(
+                        validGuess = validGuess,
+                        creepinessThreshold = creepinessThreshold,
+                        seed = validGuess.hashCode() + index,
+                        chipSize = chipSize,
+                        innerPadding = innerPadding,
+                        phase = guessedPhase + index * 0.17f,
+                    )
+            }
         }
     }
 }

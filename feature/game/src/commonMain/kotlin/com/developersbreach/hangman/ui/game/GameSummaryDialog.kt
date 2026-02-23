@@ -3,6 +3,7 @@ package com.developersbreach.hangman.ui.game
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
@@ -46,12 +47,14 @@ fun ShowDialogWhenGameWon(
 
         Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.Start,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Spacer(modifier = Modifier.height(16.dp))
             BodyLargeText(
                 text = stringResource(Res.string.game_won_points, pointsScoredOverall),
                 color = HangmanTheme.colorScheme.onSurface,
             )
+            Spacer(modifier = Modifier.height(4.dp))
             BodyLargeText(
                 text = stringResource(
                     Res.string.game_won_difficulty,
@@ -59,6 +62,7 @@ fun ShowDialogWhenGameWon(
                 ),
                 color = HangmanTheme.colorScheme.onSurface,
             )
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
         HangmanTextActionButton(

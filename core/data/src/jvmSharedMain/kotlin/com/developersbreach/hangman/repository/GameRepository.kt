@@ -1,5 +1,6 @@
 package com.developersbreach.hangman.repository
 
+import com.developersbreach.game.core.HintType
 import com.developersbreach.hangman.repository.database.GameDatabase
 import com.developersbreach.hangman.repository.database.entity.HistoryEntity
 import com.developersbreach.hangman.repository.metadata.generateHistoryMetadata
@@ -25,6 +26,8 @@ class GameRepository(
             gameCategory = request.gameCategory,
             gamePlayedTime = metadata.gamePlayedTime,
             gamePlayedDate = metadata.gamePlayedDate,
+            hintsUsed = request.hintsUsed,
+            hintTypesUsed = request.hintTypesUsed.joinToString(separator = ",") { it.name },
         )
 
         withContext(Dispatchers.IO) {
@@ -63,6 +66,12 @@ private fun HistoryEntity.toRecord(): HistoryRecord {
         gameSummary = gameSummary,
         gamePlayedTime = gamePlayedTime,
         gamePlayedDate = gamePlayedDate,
+        hintsUsed = hintsUsed,
+        hintTypesUsed = hintTypesUsed
+            .split(",")
+            .mapNotNull { value ->
+                runCatching { HintType.valueOf(value) }.getOrNull()
+            },
     )
 }
 
@@ -76,5 +85,7 @@ private fun HistoryRecord.toEntity(): HistoryEntity {
         gameSummary = gameSummary,
         gamePlayedTime = gamePlayedTime,
         gamePlayedDate = gamePlayedDate,
+        hintsUsed = hintsUsed,
+        hintTypesUsed = hintTypesUsed.joinToString(separator = ",") { it.name },
     )
 }

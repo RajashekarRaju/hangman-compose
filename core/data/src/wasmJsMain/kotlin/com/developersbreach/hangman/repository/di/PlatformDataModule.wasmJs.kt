@@ -81,6 +81,8 @@ private class WasmLocalStorageGameRepository : HistoryRepository, GameSessionRep
             gameSummary = request.gameSummary,
             gamePlayedTime = metadata.gamePlayedTime,
             gamePlayedDate = metadata.gamePlayedDate,
+            hintsUsed = request.hintsUsed,
+            hintTypesUsed = request.hintTypesUsed,
         )
         val updated = listOf(record) + historyState.value
         historyState.value = updated

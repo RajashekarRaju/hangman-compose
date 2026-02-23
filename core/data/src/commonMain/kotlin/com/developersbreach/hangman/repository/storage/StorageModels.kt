@@ -2,6 +2,7 @@ package com.developersbreach.hangman.repository.storage
 
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
+import com.developersbreach.game.core.HintType
 import com.developersbreach.hangman.repository.model.HistoryRecord
 import kotlinx.serialization.Serializable
 
@@ -15,6 +16,8 @@ data class StoredHistoryRecord(
     val gameSummary: Boolean,
     val gamePlayedTime: String,
     val gamePlayedDate: String,
+    val hintsUsed: Int = 0,
+    val hintTypesUsed: List<String> = emptyList(),
 )
 
 fun StoredHistoryRecord.toDomain(): HistoryRecord {
@@ -27,6 +30,10 @@ fun StoredHistoryRecord.toDomain(): HistoryRecord {
         gameSummary = gameSummary,
         gamePlayedTime = gamePlayedTime,
         gamePlayedDate = gamePlayedDate,
+        hintsUsed = hintsUsed,
+        hintTypesUsed = hintTypesUsed.mapNotNull { value ->
+            runCatching { HintType.valueOf(value) }.getOrNull()
+        },
     )
 }
 
@@ -40,6 +47,8 @@ fun HistoryRecord.toStored(): StoredHistoryRecord {
         gameSummary = gameSummary,
         gamePlayedTime = gamePlayedTime,
         gamePlayedDate = gamePlayedDate,
+        hintsUsed = hintsUsed,
+        hintTypesUsed = hintTypesUsed.map { it.name },
     )
 }
 

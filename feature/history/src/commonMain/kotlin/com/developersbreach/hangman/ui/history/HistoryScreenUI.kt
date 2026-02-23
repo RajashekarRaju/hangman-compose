@@ -26,17 +26,12 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.developersbreach.game.core.GameCategory
-import com.developersbreach.game.core.GameDifficulty
+import com.developersbreach.game.core.HintType
 import com.developersbreach.hangman.feature.history.generated.resources.Res
-import com.developersbreach.hangman.feature.history.generated.resources.history_category_companies
-import com.developersbreach.hangman.feature.history.generated.resources.history_category_countries
-import com.developersbreach.hangman.feature.history.generated.resources.history_category_languages
 import com.developersbreach.hangman.feature.history.generated.resources.history_cd_delete_item
-import com.developersbreach.hangman.feature.history.generated.resources.history_difficulty_easy
-import com.developersbreach.hangman.feature.history.generated.resources.history_difficulty_hard
-import com.developersbreach.hangman.feature.history.generated.resources.history_difficulty_medium
 import com.developersbreach.hangman.feature.history.generated.resources.history_empty_state
+import com.developersbreach.hangman.feature.history.generated.resources.history_hint_types_used
+import com.developersbreach.hangman.feature.history.generated.resources.history_hints_used
 import com.developersbreach.hangman.feature.history.generated.resources.history_summary_lost
 import com.developersbreach.hangman.feature.history.generated.resources.history_summary_won
 import com.developersbreach.hangman.repository.model.HistoryRecord
@@ -55,7 +50,6 @@ import com.developersbreach.hangman.ui.components.TitleMediumText
 import com.developersbreach.hangman.ui.components.creepyOutline
 import com.developersbreach.hangman.ui.components.rememberCreepyPhase
 import com.developersbreach.hangman.ui.theme.HangmanTheme
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -236,6 +230,24 @@ private fun ItemGameHistory(
 
             Column(horizontalAlignment = Alignment.End) {
                 BodySmallText(
+                    text = stringResource(Res.string.history_hints_used, history.hintsUsed),
+                    color = HangmanTheme.colorScheme.onSurfaceVariant,
+                )
+                if (history.hintTypesUsed.isNotEmpty()) {
+                    val revealLabel = stringResource(HintType.REVEAL_LETTER.labelRes())
+                    val eliminateLabel = stringResource(HintType.ELIMINATE_LETTERS.labelRes())
+                    val hintTypesText = history.hintTypesUsed.joinToString { type ->
+                        when (type) {
+                            HintType.REVEAL_LETTER -> revealLabel
+                            HintType.ELIMINATE_LETTERS -> eliminateLabel
+                        }
+                    }
+                    BodySmallText(
+                        text = stringResource(Res.string.history_hint_types_used, hintTypesText),
+                        color = HangmanTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                BodySmallText(
                     text = history.gamePlayedTime,
                     color = HangmanTheme.colorScheme.onSurfaceVariant
                 )
@@ -288,20 +300,4 @@ private fun ShowEmptyHistoryMessage(modifier: Modifier = Modifier) {
         color = HangmanTheme.colorScheme.onBackground.copy(alpha = 0.75f),
         modifier = modifier
     )
-}
-
-private fun GameDifficulty.labelRes(): StringResource {
-    return when (this) {
-        GameDifficulty.EASY -> Res.string.history_difficulty_easy
-        GameDifficulty.MEDIUM -> Res.string.history_difficulty_medium
-        GameDifficulty.HARD -> Res.string.history_difficulty_hard
-    }
-}
-
-private fun GameCategory.labelRes(): StringResource {
-    return when (this) {
-        GameCategory.COUNTRIES -> Res.string.history_category_countries
-        GameCategory.LANGUAGES -> Res.string.history_category_languages
-        GameCategory.COMPANIES -> Res.string.history_category_companies
-    }
 }

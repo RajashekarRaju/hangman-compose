@@ -1,5 +1,7 @@
 package com.developersbreach.hangman.ui.components
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,6 +18,7 @@ import com.developersbreach.hangman.ui.theme.HangmanTheme
 fun HangmanScaffold(
     modifier: Modifier = Modifier,
     topBar: @Composable () -> Unit = {},
+    bottomBar: @Composable ColumnScope.() -> Unit = {},
     containerColor: Color = HangmanTheme.colorScheme.background,
     contentColor: Color = HangmanTheme.colorScheme.onBackground,
     content: @Composable (PaddingValues) -> Unit,
@@ -23,6 +26,7 @@ fun HangmanScaffold(
     Scaffold(
         modifier = modifier,
         topBar = topBar,
+        bottomBar = { Column { bottomBar() } },
         containerColor = containerColor,
         contentColor = contentColor,
         content = content,

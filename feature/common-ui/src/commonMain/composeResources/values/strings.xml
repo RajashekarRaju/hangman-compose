@@ -3,4 +3,16 @@
     <string name="instructions_dialog_subtitle">Guess the name of the %1$s.</string>
     <string name="instructions_label_difficulty">Difficulty: %1$s</string>
     <string name="instructions_label_category">Category: %1$s</string>
+    <string name="instructions_dialog_body">
+        A match has 5 levels. You win only after completing all 5 levels.\n
+        Each level has a 60-second timer. If time runs out, the game ends as a loss.\n
+        You start each level with 8 attempts. Attempts reset when you enter the next level.\n
+        Wrong letter guesses reduce attempts by 1. Correct guesses do not reduce attempts.\n
+        Level points are based on the word length and are added to your total score.\n
+        Hints are optional and limited per level. Easy gives 2 hints, Medium and Hard give 1 hint.\n
+        Available hint types are Reveal Letter and Eliminate Letters.\n
+        Using hints does not reduce points. Hints only consume your level hint credits.\n
+        You can play with 3 categories: Countries, Languages, and Companies.\n
+        Your completed game results are saved in History.
+    </string>
 </resources>

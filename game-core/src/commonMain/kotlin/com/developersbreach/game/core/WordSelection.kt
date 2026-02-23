@@ -30,5 +30,9 @@ private fun List<String>.filterWordsByLength(
     range: IntRange,
     numberOfWords: Int = 5
 ): List<String> {
-    return this.filter { it.length in range }.shuffled().take(numberOfWords)
+    return this.filter { it.playableLetterCount() in range }.shuffled().take(numberOfWords)
+}
+
+private fun String.playableLetterCount(): Int {
+    return count { character -> character.isLetter() }
 }
