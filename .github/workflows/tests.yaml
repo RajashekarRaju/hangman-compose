@@ -1,4 +1,4 @@
-name: androidTest
+name: Tests
 on:
   pull_request:
     branches: [ '*' ]
@@ -26,8 +26,15 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Run local tests
-        run: ./gradlew :app:testDebugUnitTest --stacktrace
+      - name: Run unit and desktop tests
+        run: |
+          ./gradlew \
+            :app:testDebugUnitTest \
+            :game-core:desktopTest \
+            :feature:onboarding:desktopTest \
+            :feature:game:desktopTest \
+            :feature:history:desktopTest \
+            --stacktrace
 
       - name: Create AVD and Run androidTest
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'

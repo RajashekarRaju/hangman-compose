@@ -15,9 +15,10 @@ Words are managed in `game-core` using a validated DSL catalog.
 
 ### Files to edit
 
-- `/game/core/CountryWords.kt`
-- `/game/core/LanguageWords.kt`
-- `/game/core/CompanyWords.kt`
+- `/game/core/wordCategories/CountryWords.kt`
+- `/game/core/wordCategories/LanguageWords.kt`
+- `/game/core/wordCategories/CompanyWords.kt`
+- `/game/core/wordCategories/AnimalWords.kt`
 
 Do not edit gameplay logic just to add words.
 
@@ -32,20 +33,21 @@ Do not edit gameplay logic just to add words.
 
 Difficulty letter-count ranges are defined once in:
 
-- `/Users/raj/kmp/hangman-compose/game-core/src/commonMain/kotlin/com/developersbreach/game/core/GameConfigs.kt`
+- `game-core/src/commonMain/kotlin/com/developersbreach/game/core/GameConfigs.kt`
 
 Current mapping:
 
 - `EASY`: `4..5`
 - `MEDIUM`: `6..7`
 - `HARD`: `8..10`
+- `VERY_HARD`: `11+`
 
 ### Validation
 
 Run:
 
 ```bash
-GRADLE_USER_HOME=.gradle-local ./gradlew :game-core:compileKotlinMetadata :feature:game:compileDebugKotlinAndroid
+./gradlew :game-core:desktopTest :feature:game:desktopTest
 ```
 
 The word DSL validator will fail the build if:
@@ -53,7 +55,7 @@ The word DSL validator will fail the build if:
 - any category is empty
 - invalid characters exist
 - duplicates exist
-- any category does not have enough words for each difficulty bucket
+- any category does not have enough words for required difficulty buckets (`EASY`, `MEDIUM`, `HARD`)
 
 ## Pull Request Checklist
 
