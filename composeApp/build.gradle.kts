@@ -54,3 +54,37 @@ kotlin {
 android {
     namespace = "com.developersbreach.hangman.composeapp"
 }
+
+compose.desktop {
+    application {
+        mainClass = "com.developersbreach.hangman.composeapp.DesktopMainKt"
+
+        buildTypes {
+            release {
+                proguard {
+                    isEnabled.set(false)
+                }
+            }
+        }
+
+        nativeDistributions {
+            packageName = "Hangman"
+            packageVersion = "1.0.2"
+            description = "Hangman"
+            vendor = "Developers Breach"
+
+            macOS {
+                packageVersion = "1.0.2"
+                dmgPackageVersion = "1.0.2"
+            }
+
+            modules("java.naming")
+            targetFormats(
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb,
+                org.jetbrains.compose.desktop.application.dsl.TargetFormat.Rpm,
+            )
+        }
+    }
+}
