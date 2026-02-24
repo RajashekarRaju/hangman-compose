@@ -17,9 +17,13 @@ import com.developersbreach.hangman.repository.storage.toDomain
 import com.developersbreach.hangman.repository.storage.toGameCategory
 import com.developersbreach.hangman.repository.storage.toGameDifficulty
 import com.developersbreach.hangman.repository.storage.toStored
+import com.developersbreach.hangman.ui.theme.ThemePaletteId
+import com.developersbreach.hangman.ui.theme.toThemePaletteId
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.json.Json
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -94,6 +98,7 @@ private class IosUserDefaultsGameRepository : HistoryRepository, GameSessionRepo
 
 private class IosUserDefaultsGameSettingsRepository : GameSettingsRepository {
     private var settings: StoredSettings = loadSettings()
+    private val themePaletteIdState = MutableStateFlow(settings.themePaletteId.toThemePaletteId())
 
     private fun loadSettings(): StoredSettings {
         val raw = defaults.stringForKey(SETTINGS_KEY) ?: return StoredSettings()
@@ -108,6 +113,12 @@ private class IosUserDefaultsGameSettingsRepository : GameSettingsRepository {
 
     override suspend fun getGameCategory(): GameCategory = settings.gameCategory.toGameCategory()
 
+    override suspend fun getThemePaletteId(): ThemePaletteId {
+        return settings.themePaletteId.toThemePaletteId().also { themePaletteIdState.value = it }
+    }
+
+    override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themePaletteIdState.asStateFlow()
+
     override suspend fun setGameDifficulty(gameDifficulty: GameDifficulty) {
         settings = settings.copy(gameDifficulty = gameDifficulty.name)
         persist()
@@ -116,6 +127,12 @@ private class IosUserDefaultsGameSettingsRepository : GameSettingsRepository {
     override suspend fun setGameCategory(gameCategory: GameCategory) {
         settings = settings.copy(gameCategory = gameCategory.name)
         persist()
+    }
+
+    override suspend fun setThemePaletteId(themePaletteId: ThemePaletteId) {
+        settings = settings.copy(themePaletteId = themePaletteId.name)
+        persist()
+        themePaletteIdState.value = themePaletteId
     }
 }
 

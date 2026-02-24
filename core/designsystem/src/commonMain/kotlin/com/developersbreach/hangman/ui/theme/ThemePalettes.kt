@@ -15,6 +15,7 @@ enum class ThemePaletteId {
     LAVENDER,
     TEAL,
     BLOSSOM,
+    INSANE_RED,
 }
 
 private val originalPalette = ThemePalette(
@@ -669,9 +670,78 @@ private val blossomPalette = ThemePalette(
     previewColor = Color(0xFF9C3D73),
 )
 
+private val insaneRedPalette = ThemePalette(
+    id = ThemePaletteId.INSANE_RED,
+    displayName = "Insane Red",
+    light = PaletteTones(
+        primary = Color(0xFFB11818),
+        onPrimary = Color(0xFFFFFFFF),
+        primaryContainer = Color(0xFFFFDAD6),
+        onPrimaryContainer = Color(0xFF410001),
+        secondary = Color(0xFF9D3B3B),
+        onSecondary = Color(0xFFFFFFFF),
+        secondaryContainer = Color(0xFFFFDAD8),
+        onSecondaryContainer = Color(0xFF3F080B),
+        tertiary = Color(0xFF8A4A36),
+        onTertiary = Color(0xFFFFFFFF),
+        tertiaryContainer = Color(0xFFFFDBCF),
+        onTertiaryContainer = Color(0xFF321207),
+        background = Color(0xFF2A0F12),
+        onBackground = Color(0xFFFFEDEE),
+        surface = Color(0xFF38171A),
+        onSurface = Color(0xFFFFE9EA),
+        surfaceVariant = Color(0xFF5C3A3E),
+        onSurfaceVariant = Color(0xFFF4DADC),
+        outline = Color(0xFFC8979B),
+        outlineVariant = Color(0xFF6E4A4E),
+        inverseSurface = Color(0xFFFFE9EA),
+        inverseOnSurface = Color(0xFF3A191D),
+        surfaceDim = Color(0xFF2A0F12),
+        surfaceBright = Color(0xFF472327),
+        surfaceContainerLowest = Color(0xFF21090B),
+        surfaceContainerLow = Color(0xFF2B1013),
+        surfaceContainer = Color(0xFF341518),
+        surfaceContainerHigh = Color(0xFF3D1B1F),
+        surfaceContainerHighest = Color(0xFF472327),
+    ),
+    dark = PaletteTones(
+        primary = Color(0xFFFF6A6A),
+        onPrimary = Color(0xFF670003),
+        primaryContainer = Color(0xFF8C0B10),
+        onPrimaryContainer = Color(0xFFFFDAD8),
+        secondary = Color(0xFFFFB3B1),
+        onSecondary = Color(0xFF600F16),
+        secondaryContainer = Color(0xFF7C252A),
+        onSecondaryContainer = Color(0xFFFFDAD8),
+        tertiary = Color(0xFFFFB59F),
+        onTertiary = Color(0xFF5A1B0A),
+        tertiaryContainer = Color(0xFF75321E),
+        onTertiaryContainer = Color(0xFFFFDBCF),
+        background = Color(0xFF17070A),
+        onBackground = Color(0xFFFFEDEE),
+        surface = Color(0xFF1F0C0F),
+        onSurface = Color(0xFFFFE9EA),
+        surfaceVariant = Color(0xFF4D2A2E),
+        onSurfaceVariant = Color(0xFFE8C1C4),
+        outline = Color(0xFFB68A8D),
+        outlineVariant = Color(0xFF5F383C),
+        inverseSurface = Color(0xFFFFE9EA),
+        inverseOnSurface = Color(0xFF331418),
+        surfaceDim = Color(0xFF17070A),
+        surfaceBright = Color(0xFF3B1C20),
+        surfaceContainerLowest = Color(0xFF120407),
+        surfaceContainerLow = Color(0xFF1C0A0D),
+        surfaceContainer = Color(0xFF231013),
+        surfaceContainerHigh = Color(0xFF2D1619),
+        surfaceContainerHighest = Color(0xFF371D20),
+    ),
+    previewColor = Color(0xFFB11818),
+)
+
 object ThemePalettes {
     val all: List<ThemePalette> = listOf(
         originalPalette,
+        insaneRedPalette,
         coralPalette,
         blossomPalette,
         amberPalette,
@@ -682,7 +752,7 @@ object ThemePalettes {
         lavenderPalette,
     )
 
-    val default: ThemePalette = originalPalette
+    val default: ThemePalette = insaneRedPalette
 
     private val paletteById = all.associateBy { it.id }
 
