@@ -7,6 +7,7 @@ import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
+import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -30,6 +31,7 @@ class OnBoardingViewModel(
 
     init {
         hydrateFromPreferences()
+        observeThemePalette()
         observeHighestScore()
         playBackgroundMusic()
     }
@@ -96,6 +98,18 @@ class OnBoardingViewModel(
                 updatePlayerChosenCategory(event.category)
             }
 
+            OnBoardingEvent.OpenThemePaletteMenu -> {
+                _uiState.update { current -> current.copy(isPaletteMenuExpanded = true) }
+            }
+
+            OnBoardingEvent.DismissThemePaletteMenu -> {
+                _uiState.update { current -> current.copy(isPaletteMenuExpanded = false) }
+            }
+
+            is OnBoardingEvent.ThemePaletteChanged -> {
+                updateThemePalette(event.paletteId)
+            }
+
             OnBoardingEvent.OpenInstructionsDialog -> {
                 _uiState.update { current -> current.copy(isInstructionsDialogOpen = true) }
             }
@@ -134,10 +148,12 @@ class OnBoardingViewModel(
     private fun hydrateFromPreferences() {
         viewModelScope.launch {
             val difficulty = settingsRepository.getGameDifficulty()
+            val themePaletteId = settingsRepository.getThemePaletteId()
             _uiState.update { current ->
                 current.copy(
                     gameDifficulty = difficulty,
                     gameCategory = settingsRepository.getGameCategory(),
+                    themePaletteId = themePaletteId,
                     isBackgroundMusicPlaying = audioController.isPlaying(),
                     pendingDifficulty = difficulty,
                     pendingDifficultySliderPosition = difficulty.toSliderPosition(),
@@ -179,6 +195,25 @@ class OnBoardingViewModel(
         }
         viewModelScope.launch {
             settingsRepository.setGameCategory(gameCategory)
+        }
+    }
+
+    private fun updateThemePalette(themePaletteId: ThemePaletteId) {
+        _uiState.update { current ->
+            current.copy(
+                isPaletteMenuExpanded = false,
+            )
+        }
+        viewModelScope.launch {
+            settingsRepository.setThemePaletteId(themePaletteId)
+        }
+    }
+
+    private fun observeThemePalette() {
+        viewModelScope.launch {
+            settingsRepository.observeThemePaletteId().collect { themePaletteId ->
+                _uiState.update { current -> current.copy(themePaletteId = themePaletteId) }
+            }
         }
     }
 

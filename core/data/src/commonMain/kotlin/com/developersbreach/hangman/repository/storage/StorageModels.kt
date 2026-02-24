@@ -56,6 +56,7 @@ fun HistoryRecord.toStored(): StoredHistoryRecord {
 data class StoredSettings(
     val gameDifficulty: String = GameDifficulty.EASY.name,
     val gameCategory: String = GameCategory.COUNTRIES.name,
+    val themePaletteId: String = "INSANE_RED",
 )
 
 fun String.toGameDifficulty(): GameDifficulty {

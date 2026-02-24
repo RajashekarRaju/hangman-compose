@@ -6,10 +6,12 @@ import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
 import com.developersbreach.hangman.repository.model.HistoryRecord
+import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -138,7 +140,9 @@ class OnBoardingViewModelTest {
 private class FakeSettingsRepository(
     private var difficulty: GameDifficulty = GameDifficulty.EASY,
     private var category: GameCategory = GameCategory.COUNTRIES,
+    private var themePaletteId: ThemePaletteId = ThemePaletteId.EMERALD,
 ) : GameSettingsRepository {
+    private val themeState = MutableStateFlow(themePaletteId)
 
     var lastSetDifficulty: GameDifficulty? = null
     var lastSetCategory: GameCategory? = null
@@ -146,6 +150,10 @@ private class FakeSettingsRepository(
     override suspend fun getGameDifficulty(): GameDifficulty = difficulty
 
     override suspend fun getGameCategory(): GameCategory = category
+
+    override suspend fun getThemePaletteId(): ThemePaletteId = themePaletteId
+
+    override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themeState
 
     override suspend fun setGameDifficulty(gameDifficulty: GameDifficulty) {
         difficulty = gameDifficulty
@@ -155,6 +163,11 @@ private class FakeSettingsRepository(
     override suspend fun setGameCategory(gameCategory: GameCategory) {
         category = gameCategory
         lastSetCategory = gameCategory
+    }
+
+    override suspend fun setThemePaletteId(themePaletteId: ThemePaletteId) {
+        this.themePaletteId = themePaletteId
+        themeState.value = themePaletteId
     }
 }
 

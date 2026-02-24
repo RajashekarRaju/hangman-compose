@@ -17,6 +17,9 @@ fun initKoinComponents(): List<Module> {
 
 private val viewModelModule = module {
     viewModel {
+        AppInitializerViewModel(get())
+    }
+    viewModel {
         OnBoardingViewModel(get(), get(), get())
     }
     viewModel {

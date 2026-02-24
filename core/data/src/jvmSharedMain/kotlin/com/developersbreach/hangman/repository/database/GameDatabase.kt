@@ -13,7 +13,7 @@ internal const val DATABASE_NAME = "hangman.db"
 
 @Database(
     entities = [HistoryEntity::class, GameSettingsEntity::class],
-    version = 3,
+    version = 4,
     exportSchema = false,
 )
 abstract class GameDatabase : RoomDatabase() {

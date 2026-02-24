@@ -1,8 +1,10 @@
 package com.developersbreach.hangman.ui.onboarding
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
@@ -52,6 +55,10 @@ import com.developersbreach.hangman.ui.components.LabelLargeText
 import com.developersbreach.hangman.ui.components.TitleMediumText
 import com.developersbreach.hangman.ui.components.rememberInfiniteRotation
 import com.developersbreach.hangman.ui.theme.HangmanTheme
+import com.developersbreach.hangman.ui.theme.ThemePaletteId
+import com.developersbreach.hangman.ui.theme.ThemePalettes
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenu
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -144,6 +151,17 @@ private fun OnBoardingScreenContent(
                 BackgroundVolumeIconButton(
                     isBackgroundMusicPlaying = uiState.isBackgroundMusicPlaying,
                     onToggleBackgroundMusic = { onEvent(OnBoardingEvent.ToggleBackgroundMusic) }
+                )
+
+                ThemePaletteDropdown(
+                    selectedPaletteId = uiState.themePaletteId,
+                    expanded = uiState.isPaletteMenuExpanded,
+                    onExpandRequest = { onEvent(OnBoardingEvent.OpenThemePaletteMenu) },
+                    onDismissRequest = { onEvent(OnBoardingEvent.DismissThemePaletteMenu) },
+                    onPaletteChanged = {
+                        onEvent(OnBoardingEvent.ThemePaletteChanged(it))
+                        onEvent(OnBoardingEvent.DismissThemePaletteMenu)
+                    },
                 )
             }
 
@@ -292,6 +310,53 @@ private fun BackgroundVolumeIconButton(
             contentDescription = stringResource(Res.string.onboarding_cd_game_sound_play_pause),
             tint = HangmanTheme.colorScheme.primary
         )
+    }
+}
+
+@Composable
+private fun ThemePaletteDropdown(
+    selectedPaletteId: ThemePaletteId,
+    expanded: Boolean,
+    onExpandRequest: () -> Unit,
+    onDismissRequest: () -> Unit,
+    onPaletteChanged: (ThemePaletteId) -> Unit,
+) {
+    val selectedPalette = ThemePalettes.byId(selectedPaletteId)
+
+    Box {
+        HangmanIconActionButton(
+            onClick = onExpandRequest,
+            seed = 703,
+            size = 42,
+            threshold = 0.14f,
+            backgroundColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.06f),
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(14.dp)
+                    .background(selectedPalette.previewColor, CircleShape)
+            )
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = onDismissRequest,
+            containerColor = HangmanTheme.colorScheme.surfaceContainer,
+        ) {
+            ThemePalettes.all.forEach { palette ->
+                DropdownMenuItem(
+                    text = {
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .background(palette.previewColor, CircleShape)
+                        )
+                    },
+                    onClick = { onPaletteChanged(palette.id) },
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                )
+            }
+        }
     }
 }
 

@@ -51,6 +51,8 @@ fun AppNavigation(
                 navigateUp = {
                     if (navController.navigateUp()) {
                         updateUrlForDestination(RouteSpec.root.destination)
+                    } else {
+                        navController.navigateToDestination(RouteSpec.root.destination)
                     }
                 },
                 viewModel = viewModel
@@ -63,6 +65,8 @@ fun AppNavigation(
                 navigateUp = {
                     if (navController.navigateUp()) {
                         updateUrlForDestination(RouteSpec.root.destination)
+                    } else {
+                        navController.navigateToDestination(RouteSpec.root.destination)
                     }
                 },
                 viewModel = viewModel

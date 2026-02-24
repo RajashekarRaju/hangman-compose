@@ -15,7 +15,7 @@ fun OnBoardingScreen(
     navigateToGameScreen: () -> Unit,
     navigateToHistoryScreen: () -> Unit,
     viewModel: OnBoardingViewModel,
-    finishActivity: () -> Unit
+    finishActivity: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -39,8 +39,10 @@ fun OnBoardingScreen(
 private fun OnBoardingScreenUIPreview() {
     HangmanTheme(
         darkTheme = true,
-        palette = ThemePalettes.byId(ThemePaletteId.ORIGINAL)
+        palette = ThemePalettes.byId(ThemePaletteId.INSANE_RED)
     ) {
-        OnBoardingUiState(highScore = 1520).OnBoardingScreenUI {}
+        OnBoardingUiState(highScore = 1520).OnBoardingScreenUI(
+            onEvent = {},
+        )
     }
 }

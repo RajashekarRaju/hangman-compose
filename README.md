@@ -12,11 +12,11 @@
 
 - Web: [https://rajashekarraju.github.io/hangman-compose/](https://rajashekarraju.github.io/hangman-compose/)
 - Desktop installers :
-  - macOS DMG: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/latest/download/hangman-macos.dmg)
-  - Windows MSI: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/latest/download/hangman-windows.msi)
-  - Linux DEB: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/latest/download/hangman-linux.deb)
-  - Linux RPM: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/latest/download/hangman-linux.rpm)
-- Android APK : [Download](https://github.com/RajashekarRaju/hangman-compose/releases/latest/download/hangman-android.apk)
+  - macOS DMG: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/download/desktop-latest/hangman-macos.dmg)
+  - Windows MSI: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/download/desktop-latest/hangman-windows.msi)
+  - Linux DEB: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/download/desktop-latest/hangman-linux.deb)
+  - Linux RPM: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/download/desktop-latest/hangman-linux.rpm)
+- Android APK : [Download](https://github.com/RajashekarRaju/hangman-compose/releases/download/android-latest/hangman-android.apk)
 
 ### Thanks to [Cicero Hellmann](https://github.com/cicerohellmann) For giving this cool idea to build Hangman game with Compose for Android.
 

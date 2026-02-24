@@ -9,9 +9,12 @@ import com.developersbreach.hangman.audio.GameSoundEffectPlayer
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
+import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -155,10 +158,15 @@ private class FakeGameSettingsRepository(
     private var difficulty: GameDifficulty,
     private var category: GameCategory,
 ) : GameSettingsRepository {
+    private val themePaletteState = MutableStateFlow(ThemePaletteId.INSANE_RED)
 
     override suspend fun getGameDifficulty(): GameDifficulty = difficulty
 
     override suspend fun getGameCategory(): GameCategory = category
+
+    override suspend fun getThemePaletteId(): ThemePaletteId = ThemePaletteId.INSANE_RED
+
+    override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themePaletteState
 
     override suspend fun setGameDifficulty(gameDifficulty: GameDifficulty) {
         difficulty = gameDifficulty
@@ -166,6 +174,10 @@ private class FakeGameSettingsRepository(
 
     override suspend fun setGameCategory(gameCategory: GameCategory) {
         category = gameCategory
+    }
+
+    override suspend fun setThemePaletteId(themePaletteId: ThemePaletteId) {
+        themePaletteState.value = themePaletteId
     }
 }
 
