@@ -168,6 +168,8 @@ private class WasmBackgroundAudioController : BackgroundAudioController {
     private fun registerGestureListeners() {
         if (gestureListenerRegistered) return
         gestureListenerRegistered = true
+        document.addEventListener("pointerdown", gestureListener)
+        document.addEventListener("mousedown", gestureListener)
         document.addEventListener("click", gestureListener)
         document.addEventListener("touchstart", gestureListener)
         document.addEventListener("keydown", gestureListener)
@@ -176,6 +178,8 @@ private class WasmBackgroundAudioController : BackgroundAudioController {
     private fun unregisterGestureListeners() {
         if (!gestureListenerRegistered) return
         gestureListenerRegistered = false
+        document.removeEventListener("pointerdown", gestureListener)
+        document.removeEventListener("mousedown", gestureListener)
         document.removeEventListener("click", gestureListener)
         document.removeEventListener("touchstart", gestureListener)
         document.removeEventListener("keydown", gestureListener)
