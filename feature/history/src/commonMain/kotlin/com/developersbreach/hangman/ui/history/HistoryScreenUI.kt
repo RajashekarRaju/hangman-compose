@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
@@ -117,10 +117,10 @@ private fun HistoryScreenContent(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(
+        itemsIndexed(
             items = gameHistoryList,
-            key = { it.history.gameId }
-        ) { item ->
+            key = { _, item -> item.history.gameId }
+        ) { index, item ->
             val history = item.history
             HangmanSwipeToDismissItem(
                 dismissKey = history.gameId,
@@ -130,6 +130,7 @@ private fun HistoryScreenContent(
                     ItemGameHistory(
                         history = history,
                         levelProgress = item.levelProgress,
+                        showPaleBackground = index % 2 == 0,
                         onDeleteClick = { onClickDeleteSelectedGameHistory(history) },
                         phase = listCreepyPhase,
                     )
@@ -143,6 +144,7 @@ private fun HistoryScreenContent(
 private fun ItemGameHistory(
     history: HistoryRecord,
     levelProgress: Float,
+    showPaleBackground: Boolean,
     onDeleteClick: () -> Unit,
     phase: Float,
 ) {
@@ -155,7 +157,12 @@ private fun ItemGameHistory(
         modifier = Modifier
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth()
-            .background(HangmanTheme.colorScheme.surfaceContainer)
+            .background(
+                when {
+                    showPaleBackground -> HangmanTheme.colorScheme.surfaceContainer
+                    else -> Color.Transparent
+                }
+            )
             .creepyOutline(
                 seed = history.gameId.hashCode(),
                 threshold = 0.09f,

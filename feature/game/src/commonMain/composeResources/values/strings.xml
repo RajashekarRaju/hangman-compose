@@ -26,4 +26,10 @@
     <string name="game_hint_unavailable_no_letters">No hidden letters left to reveal.</string>
     <string name="game_hint_unavailable_no_elimination">No wrong letters available to eliminate.</string>
     <string name="game_hint_unavailable_game_over">Hints are disabled because the game is over.</string>
+    <string name="game_category_hint_single_word">Guess %1$d-letter %2$s</string>
+    <string name="game_category_hint_multi_word">Guess %1$d-letter %2$s (%3$d words)</string>
+    <string name="game_category_singular_country">country</string>
+    <string name="game_category_singular_language">language</string>
+    <string name="game_category_singular_company">company</string>
+    <string name="game_category_singular_animal">animal</string>
 </resources>

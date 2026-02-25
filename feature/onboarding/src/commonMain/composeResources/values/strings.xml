@@ -4,6 +4,7 @@
     <string name="onboarding_button_history">History</string>
     <string name="onboarding_button_difficulty">Difficulty</string>
     <string name="onboarding_button_category">Category</string>
+    <string name="onboarding_button_report_issue">Report Issue</string>
 
     <string name="onboarding_difficulty_dialog_title">Difficulty</string>
     <string name="onboarding_category_dialog_title">Category</string>
@@ -17,4 +18,5 @@
     <string name="onboarding_cd_game_sound_play_pause">Play or pause background game sound.</string>
     <string name="onboarding_cd_image_screen_bg">Background image of the screen.</string>
     <string name="onboarding_cd_open_instructions_dialog">Open game instructions dialog.</string>
+    <string name="onboarding_cd_report_issue">Open repository issues page.</string>
 </resources>

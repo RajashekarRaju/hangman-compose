@@ -34,6 +34,16 @@ fun HistoryScreen(
 @HangmanScreenPreviews
 @Composable
 private fun HistoryScreenUIPreview() {
+    val record = HistoryRecord(
+        gameId = "1",
+        gameScore = 2913,
+        gameLevel = 4,
+        gameDifficulty = GameDifficulty.HARD,
+        gameCategory = GameCategory.LANGUAGES,
+        gameSummary = false,
+        gamePlayedTime = "09:41 PM",
+        gamePlayedDate = "14 Feb"
+    )
     HangmanTheme(
         darkTheme = true,
         palette = ThemePalettes.byId(ThemePaletteId.ORIGINAL)
@@ -41,18 +51,17 @@ private fun HistoryScreenUIPreview() {
         HistoryUiState(
             gameHistoryList = listOf(
                 HistoryListItemUiState(
-                    history = HistoryRecord(
-                        gameId = "atomorum",
-                        gameScore = 2913,
-                        gameLevel = 4,
-                        gameDifficulty = GameDifficulty.HARD,
-                        gameCategory = GameCategory.LANGUAGES,
-                        gameSummary = false,
-                        gamePlayedTime = "09:41 PM",
-                        gamePlayedDate = "14 Feb"
-                    ),
+                    history = record,
                     levelProgress = 0.8f,
-                )
+                ),
+                HistoryListItemUiState(
+                    history = record.copy(gameId = "2"),
+                    levelProgress = 0.8f,
+                ),
+                HistoryListItemUiState(
+                    history = record.copy(gameId = "3"),
+                    levelProgress = 0.8f,
+                ),
             )
         ).HistoryScreenUI {}
     }
