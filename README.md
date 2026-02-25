@@ -1,22 +1,21 @@
-# :video_game: Hangman - Built With Compose :paintbrush:
-
-## Multiplatform Hangman built with Compose Multiplatform.
+# :video_game: Hangman - Built With Compose Multuplatform :paintbrush:
 
 [![Deploy Web (Production)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/pages-production.yml/badge.svg)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/pages-production.yml)
 [![Build Packages](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/packages.yml/badge.svg)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/packages.yml)
 [![Tests](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/tests.yaml/badge.svg)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/tests.yaml)
 
-![Game Banner](/assets/banner_hangman.png)
+<img src="/assets/banner_hangman.png" alt="Game Banner" style="border-radius: 20px;" />
 
 ## Play / Download
 
-- Web: [https://rajashekarraju.github.io/hangman-compose/](https://rajashekarraju.github.io/hangman-compose/)
-- Desktop installers :
-  - macOS DMG: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/download/desktop-latest/hangman-macos.dmg)
-  - Windows MSI: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/download/desktop-latest/hangman-windows.msi)
-  - Linux DEB: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/download/desktop-latest/hangman-linux.deb)
-  - Linux RPM: [Download](https://github.com/RajashekarRaju/hangman-compose/releases/download/desktop-latest/hangman-linux.rpm)
-- Android APK : [Download](https://github.com/RajashekarRaju/hangman-compose/releases/download/android-latest/hangman-android.apk)
+| Platform      | Access |
+|---------------| --- |
+| 🌐 Web        | [Play in browser](https://rajashekarraju.github.io/hangman-compose/) |
+| 🍎 macOS      | [Download DMG](https://github.com/RajashekarRaju/hangman-compose/releases/download/desktop-latest/hangman-macos.dmg) |
+| 🪟 Windows    | [Download MSI](https://github.com/RajashekarRaju/hangman-compose/releases/download/desktop-latest/hangman-windows.msi) |
+| 🐧 Linux      | [Download DEB](https://github.com/RajashekarRaju/hangman-compose/releases/download/desktop-latest/hangman-linux.deb) · [Download RPM](https://github.com/RajashekarRaju/hangman-compose/releases/download/desktop-latest/hangman-linux.rpm) |
+| 🤖️ Android | [Download APK](https://github.com/RajashekarRaju/hangman-compose/releases/download/android-latest/hangman-android.apk) |
+| 📱 iOS        | Run locally on macOS + Xcode: `bash scripts/run-ios-sim.sh` |
 
 ### Thanks to [Cicero Hellmann](https://github.com/cicerohellmann) For giving this cool idea to build Hangman game with Compose for Android.
 
@@ -36,6 +35,24 @@
 - [x] Responsive game layout (mobile/desktop/web) with previews and shared creepy design system.
 - [x] Cross-platform sound support (Android/Web/Desktop/iOS)
 - [x] Navigation3 update
+
+### Screenshots (v0.2.0)
+
+#### Foldable
+
+| Onboarding | Game | History |
+| --- | --- | --- |
+| ![Foldable Onboarding](/assets/fold_onboarding.png) | ![Foldable Game Screen](/assets/fold_game_screen.png) | ![Foldable History](/assets/fold_game_history.png) |
+
+#### Mobile
+
+| Onboarding | Game | Summary |
+| --- | --- | --- |
+| ![Mobile Onboarding](/assets/mobile_onboarding.png) | ![Mobile Game Screen](/assets/mobile_game_screen.png) | ![Mobile Game Summary](/assets/mobile_game_screen_summary.png) |
+
+| History | Select Category | Select Difficulty |
+| --- | --- | --- |
+| ![Mobile History](/assets/mobile_game_history.png) | ![Mobile Select Category](/assets/mobile_select_category.png) | ![Mobile Select Difficulty](/assets/mobile_select_difficulty.png) |
 
 ## Initial Version (v0.1.0)
 
