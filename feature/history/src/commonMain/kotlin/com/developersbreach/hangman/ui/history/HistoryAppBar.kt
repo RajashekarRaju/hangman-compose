@@ -39,7 +39,8 @@ fun HistoryAppBar(
             ) {
                 HangmanIcon(
                     imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                    contentDescription = stringResource(Res.string.history_cd_navigate_up)
+                    contentDescription = stringResource(Res.string.history_cd_navigate_up),
+                    tint = HangmanTheme.colorScheme.primary,
                 )
             }
         },
@@ -52,7 +53,8 @@ fun HistoryAppBar(
                 ) {
                     HangmanIcon(
                         imageVector = Icons.Outlined.Delete,
-                        contentDescription = stringResource(Res.string.history_cd_delete_all)
+                        contentDescription = stringResource(Res.string.history_cd_delete_all),
+                        tint = HangmanTheme.colorScheme.primary,
                     )
                 }
             }

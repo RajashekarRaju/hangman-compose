@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.developersbreach.hangman.feature.onboarding.generated.resources.Res
@@ -36,11 +38,13 @@ import com.developersbreach.hangman.feature.onboarding.generated.resources.onboa
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_exit
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_history
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_play
+import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_report_issue
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_exit_game
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_game_banner
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_game_sound_play_pause
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_open_instructions_dialog
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_play_game_button
+import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_report_issue
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_game_tagline
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_highest_score_header
 import com.developersbreach.hangman.feature.onboarding.generated.resources.rope_with_title
@@ -50,6 +54,7 @@ import com.developersbreach.hangman.ui.components.AnimatedEnter
 import com.developersbreach.hangman.ui.components.BodySmallText
 import com.developersbreach.hangman.ui.components.HangmanIcon
 import com.developersbreach.hangman.ui.components.HangmanIconActionButton
+import com.developersbreach.hangman.ui.components.HangmanTextActionButton
 import com.developersbreach.hangman.ui.components.HangmanPrimaryButton
 import com.developersbreach.hangman.ui.components.LabelLargeText
 import com.developersbreach.hangman.ui.components.TitleMediumText
@@ -62,11 +67,17 @@ import androidx.compose.material3.DropdownMenu
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
+private const val GITHUB_ISSUES_URL = "https://github.com/RajashekarRaju/hangman-compose/issues"
+
 @Composable
 fun OnBoardingUiState.OnBoardingScreenUI(
     onEvent: (OnBoardingEvent) -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    val uriHandler = LocalUriHandler.current
+
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val showBottomIssueAction = maxWidth >= 900.dp
+
         Image(
             painter = painterResource(DesignRes.drawable.game_background),
             contentDescription = stringResource(Res.string.onboarding_cd_image_screen_bg),
@@ -105,6 +116,15 @@ fun OnBoardingUiState.OnBoardingScreenUI(
                 difficultyValue = gameDifficultyName(gameDifficulty),
                 categoryValue = categoryName(gameCategory),
                 onDismissRequest = { onEvent(OnBoardingEvent.DismissInstructionsDialog) },
+            )
+        }
+
+        if (showBottomIssueAction) {
+            ReportIssueTextButton(
+                onClick = { uriHandler.openUri(GITHUB_ISSUES_URL) },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 20.dp),
             )
         }
     }
@@ -167,6 +187,23 @@ private fun OnBoardingScreenContent(
 
             Spacer(modifier = Modifier.height(24.dp))
         }
+    }
+}
+
+@Composable
+private fun ReportIssueTextButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    HangmanTextActionButton(
+        onClick = onClick,
+        modifier = modifier,
+    ) {
+        LabelLargeText(
+        text = stringResource(Res.string.onboarding_button_report_issue),
+            color = HangmanTheme.colorScheme.primary.copy(alpha = 0.82f),
+            modifier = Modifier.padding(vertical = 4.dp),
+        )
     }
 }
 

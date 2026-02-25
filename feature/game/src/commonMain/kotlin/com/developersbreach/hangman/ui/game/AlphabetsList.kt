@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -16,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.developersbreach.game.core.Alphabet
 import com.developersbreach.hangman.ui.components.SparkPulse
 import com.developersbreach.hangman.ui.components.TitleLargeText
@@ -29,7 +29,6 @@ fun AlphabetsList(
     tileSize: Dp,
     spacing: Dp,
     contentPadding: Dp,
-    maxGridHeight: Dp,
     creepinessThreshold: Float = 0.16f,
     onAlphabetClicked: (alphabetId: Int) -> Unit,
 ) {
@@ -41,10 +40,14 @@ fun AlphabetsList(
             columns = GridCells.Adaptive(tileSize),
             horizontalArrangement = Arrangement.spacedBy(spacing, Alignment.CenterHorizontally),
             verticalArrangement = Arrangement.spacedBy(spacing, Alignment.CenterVertically),
-            contentPadding = PaddingValues(contentPadding),
+            contentPadding = PaddingValues(
+                start = contentPadding,
+                top = contentPadding,
+                end = contentPadding,
+                bottom = contentPadding + 24.dp,
+            ),
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(max = maxGridHeight),
         ) {
             items(items = alphabetsList, key = { it.alphabetId }) { alphabet ->
                 ItemAlphabetText(
