@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.developersbreach.game.core.HintType
 import com.developersbreach.hangman.feature.history.generated.resources.Res
 import com.developersbreach.hangman.feature.history.generated.resources.history_cd_delete_item
 import com.developersbreach.hangman.feature.history.generated.resources.history_empty_state
@@ -50,6 +49,7 @@ import com.developersbreach.hangman.ui.components.TitleMediumText
 import com.developersbreach.hangman.ui.components.creepyOutline
 import com.developersbreach.hangman.ui.components.rememberCreepyPhase
 import com.developersbreach.hangman.ui.theme.HangmanTheme
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -130,6 +130,7 @@ private fun HistoryScreenContent(
                     ItemGameHistory(
                         history = history,
                         levelProgress = item.levelProgress,
+                        hintTypeLabelRes = item.hintTypeLabelRes,
                         showPaleBackground = index % 2 == 0,
                         onDeleteClick = { onClickDeleteSelectedGameHistory(history) },
                         phase = listCreepyPhase,
@@ -144,6 +145,7 @@ private fun HistoryScreenContent(
 private fun ItemGameHistory(
     history: HistoryRecord,
     levelProgress: Float,
+    hintTypeLabelRes: List<StringResource>,
     showPaleBackground: Boolean,
     onDeleteClick: () -> Unit,
     phase: Float,
@@ -240,15 +242,11 @@ private fun ItemGameHistory(
                     text = stringResource(Res.string.history_hints_used, history.hintsUsed),
                     color = HangmanTheme.colorScheme.onSurfaceVariant,
                 )
-                if (history.hintTypesUsed.isNotEmpty()) {
-                    val revealLabel = stringResource(HintType.REVEAL_LETTER.labelRes())
-                    val eliminateLabel = stringResource(HintType.ELIMINATE_LETTERS.labelRes())
-                    val hintTypesText = history.hintTypesUsed.joinToString { type ->
-                        when (type) {
-                            HintType.REVEAL_LETTER -> revealLabel
-                            HintType.ELIMINATE_LETTERS -> eliminateLabel
-                        }
+                if (hintTypeLabelRes.isNotEmpty()) {
+                    val localizedHintTypeLabels = hintTypeLabelRes.map { labelRes ->
+                        stringResource(labelRes)
                     }
+                    val hintTypesText = localizedHintTypeLabels.joinToString()
                     BodySmallText(
                         text = stringResource(Res.string.history_hint_types_used, hintTypesText),
                         color = HangmanTheme.colorScheme.onSurfaceVariant,

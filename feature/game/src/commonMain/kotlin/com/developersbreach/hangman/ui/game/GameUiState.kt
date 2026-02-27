@@ -12,6 +12,12 @@ import com.developersbreach.hangman.feature.game.generated.resources.game_hint_u
 import com.developersbreach.hangman.feature.game.generated.resources.game_hint_unavailable_no_elimination
 import com.developersbreach.hangman.feature.game.generated.resources.game_hint_unavailable_no_hints
 import com.developersbreach.hangman.feature.game.generated.resources.game_hint_unavailable_no_letters
+import com.developersbreach.hangman.feature.game.generated.resources.game_category_hint_multi_word
+import com.developersbreach.hangman.feature.game.generated.resources.game_category_hint_single_word
+import com.developersbreach.hangman.feature.game.generated.resources.game_category_singular_animal
+import com.developersbreach.hangman.feature.game.generated.resources.game_category_singular_company
+import com.developersbreach.hangman.feature.game.generated.resources.game_category_singular_country
+import com.developersbreach.hangman.feature.game.generated.resources.game_category_singular_language
 import org.jetbrains.compose.resources.StringResource
 
 data class GameUiState(
@@ -36,11 +42,19 @@ data class GameUiState(
     val isHintOnCooldown: Boolean = false,
     val levelTimeTotalMillis: Long = 60_000L,
     val levelTimeRemainingMillis: Long = 60_000L,
+    val categoryHint: GameCategoryHintUiModel? = null,
 )
 
 data class HintFeedback(
     val selectedHintType: HintType,
     val error: HintError? = null,
+)
+
+data class GameCategoryHintUiModel(
+    val templateRes: StringResource,
+    val letterCount: Int,
+    val categoryNounRes: StringResource,
+    val wordCount: Int? = null,
 )
 
 val GameUiState.levelTimeProgress: Float
@@ -76,5 +90,41 @@ internal fun HintError.messageRes(): StringResource {
         HintError.NO_UNREVEALED_LETTERS -> Res.string.game_hint_unavailable_no_letters
         HintError.NO_ELIMINATION_CANDIDATES -> Res.string.game_hint_unavailable_no_elimination
         HintError.GAME_ALREADY_FINISHED -> Res.string.game_hint_unavailable_game_over
+    }
+}
+
+internal fun buildGameCategoryHintUiModel(
+    wordToGuess: String,
+    category: GameCategory,
+): GameCategoryHintUiModel? {
+    val normalizedWord = wordToGuess.trim()
+    if (normalizedWord.isEmpty()) return null
+
+    val letterCount = normalizedWord.count { !it.isWhitespace() }
+    if (letterCount <= 0) return null
+
+    val wordCount = normalizedWord.split(Regex("\\s+")).count { it.isNotBlank() }
+
+    val categoryNounRes = when (category) {
+        GameCategory.COUNTRIES -> Res.string.game_category_singular_country
+        GameCategory.LANGUAGES -> Res.string.game_category_singular_language
+        GameCategory.COMPANIES -> Res.string.game_category_singular_company
+        GameCategory.ANIMALS -> Res.string.game_category_singular_animal
+    }
+
+    return when {
+        wordCount > 1 -> GameCategoryHintUiModel(
+            templateRes = Res.string.game_category_hint_multi_word,
+            letterCount = letterCount,
+            categoryNounRes = categoryNounRes,
+            wordCount = wordCount,
+        )
+
+        else -> GameCategoryHintUiModel(
+            templateRes = Res.string.game_category_hint_single_word,
+            letterCount = letterCount,
+            categoryNounRes = categoryNounRes,
+            wordCount = null,
+        )
     }
 }

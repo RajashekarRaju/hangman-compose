@@ -4,11 +4,15 @@ import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import kotlin.math.abs
+import org.jetbrains.compose.resources.StringResource
 
 data class OnBoardingUiState(
     val highScore: Int = 0,
+    val availableCategories: List<GameCategory> = categoryOptions,
     val gameDifficulty: GameDifficulty = GameDifficulty.EASY,
+    val gameDifficultyLabelRes: StringResource = GameDifficulty.EASY.labelRes(),
     val gameCategory: GameCategory = GameCategory.COUNTRIES,
+    val gameCategoryLabelRes: StringResource = GameCategory.COUNTRIES.labelRes(),
     val themePaletteId: ThemePaletteId = ThemePaletteId.INSANE_RED,
     val isBackgroundMusicPlaying: Boolean = false,
     val isPaletteMenuExpanded: Boolean = false,

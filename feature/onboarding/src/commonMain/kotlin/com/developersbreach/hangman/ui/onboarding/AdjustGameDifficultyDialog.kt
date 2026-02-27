@@ -59,7 +59,7 @@ fun AdjustGameDifficultyDialog(
         Spacer(modifier = Modifier.height(16.dp))
 
         HeadlineSmallText(
-            text = gameDifficultyName(selectedDifficulty),
+            text = stringResource(selectedDifficulty.labelRes()),
             color = HangmanTheme.colorScheme.onSurface
         )
 

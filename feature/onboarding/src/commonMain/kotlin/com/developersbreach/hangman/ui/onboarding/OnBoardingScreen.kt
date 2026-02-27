@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalUriHandler
 import com.developersbreach.hangman.ui.preview.HangmanScreenPreviews
 import com.developersbreach.hangman.ui.theme.HangmanTheme
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
@@ -17,6 +18,7 @@ fun OnBoardingScreen(
     viewModel: OnBoardingViewModel,
     finishActivity: () -> Unit,
 ) {
+    val uriHandler = LocalUriHandler.current
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(viewModel) {
@@ -25,6 +27,7 @@ fun OnBoardingScreen(
                 OnBoardingEffect.NavigateToGame -> navigateToGameScreen()
                 OnBoardingEffect.NavigateToHistory -> navigateToHistoryScreen()
                 OnBoardingEffect.FinishActivity -> finishActivity()
+                is OnBoardingEffect.OpenIssueTracker -> uriHandler.openUri(effect.url)
             }
         }
     }

@@ -118,6 +118,10 @@ class OnBoardingViewModel(
                 _uiState.update { current -> current.copy(isInstructionsDialogOpen = false) }
             }
 
+            OnBoardingEvent.ReportIssueClicked -> {
+                emitEffect(OnBoardingEffect.OpenIssueTracker(ISSUES_URL))
+            }
+
             OnBoardingEvent.ToggleBackgroundMusic -> {
                 if (_uiState.value.isBackgroundMusicPlaying) {
                     stopBackgroundMusic()
@@ -148,11 +152,14 @@ class OnBoardingViewModel(
     private fun hydrateFromPreferences() {
         viewModelScope.launch {
             val difficulty = settingsRepository.getGameDifficulty()
+            val category = settingsRepository.getGameCategory()
             val themePaletteId = settingsRepository.getThemePaletteId()
             _uiState.update { current ->
                 current.copy(
                     gameDifficulty = difficulty,
-                    gameCategory = settingsRepository.getGameCategory(),
+                    gameDifficultyLabelRes = difficulty.labelRes(),
+                    gameCategory = category,
+                    gameCategoryLabelRes = category.labelRes(),
                     themePaletteId = themePaletteId,
                     isBackgroundMusicPlaying = audioController.isPlaying(),
                     pendingDifficulty = difficulty,
@@ -180,6 +187,7 @@ class OnBoardingViewModel(
         _uiState.update { current ->
             current.copy(
                 gameDifficulty = gameDifficulty,
+                gameDifficultyLabelRes = gameDifficulty.labelRes(),
                 pendingDifficulty = gameDifficulty,
                 pendingDifficultySliderPosition = gameDifficulty.toSliderPosition(),
             )
@@ -191,7 +199,10 @@ class OnBoardingViewModel(
 
     private fun updatePlayerChosenCategory(gameCategory: GameCategory) {
         _uiState.update { current ->
-            current.copy(gameCategory = gameCategory)
+            current.copy(
+                gameCategory = gameCategory,
+                gameCategoryLabelRes = gameCategory.labelRes(),
+            )
         }
         viewModelScope.launch {
             settingsRepository.setGameCategory(gameCategory)
@@ -219,5 +230,9 @@ class OnBoardingViewModel(
 
     override fun onCleared() {
         stopBackgroundMusic()
+    }
+
+    private companion object {
+        private const val ISSUES_URL = "https://github.com/RajashekarRaju/hangman-compose/issues"
     }
 }

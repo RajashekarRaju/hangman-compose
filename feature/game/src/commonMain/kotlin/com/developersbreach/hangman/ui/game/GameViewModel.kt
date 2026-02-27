@@ -40,6 +40,7 @@ class GameViewModel(
     private var gameSessionEngine: GameSessionEngine? = null
     private var levelTimerJob: Job? = null
     private var hintCooldownJob: Job? = null
+    private var hintFeedbackDismissJob: Job? = null
 
     init {
         hydrateGameSession()
@@ -65,6 +66,7 @@ class GameViewModel(
             }
             is GameEvent.HintSelected -> applyHint(event.hintType)
             GameEvent.DismissHintFeedbackDialog -> {
+                hintFeedbackDismissJob?.cancel()
                 _uiState.update { current ->
                     current.copy(
                         showHintFeedbackDialog = false,
@@ -121,16 +123,27 @@ class GameViewModel(
             startHintCooldown()
         }
 
-        if (!update.hintApplied && update.hintError != null) {
+        val hintError = update.hintError
+        if (!update.hintApplied && hintError != null) {
+            val state = _uiState.value
+            logHintUnavailable(
+                hintType = hintType,
+                error = hintError.name,
+                level = state.displayedLevel,
+                attemptsLeft = state.attemptsLeftToGuess,
+                hintsRemaining = state.hintsRemaining,
+                word = state.wordToGuess,
+            )
             _uiState.update { current ->
                 current.copy(
                     showHintFeedbackDialog = true,
                     hintFeedback = HintFeedback(
                         selectedHintType = hintType,
-                        error = update.hintError,
+                        error = hintError,
                     ),
                 )
             }
+            startHintFeedbackAutoDismiss()
         }
     }
 
@@ -189,6 +202,10 @@ class GameViewModel(
                 hintsRemaining = state.hintsRemaining,
                 hintsUsedTotal = state.hintsUsedTotal,
                 hintTypesUsed = state.hintTypesUsed,
+                categoryHint = buildGameCategoryHintUiModel(
+                    wordToGuess = state.currentWord,
+                    category = current.gameCategory,
+                ),
             )
         }
     }
@@ -284,9 +301,37 @@ class GameViewModel(
         }
     }
 
+    private fun startHintFeedbackAutoDismiss() {
+        hintFeedbackDismissJob?.cancel()
+        hintFeedbackDismissJob = viewModelScope.launch {
+            delay(HINT_FEEDBACK_DISMISS_MILLIS)
+            _uiState.update { current ->
+                current.copy(
+                    showHintFeedbackDialog = false,
+                    hintFeedback = null,
+                )
+            }
+        }
+    }
+
+    private fun logHintUnavailable(
+        hintType: HintType,
+        error: String,
+        level: Int,
+        attemptsLeft: Int,
+        hintsRemaining: Int,
+        word: String,
+    ) {
+        println(
+            "HintUnavailable type=$hintType error=$error level=$level attemptsLeft=$attemptsLeft " +
+                "hintsRemaining=$hintsRemaining word=\"$word\""
+        )
+    }
+
     override fun onCleared() {
         levelTimerJob?.cancel()
         hintCooldownJob?.cancel()
+        hintFeedbackDismissJob?.cancel()
         super.onCleared()
     }
 
@@ -294,5 +339,6 @@ class GameViewModel(
         private const val TIMER_TICK_MILLIS = 100L
         private const val LEVEL_TIMER_TOTAL_MILLIS = 60_000L
         private const val HINT_COOLDOWN_MILLIS = 2_000L
+        private const val HINT_FEEDBACK_DISMISS_MILLIS = 2_000L
     }
 }

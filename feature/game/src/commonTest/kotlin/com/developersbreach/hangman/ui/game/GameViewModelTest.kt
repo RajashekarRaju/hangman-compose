@@ -116,6 +116,11 @@ class GameViewModelTest {
         assertTrue(viewModel.uiState.value.showHintFeedbackDialog)
         assertNotNull(feedback)
         assertEquals(HintError.NO_HINTS_REMAINING, feedback.error)
+
+        advanceTimeBy(2_000)
+        runCurrent()
+        assertFalse(viewModel.uiState.value.showHintFeedbackDialog)
+        assertEquals(null, viewModel.uiState.value.hintFeedback)
     }
 
     @Test

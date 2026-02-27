@@ -53,14 +53,17 @@ private fun HistoryScreenUIPreview() {
                 HistoryListItemUiState(
                     history = record,
                     levelProgress = 0.8f,
+                    hintTypeLabelRes = emptyList(),
                 ),
                 HistoryListItemUiState(
                     history = record.copy(gameId = "2"),
                     levelProgress = 0.8f,
+                    hintTypeLabelRes = emptyList(),
                 ),
                 HistoryListItemUiState(
                     history = record.copy(gameId = "3"),
                     levelProgress = 0.8f,
+                    hintTypeLabelRes = emptyList(),
                 ),
             )
         ).HistoryScreenUI {}

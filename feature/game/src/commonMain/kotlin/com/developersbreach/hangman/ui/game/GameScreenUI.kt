@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -39,7 +38,6 @@ import com.developersbreach.hangman.ui.components.HangmanScaffold
 import com.developersbreach.hangman.ui.components.HangmanTextActionButton
 import com.developersbreach.hangman.ui.components.creepyOutline
 import com.developersbreach.hangman.ui.theme.HangmanTheme
-import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -135,7 +133,7 @@ private fun GameNavigationActionIcons(
 
             if (showTopHint) {
                 GameCategoryHintText(
-                    uiState = uiState,
+                    categoryHint = uiState.categoryHint,
                     alpha = 0.84f,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -219,13 +217,6 @@ private fun ColumnScope.HintBottomTray(
 
     val feedbackMessage = uiState.hintFeedback?.error?.let { error ->
         stringResource(error.messageRes())
-    }
-
-    LaunchedEffect(uiState.showHintFeedbackDialog, feedbackMessage) {
-        if (uiState.showHintFeedbackDialog && feedbackMessage != null) {
-            delay(2000)
-            onEvent(GameEvent.DismissHintFeedbackDialog)
-        }
     }
 
     HangmanDivider(
