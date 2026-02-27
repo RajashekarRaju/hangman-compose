@@ -28,12 +28,11 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ChooseGameCategoryDialog(
+    categories: List<GameCategory>,
     gameCategory: GameCategory,
     updatePlayerChosenCategory: (GameCategory) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
-    val options = categoryOptions()
-
     HangmanDialog(
         onDismissRequest = onDismissRequest,
         seed = 811,
@@ -52,9 +51,9 @@ fun ChooseGameCategoryDialog(
             modifier = Modifier.selectableGroup(),
             horizontalAlignment = Alignment.Start
         ) {
-            options.forEach { category ->
+            categories.forEach { category ->
                 ItemCategoryRow(
-                    gameCategory = category,
+                    category = category,
                     selectedGameCategory = gameCategory,
                     updatePlayerChosenCategory = updatePlayerChosenCategory
                 )
@@ -65,7 +64,7 @@ fun ChooseGameCategoryDialog(
 
 @Composable
 private fun ItemCategoryRow(
-    gameCategory: Category,
+    category: GameCategory,
     selectedGameCategory: GameCategory,
     updatePlayerChosenCategory: (GameCategory) -> Unit,
 ) {
@@ -77,20 +76,20 @@ private fun ItemCategoryRow(
             .fillMaxWidth()
             .height(56.dp)
             .selectable(
-                selected = gameCategory.category == selectedGameCategory,
+                selected = category == selectedGameCategory,
                 role = Role.RadioButton,
                 indication = null,
                 interactionSource = interactionSource,
-                onClick = { updatePlayerChosenCategory(gameCategory.category) }
+                onClick = { updatePlayerChosenCategory(category) }
             )
     ) {
         CreepyRadioButton(
-            selected = gameCategory.category == selectedGameCategory,
-            seed = gameCategory.category.ordinal * 41
+            selected = category == selectedGameCategory,
+            seed = category.ordinal * 41
         )
 
         BodyLargeText(
-            text = gameCategory.categoryName,
+            text = stringResource(category.labelRes()),
             modifier = Modifier.padding(start = 20.dp),
             color = HangmanTheme.colorScheme.onSurface
         )

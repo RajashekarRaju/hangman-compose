@@ -88,6 +88,16 @@ class OnBoardingViewModelTest {
         runCurrent()
         assertEquals(OnBoardingEffect.NavigateToHistory, historyEffect.await())
 
+        val reportIssueEffect = async { viewModel.effects.first() }
+        viewModel.onEvent(OnBoardingEvent.ReportIssueClicked)
+        runCurrent()
+        assertEquals(
+            OnBoardingEffect.OpenIssueTracker(
+                "https://github.com/RajashekarRaju/hangman-compose/issues"
+            ),
+            reportIssueEffect.await()
+        )
+
         val finishEffect = async { viewModel.effects.first() }
         viewModel.onEvent(OnBoardingEvent.ExitClicked)
         runCurrent()

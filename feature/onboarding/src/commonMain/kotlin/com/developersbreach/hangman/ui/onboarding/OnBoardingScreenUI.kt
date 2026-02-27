@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.developersbreach.hangman.feature.onboarding.generated.resources.Res
@@ -44,7 +43,6 @@ import com.developersbreach.hangman.feature.onboarding.generated.resources.onboa
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_game_sound_play_pause
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_open_instructions_dialog
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_play_game_button
-import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_report_issue
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_game_tagline
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_highest_score_header
 import com.developersbreach.hangman.feature.onboarding.generated.resources.rope_with_title
@@ -67,14 +65,10 @@ import androidx.compose.material3.DropdownMenu
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-private const val GITHUB_ISSUES_URL = "https://github.com/RajashekarRaju/hangman-compose/issues"
-
 @Composable
 fun OnBoardingUiState.OnBoardingScreenUI(
     onEvent: (OnBoardingEvent) -> Unit
 ) {
-    val uriHandler = LocalUriHandler.current
-
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val showBottomIssueAction = maxWidth >= 900.dp
 
@@ -105,6 +99,7 @@ fun OnBoardingUiState.OnBoardingScreenUI(
 
         if (isCategoryDialogOpen) {
             ChooseGameCategoryDialog(
+                categories = availableCategories,
                 gameCategory = gameCategory,
                 updatePlayerChosenCategory = { onEvent(OnBoardingEvent.CategoryChanged(it)) },
                 onDismissRequest = { onEvent(OnBoardingEvent.DismissCategoryDialog) }
@@ -113,15 +108,15 @@ fun OnBoardingUiState.OnBoardingScreenUI(
 
         if (isInstructionsDialogOpen) {
             HangmanInstructionsDialog(
-                difficultyValue = gameDifficultyName(gameDifficulty),
-                categoryValue = categoryName(gameCategory),
+                difficultyValue = stringResource(gameDifficultyLabelRes),
+                categoryValue = stringResource(gameCategoryLabelRes),
                 onDismissRequest = { onEvent(OnBoardingEvent.DismissInstructionsDialog) },
             )
         }
 
         if (showBottomIssueAction) {
             ReportIssueTextButton(
-                onClick = { uriHandler.openUri(GITHUB_ISSUES_URL) },
+                onClick = { onEvent(OnBoardingEvent.ReportIssueClicked) },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 20.dp),
