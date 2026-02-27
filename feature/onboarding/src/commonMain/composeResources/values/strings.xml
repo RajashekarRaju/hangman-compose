@@ -2,6 +2,7 @@
     <string name="onboarding_button_play">Play</string>
     <string name="onboarding_button_exit">Exit</string>
     <string name="onboarding_button_history">History</string>
+    <string name="onboarding_button_achievements">Achievements</string>
     <string name="onboarding_button_difficulty">Difficulty</string>
     <string name="onboarding_button_category">Category</string>
     <string name="onboarding_button_report_issue">Report Issue</string>

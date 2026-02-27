@@ -88,6 +88,11 @@ class OnBoardingViewModelTest {
         runCurrent()
         assertEquals(OnBoardingEffect.NavigateToHistory, historyEffect.await())
 
+        val achievementsEffect = async { viewModel.effects.first() }
+        viewModel.onEvent(OnBoardingEvent.NavigateToAchievementsClicked)
+        runCurrent()
+        assertEquals(OnBoardingEffect.NavigateToAchievements, achievementsEffect.await())
+
         val reportIssueEffect = async { viewModel.effects.first() }
         viewModel.onEvent(OnBoardingEvent.ReportIssueClicked)
         runCurrent()

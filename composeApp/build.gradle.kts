@@ -29,6 +29,7 @@ kotlin {
             implementation(project(":feature:onboarding"))
             implementation(project(":feature:game"))
             implementation(project(":feature:history"))
+            implementation(project(":feature:achievements"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.ui)
             implementation(libs.compose.foundation)

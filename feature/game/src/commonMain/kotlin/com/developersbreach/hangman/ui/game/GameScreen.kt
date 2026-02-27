@@ -23,6 +23,7 @@ fun GameScreen(
         viewModel.effects.collectLatest { effect ->
             when (effect) {
                 GameEffect.NavigateUp -> navigateUp()
+                is GameEffect.AchievementsUnlocked -> Unit
             }
         }
     }

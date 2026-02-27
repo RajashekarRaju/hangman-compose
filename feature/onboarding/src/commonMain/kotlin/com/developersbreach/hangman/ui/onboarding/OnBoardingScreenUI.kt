@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.developersbreach.hangman.feature.onboarding.generated.resources.Res
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_image_screen_bg
@@ -35,6 +36,7 @@ import com.developersbreach.hangman.feature.onboarding.generated.resources.demon
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_category
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_difficulty
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_exit
+import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_achievements
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_history
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_play
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_report_issue
@@ -150,6 +152,8 @@ private fun OnBoardingScreenContent(
         item { ExitGameButton { onEvent(OnBoardingEvent.ExitClicked) } }
 
         item { GameHistoryButton { onEvent(OnBoardingEvent.NavigateToHistoryClicked) } }
+
+        item { AchievementsButton { onEvent(OnBoardingEvent.NavigateToAchievementsClicked) } }
 
         item { GameDifficultyButton(onEvent = onEvent) }
 
@@ -282,6 +286,14 @@ private fun GameHistoryButton(onClick: () -> Unit) {
 }
 
 @Composable
+private fun AchievementsButton(onClick: () -> Unit) {
+    OnBoardingActionButton(
+        text = stringResource(Res.string.onboarding_button_achievements),
+        onClick = onClick
+    )
+}
+
+@Composable
 fun GameDifficultyButton(
     onEvent: (OnBoardingEvent) -> Unit
 ) {
@@ -403,7 +415,7 @@ private fun OnBoardingActionButton(
         onClick = onClick,
         seed = text.hashCode(),
         threshold = creepinessThreshold,
-        modifier = Modifier.width(180.dp),
+        modifier = Modifier.width(200.dp),
     ) {
         if (icon != null) {
             icon()
@@ -413,6 +425,9 @@ private fun OnBoardingActionButton(
         LabelLargeText(
             text = text,
             color = HangmanTheme.colorScheme.primary.copy(alpha = 0.75f),
+            maxLines = 1,
+            softWrap = false,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(vertical = 4.dp)
         )
     }

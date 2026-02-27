@@ -12,4 +12,5 @@ sealed interface GameEvent {
     data class AlphabetClicked(val alphabetId: Int) : GameEvent
     data object WinDialogDismissed : GameEvent
     data object LostDialogDismissed : GameEvent
+    data object AchievementBannerConsumed : GameEvent
 }

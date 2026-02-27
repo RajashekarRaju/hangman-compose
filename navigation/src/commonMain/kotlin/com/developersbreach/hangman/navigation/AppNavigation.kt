@@ -6,6 +6,8 @@ import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.developersbreach.hangman.ui.achievements.AchievementsScreen
+import com.developersbreach.hangman.ui.achievements.AchievementsViewModel
 import com.developersbreach.hangman.ui.game.GameScreen
 import com.developersbreach.hangman.ui.game.GameViewModel
 import com.developersbreach.hangman.ui.history.HistoryScreen
@@ -40,6 +42,7 @@ fun AppNavigation(
             OnBoardingScreen(
                 navigateToGameScreen = { navController.navigateToDestination(GameRoute) },
                 navigateToHistoryScreen = { navController.navigateToDestination(HistoryRoute) },
+                navigateToAchievementsScreen = { navController.navigateToDestination(AchievementsRoute) },
                 viewModel = viewModel,
                 finishActivity = closeApplication,
             )
@@ -70,6 +73,20 @@ fun AppNavigation(
                     }
                 },
                 viewModel = viewModel
+            )
+        }
+
+        composable<AchievementsRoute> {
+            val viewModel = koinViewModel<AchievementsViewModel>()
+            AchievementsScreen(
+                navigateUp = {
+                    if (navController.navigateUp()) {
+                        updateUrlForDestination(RouteSpec.root.destination)
+                    } else {
+                        navController.navigateToDestination(RouteSpec.root.destination)
+                    }
+                },
+                viewModel = viewModel,
             )
         }
     }

@@ -47,6 +47,10 @@ class OnBoardingViewModel(
                 emitEffect(OnBoardingEffect.NavigateToHistory)
             }
 
+            OnBoardingEvent.NavigateToAchievementsClicked -> {
+                emitEffect(OnBoardingEffect.NavigateToAchievements)
+            }
+
             OnBoardingEvent.ExitClicked -> {
                 stopBackgroundMusic()
                 emitEffect(OnBoardingEffect.FinishActivity)
