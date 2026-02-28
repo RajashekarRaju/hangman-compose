@@ -108,6 +108,13 @@ private fun AchievementsUiState.AchievementsGridUI() {
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier.fillMaxSize(),
     ) {
+        item(
+            key = "summary",
+            span = { GridItemSpan(maxLineSpan) },
+        ) {
+            AchievementsSummaryCard(summary = summary)
+        }
+
         groupedItems.forEach { section ->
             item(
                 key = "section-${section.group.name}",

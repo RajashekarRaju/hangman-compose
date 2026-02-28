@@ -40,7 +40,8 @@ class AchievementsViewModel(
     private fun observeAchievements() {
         viewModelScope.launch {
             repository.observeAchievementProgress().collect { storedProgress ->
-                val byId = storedProgress.associateBy { it.achievementId }
+                val normalizedProgress = storedProgress.normalizeProgress()
+                val byId = normalizedProgress.associateBy { value -> value.achievementId }
                 val items = AchievementCatalog.definitions.map { definition ->
                     val progress = byId[definition.id] ?: definition.initialProgress()
                     AchievementItemUiState(
@@ -54,8 +55,12 @@ class AchievementsViewModel(
                         unlockedAtLabel = progress.unlockedAtEpochMillis?.let(::formatEpochMillis),
                     )
                 }
+                val summary = normalizedProgress.toAchievementsSummary()
                 _uiState.update { current ->
-                    current.copy(items = items)
+                    current.copy(
+                        items = items,
+                        summary = summary,
+                    )
                 }
             }
         }
