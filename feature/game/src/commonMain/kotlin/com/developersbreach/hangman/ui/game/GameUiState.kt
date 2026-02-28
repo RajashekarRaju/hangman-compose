@@ -3,6 +3,7 @@ package com.developersbreach.hangman.ui.game
 import com.developersbreach.game.core.Alphabet
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
+import com.developersbreach.game.core.GameSessionState
 import com.developersbreach.game.core.HintError
 import com.developersbreach.game.core.HintType
 import com.developersbreach.game.core.LEVELS_PER_GAME
@@ -56,6 +57,23 @@ data class GameCategoryHintUiModel(
     val categoryNounRes: StringResource,
     val wordCount: Int? = null,
 )
+
+internal fun GameUiState.toSessionState(): GameSessionState {
+    return GameSessionState(
+        alphabets = alphabetsList,
+        playerGuesses = playerGuesses,
+        currentWord = wordToGuess,
+        attemptsLeftToGuess = attemptsLeftToGuess,
+        currentPlayerLevel = currentPlayerLevel,
+        pointsScoredOverall = pointsScoredOverall,
+        gameOverByWinning = gameOverByWinning,
+        gameOverByNoAttemptsLeft = revealGuessingWord,
+        maxLevelReached = maxLevelReached,
+        hintsRemaining = hintsRemaining,
+        hintsUsedTotal = hintsUsedTotal,
+        hintTypesUsed = hintTypesUsed,
+    )
+}
 
 val GameUiState.levelTimeProgress: Float
     get() = when {

@@ -2,14 +2,19 @@ package com.developersbreach.hangman.ui.game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.developersbreach.game.core.AchievementCatalog
+import com.developersbreach.game.core.AchievementId
 import com.developersbreach.game.core.GameSessionEngine
+import com.developersbreach.game.core.GameSessionUpdate
 import com.developersbreach.game.core.GameSessionState
 import com.developersbreach.game.core.HintType
 import com.developersbreach.game.core.MAX_ATTEMPTS_PER_LEVEL
 import com.developersbreach.game.core.getFilteredWordsByGameDifficulty
 import com.developersbreach.game.core.hintsPerLevelForDifficulty
+import com.developersbreach.game.core.initialProgress
 import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer
+import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
@@ -20,14 +25,18 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 
 class GameViewModel(
     private val settingsRepository: GameSettingsRepository,
     private val sessionRepository: GameSessionRepository,
+    private val achievementsRepository: AchievementsRepository,
     private val soundEffectPlayer: GameSoundEffectPlayer,
 ) : ViewModel() {
 
@@ -41,6 +50,9 @@ class GameViewModel(
     private var levelTimerJob: Job? = null
     private var hintCooldownJob: Job? = null
     private var hintFeedbackDismissJob: Job? = null
+    private var achievementBannerJob: Job? = null
+    private val pendingAchievementBanners = ArrayDeque<AchievementId>()
+    private val achievementTracker = GameAchievementTracker(nowMillis = ::clockNowMillis)
 
     init {
         hydrateGameSession()
@@ -82,6 +94,15 @@ class GameViewModel(
 
     private fun hydrateGameSession() {
         viewModelScope.launch {
+            val progress = achievementsRepository.observeAchievementProgress().firstOrNull()
+                ?.takeIf { existing -> existing.isNotEmpty() }
+                ?: AchievementCatalog.definitions.map { it.initialProgress() }
+            val counters = achievementsRepository.observeAchievementStatCounters().first()
+            achievementTracker.hydrate(
+                initialProgress = progress,
+                initialCounters = counters,
+            )
+
             val gameDifficulty = settingsRepository.getGameDifficulty()
             val gameCategory = settingsRepository.getGameCategory()
             val guessingWordsForCurrentGame =
@@ -148,10 +169,15 @@ class GameViewModel(
     }
 
     private fun processSessionUpdate(
-        update: com.developersbreach.game.core.GameSessionUpdate,
+        update: GameSessionUpdate,
         playTapSound: Boolean,
     ) {
+        val levelTimeRemainingAtUpdate = _uiState.value.levelTimeRemainingMillis
         syncState(update.state)
+        evaluateAchievements(
+            update = update,
+            levelTimeRemainingAtUpdate = levelTimeRemainingAtUpdate,
+        )
 
         if (update.levelCompleted && !update.gameWon) {
             soundEffectPlayer.play(GameSoundEffect.LEVEL_WON)
@@ -245,7 +271,7 @@ class GameViewModel(
     private fun onTimerExpired() {
         levelTimerJob?.cancel()
         hintCooldownJob?.cancel()
-        _uiState.update { current ->
+        val stateAfterTimeout = _uiState.updateAndGet { current ->
             current.copy(
                 revealGuessingWord = true,
                 showInstructionsDialog = false,
@@ -253,6 +279,15 @@ class GameViewModel(
                 attemptsLeftToGuess = 0,
             )
         }
+        evaluateAchievements(
+            update = GameSessionUpdate(
+                state = stateAfterTimeout.toSessionState(),
+                levelCompleted = false,
+                gameWon = false,
+                gameLost = true,
+            ),
+            levelTimeRemainingAtUpdate = 0L,
+        )
         viewModelScope.launch {
             soundEffectPlayer.play(GameSoundEffect.GAME_LOST)
             saveCurrentGameToHistory()
@@ -280,7 +315,64 @@ class GameViewModel(
                 hintTypesUsed = state.hintTypesUsed.toList(),
             ),
         )
+        onHistoryEntryRecorded()
     }
+
+    private suspend fun onHistoryEntryRecorded() {
+        val result = achievementTracker.onHistoryRecorded()
+        achievementsRepository.saveAchievementStatCounters(result.updatedCounters)
+        achievementsRepository.replaceAchievementProgress(result.updatedProgress)
+
+        if (result.newlyUnlockedIds.isNotEmpty()) {
+            enqueueAchievementBanners(result.newlyUnlockedIds)
+        }
+    }
+
+    private fun evaluateAchievements(
+        update: GameSessionUpdate,
+        levelTimeRemainingAtUpdate: Long,
+    ) {
+        val currentState = _uiState.value
+        val result = achievementTracker.onGameUpdate(
+            update = update,
+            levelTimeRemainingAtUpdate = levelTimeRemainingAtUpdate,
+            gameCategory = currentState.gameCategory,
+            gameDifficulty = currentState.gameDifficulty,
+        )
+
+        viewModelScope.launch {
+            achievementsRepository.saveAchievementStatCounters(result.updatedCounters)
+            achievementsRepository.replaceAchievementProgress(result.updatedProgress)
+        }
+
+        if (result.newlyUnlockedIds.isNotEmpty()) {
+            enqueueAchievementBanners(result.newlyUnlockedIds)
+        }
+    }
+
+    private fun enqueueAchievementBanners(newlyUnlockedIds: List<AchievementId>) {
+        pendingAchievementBanners.addAll(newlyUnlockedIds)
+        if (achievementBannerJob?.isActive != true) {
+            startAchievementBannerLoop()
+        }
+    }
+
+    private fun startAchievementBannerLoop() {
+        achievementBannerJob?.cancel()
+        achievementBannerJob = viewModelScope.launch {
+            while (isActive) {
+                val nextBannerId = pendingAchievementBanners.removeFirstOrNull() ?: break
+                emitEffect(GameEffect.ShowAchievementBanner(nextBannerId.toBannerPayload()))
+
+                delay(ACHIEVEMENT_BANNER_VISIBLE_MILLIS)
+                emitEffect(GameEffect.HideAchievementBanner)
+
+                delay(ACHIEVEMENT_BANNER_EXIT_MILLIS)
+            }
+        }
+    }
+
+    private fun clockNowMillis(): Long = nowEpochMillis()
 
     private fun startHintCooldown() {
         hintCooldownJob?.cancel()
@@ -332,6 +424,8 @@ class GameViewModel(
         levelTimerJob?.cancel()
         hintCooldownJob?.cancel()
         hintFeedbackDismissJob?.cancel()
+        achievementBannerJob?.cancel()
+        pendingAchievementBanners.clear()
         super.onCleared()
     }
 
@@ -340,5 +434,7 @@ class GameViewModel(
         private const val LEVEL_TIMER_TOTAL_MILLIS = 60_000L
         private const val HINT_COOLDOWN_MILLIS = 2_000L
         private const val HINT_FEEDBACK_DISMISS_MILLIS = 2_000L
+        private const val ACHIEVEMENT_BANNER_VISIBLE_MILLIS = 2_500L
+        private const val ACHIEVEMENT_BANNER_EXIT_MILLIS = 250L
     }
 }
