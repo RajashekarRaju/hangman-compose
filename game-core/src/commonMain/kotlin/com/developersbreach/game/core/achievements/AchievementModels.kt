@@ -8,6 +8,7 @@ data class AchievementDefinition(
     val title: String,
     val description: String,
     val group: AchievementGroup,
+    val rarity: AchievementRarity,
     val trigger: AchievementTrigger,
     val target: Int,
     val requiredCategory: GameCategory? = null,
