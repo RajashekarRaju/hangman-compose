@@ -1,5 +1,6 @@
 package com.developersbreach.hangman.composeapp
 
+import com.developersbreach.hangman.ui.achievements.AchievementsViewModel
 import com.developersbreach.hangman.ui.game.GameViewModel
 import com.developersbreach.hangman.ui.history.HistoryViewModel
 import com.developersbreach.hangman.ui.onboarding.OnBoardingViewModel
@@ -23,9 +24,12 @@ private val viewModelModule = module {
         OnBoardingViewModel(get(), get(), get())
     }
     viewModel {
-        GameViewModel(get(), get(), get())
+        GameViewModel(get(), get(), get(), get())
     }
     viewModel {
         HistoryViewModel(get())
+    }
+    viewModel {
+        AchievementsViewModel(get())
     }
 }

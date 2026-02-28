@@ -1,0 +1,18 @@
+<resources>
+    <string name="achievements_title">Achievements</string>
+    <string name="achievements_empty">No achievements available.</string>
+    <string name="achievements_locked">Locked</string>
+    <string name="achievements_unlocked">Unlocked</string>
+    <string name="achievements_progress">Progress: %1$d/%2$d</string>
+    <string name="achievements_unlocked_at">Unlocked: %1$s</string>
+    <string name="achievements_cd_back">Back</string>
+    <string name="achievements_cd_locked">Locked achievement</string>
+    <string name="achievements_cd_unlocked">Unlocked achievement</string>
+    <string name="achievements_group_progress">Progress</string>
+    <string name="achievements_group_skill">Skill</string>
+    <string name="achievements_group_collection">Collection</string>
+    <string name="achievements_group_endurance">Endurance</string>
+    <string name="achievements_group_hint_discipline">Hint Discipline</string>
+    <string name="achievements_group_time_control">Time Control</string>
+    <string name="achievements_group_meta">Meta</string>
+</resources>
