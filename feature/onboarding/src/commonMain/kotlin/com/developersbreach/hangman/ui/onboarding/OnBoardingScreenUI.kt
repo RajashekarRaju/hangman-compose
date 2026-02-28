@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
@@ -58,6 +59,7 @@ import com.developersbreach.hangman.ui.components.HangmanTextActionButton
 import com.developersbreach.hangman.ui.components.HangmanPrimaryButton
 import com.developersbreach.hangman.ui.components.LabelLargeText
 import com.developersbreach.hangman.ui.components.TitleMediumText
+import com.developersbreach.hangman.ui.components.creepyOutline
 import com.developersbreach.hangman.ui.components.rememberInfiniteRotation
 import com.developersbreach.hangman.ui.theme.HangmanTheme
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
@@ -153,7 +155,12 @@ private fun OnBoardingScreenContent(
 
         item { GameHistoryButton { onEvent(OnBoardingEvent.NavigateToHistoryClicked) } }
 
-        item { AchievementsButton { onEvent(OnBoardingEvent.NavigateToAchievementsClicked) } }
+        item {
+            AchievementsButton(
+                hasUnread = uiState.hasUnreadAchievements,
+                onClick = { onEvent(OnBoardingEvent.NavigateToAchievementsClicked) },
+            )
+        }
 
         item { GameDifficultyButton(onEvent = onEvent) }
 
@@ -286,11 +293,48 @@ private fun GameHistoryButton(onClick: () -> Unit) {
 }
 
 @Composable
-private fun AchievementsButton(onClick: () -> Unit) {
-    OnBoardingActionButton(
-        text = stringResource(Res.string.onboarding_button_achievements),
-        onClick = onClick
-    )
+private fun AchievementsButton(
+    hasUnread: Boolean,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = Modifier.width(200.dp)
+    ) {
+        OnBoardingActionButton(
+            text = stringResource(Res.string.onboarding_button_achievements),
+            onClick = onClick,
+        )
+
+        if (hasUnread) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 4.dp, end = 6.dp)
+                    .size(20.dp)
+                    .background(
+                        color = HangmanTheme.colorScheme.primary.copy(alpha = 0.2f),
+                        shape = CircleShape,
+                    )
+                    .creepyOutline(
+                        seed = 905,
+                        threshold = 0.07f,
+                        fillColor = Color.Transparent,
+                        outlineColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.85f),
+                        strokeWidthFactor = 0.06f,
+                    ),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(7.dp)
+                        .background(
+                            color = HangmanTheme.colorScheme.primary,
+                            shape = CircleShape,
+                        ),
+                )
+            }
+        }
+    }
 }
 
 @Composable

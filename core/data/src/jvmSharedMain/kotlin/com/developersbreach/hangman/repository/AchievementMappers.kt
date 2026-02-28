@@ -15,6 +15,7 @@ internal fun AchievementProgress.toEntity(): AchievementProgressEntity {
     return AchievementProgressEntity(
         achievementId = achievementId.name,
         isUnlocked = isUnlocked,
+        isUnread = isUnread,
         unlockedAtEpochMillis = unlockedAtEpochMillis,
         progressCurrent = progressCurrent,
         progressTarget = progressTarget,
@@ -26,6 +27,7 @@ internal fun AchievementProgressEntity.toDomainOrNull(): AchievementProgress? {
     return AchievementProgress(
         achievementId = id,
         isUnlocked = isUnlocked,
+        isUnread = isUnread,
         unlockedAtEpochMillis = unlockedAtEpochMillis,
         progressCurrent = progressCurrent,
         progressTarget = progressTarget,

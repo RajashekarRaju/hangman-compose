@@ -20,6 +20,7 @@ data class AchievementDefinition(
 data class AchievementProgress(
     val achievementId: AchievementId,
     val isUnlocked: Boolean = false,
+    val isUnread: Boolean = false,
     val unlockedAtEpochMillis: Long? = null,
     val progressCurrent: Int = 0,
     val progressTarget: Int,

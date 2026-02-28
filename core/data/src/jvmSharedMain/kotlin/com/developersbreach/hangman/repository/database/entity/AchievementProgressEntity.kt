@@ -14,6 +14,9 @@ data class AchievementProgressEntity(
     @ColumnInfo(name = "column_is_unlocked")
     val isUnlocked: Boolean,
 
+    @ColumnInfo(name = "column_is_unread")
+    val isUnread: Boolean,
+
     @ColumnInfo(name = "column_unlocked_at_epoch_millis")
     val unlockedAtEpochMillis: Long?,
 

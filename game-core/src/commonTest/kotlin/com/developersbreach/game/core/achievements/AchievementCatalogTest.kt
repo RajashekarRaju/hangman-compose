@@ -115,6 +115,7 @@ class AchievementCatalogTest {
         assertEquals(definition.target, progress.progressTarget)
         assertEquals(0, progress.progressCurrent)
         assertEquals(false, progress.isUnlocked)
+        assertEquals(false, progress.isUnread)
         assertEquals(null, progress.unlockedAtEpochMillis)
     }
 }

@@ -204,6 +204,46 @@ class AchievementEvaluatorTest {
 
         assertTrue(AchievementId.ARCHIVIST in result.newlyUnlockedAchievementIds)
     }
+
+    @Test
+    fun `evaluator marks newly unlocked achievement as unread`() {
+        val result = AchievementEvaluator.evaluate(
+            currentProgress = initialProgress(),
+            counters = AchievementStatCounters(gamesWon = 1),
+            session = AchievementSessionSignals(),
+            unlockedAtEpochMillis = 1000L,
+        )
+
+        val firstWin = result.updatedProgress.byId(AchievementId.FIRST_WIN)
+        assertTrue(firstWin.isUnlocked)
+        assertTrue(firstWin.isUnread)
+    }
+
+    @Test
+    fun `evaluator preserves read state for already unlocked achievement`() {
+        val definition = AchievementCatalog.definitionFor(AchievementId.FIRST_WIN)
+        val existing = initialProgress().map { progress ->
+            if (progress.achievementId == AchievementId.FIRST_WIN) {
+                progress.copy(
+                    isUnlocked = true,
+                    isUnread = false,
+                    unlockedAtEpochMillis = 777L,
+                    progressCurrent = definition.target,
+                )
+            } else {
+                progress
+            }
+        }
+
+        val result = AchievementEvaluator.evaluate(
+            currentProgress = existing,
+            counters = AchievementStatCounters(gamesWon = 1),
+            session = AchievementSessionSignals(),
+            unlockedAtEpochMillis = 1100L,
+        )
+
+        assertEquals(false, result.updatedProgress.byId(AchievementId.FIRST_WIN).isUnread)
+    }
 }
 
 private fun initialProgress(): List<AchievementProgress> {

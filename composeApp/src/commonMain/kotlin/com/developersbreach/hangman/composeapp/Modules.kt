@@ -21,7 +21,7 @@ private val viewModelModule = module {
         AppInitializerViewModel(get())
     }
     viewModel {
-        OnBoardingViewModel(get(), get(), get())
+        OnBoardingViewModel(get(), get(), get(), get())
     }
     viewModel {
         GameViewModel(get(), get(), get(), get())

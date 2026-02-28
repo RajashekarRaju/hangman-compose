@@ -8,6 +8,7 @@ import org.jetbrains.compose.resources.StringResource
 
 data class OnBoardingUiState(
     val highScore: Int = 0,
+    val hasUnreadAchievements: Boolean = false,
     val availableCategories: List<GameCategory> = categoryOptions,
     val gameDifficulty: GameDifficulty = GameDifficulty.EASY,
     val gameDifficultyLabelRes: StringResource = GameDifficulty.EASY.labelRes(),

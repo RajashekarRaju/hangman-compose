@@ -129,8 +129,13 @@ private fun updateProgress(
     val boundedProgress = measured.coerceAtLeast(0).coerceAtMost(target)
     val mergedProgress = maxOf(existing.progressCurrent, boundedProgress)
     val shouldUnlock = existing.isUnlocked || mergedProgress >= target
+    val unlockedNow = !existing.isUnlocked && shouldUnlock
     return existing.copy(
         isUnlocked = shouldUnlock,
+        isUnread = when {
+            unlockedNow -> true
+            else -> existing.isUnread
+        },
         unlockedAtEpochMillis = when {
             existing.unlockedAtEpochMillis != null -> existing.unlockedAtEpochMillis
             shouldUnlock -> unlockedAtEpochMillis

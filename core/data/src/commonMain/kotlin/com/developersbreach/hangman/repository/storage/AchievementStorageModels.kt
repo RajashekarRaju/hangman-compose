@@ -11,6 +11,7 @@ import kotlinx.serialization.Serializable
 data class StoredAchievementProgress(
     val achievementId: String,
     val isUnlocked: Boolean,
+    val isUnread: Boolean = false,
     val unlockedAtEpochMillis: Long? = null,
     val progressCurrent: Int,
     val progressTarget: Int,
@@ -21,6 +22,7 @@ fun StoredAchievementProgress.toDomain(): AchievementProgress? {
     return AchievementProgress(
         achievementId = id,
         isUnlocked = isUnlocked,
+        isUnread = isUnread,
         unlockedAtEpochMillis = unlockedAtEpochMillis,
         progressCurrent = progressCurrent,
         progressTarget = progressTarget,
@@ -31,6 +33,7 @@ fun AchievementProgress.toStored(): StoredAchievementProgress {
     return StoredAchievementProgress(
         achievementId = achievementId.name,
         isUnlocked = isUnlocked,
+        isUnread = isUnread,
         unlockedAtEpochMillis = unlockedAtEpochMillis,
         progressCurrent = progressCurrent,
         progressTarget = progressTarget,

@@ -29,6 +29,7 @@ class RoomAchievementsRepositoryTest {
             val expected = listOf(
                 firstBlood.copy(
                     isUnlocked = true,
+                    isUnread = true,
                     unlockedAtEpochMillis = 1730000000000,
                     progressCurrent = firstBlood.progressTarget,
                 ),

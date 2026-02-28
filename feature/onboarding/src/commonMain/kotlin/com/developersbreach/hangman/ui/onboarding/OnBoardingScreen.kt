@@ -46,7 +46,10 @@ private fun OnBoardingScreenUIPreview() {
         darkTheme = true,
         palette = ThemePalettes.byId(ThemePaletteId.INSANE_RED)
     ) {
-        OnBoardingUiState(highScore = 1520).OnBoardingScreenUI(
+        OnBoardingUiState(
+            highScore = 1520,
+            hasUnreadAchievements = true,
+        ).OnBoardingScreenUI(
             onEvent = {},
         )
     }

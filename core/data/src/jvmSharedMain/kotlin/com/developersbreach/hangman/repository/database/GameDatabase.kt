@@ -21,7 +21,7 @@ internal const val DATABASE_NAME = "hangman.db"
         AchievementProgressEntity::class,
         AchievementStatsEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = false,
 )
 abstract class GameDatabase : RoomDatabase() {

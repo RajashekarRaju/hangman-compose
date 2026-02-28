@@ -2,7 +2,13 @@ package com.developersbreach.hangman.ui.onboarding
 
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
+import com.developersbreach.game.core.achievements.AchievementCatalog
+import com.developersbreach.game.core.achievements.AchievementId
+import com.developersbreach.game.core.achievements.AchievementProgress
+import com.developersbreach.game.core.achievements.AchievementStatCounters
+import com.developersbreach.game.core.achievements.initialProgress
 import com.developersbreach.hangman.audio.BackgroundAudioController
+import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
 import com.developersbreach.hangman.repository.model.HistoryRecord
@@ -49,8 +55,9 @@ class OnBoardingViewModelTest {
             difficulty = GameDifficulty.VERY_HARD,
             category = GameCategory.ANIMALS,
         )
+        val achievementsRepo = FakeAchievementsRepository()
         val audio = FakeBackgroundAudioController()
-        val viewModel = OnBoardingViewModel(historyRepo, settingsRepo, audio)
+        val viewModel = OnBoardingViewModel(historyRepo, achievementsRepo, settingsRepo, audio)
 
         historyRepo.emitHistory(
             historyRecord(score = 42),
@@ -72,9 +79,10 @@ class OnBoardingViewModelTest {
     @Test
     fun `navigate events emit effects and stop audio where needed`() = runTest(dispatcher) {
         val historyRepo = FakeHistoryRepository()
+        val achievementsRepo = FakeAchievementsRepository()
         val settingsRepo = FakeSettingsRepository()
         val audio = FakeBackgroundAudioController()
-        val viewModel = OnBoardingViewModel(historyRepo, settingsRepo, audio)
+        val viewModel = OnBoardingViewModel(historyRepo, achievementsRepo, settingsRepo, audio)
         advanceUntilIdle()
 
         val gameEffect = async { viewModel.effects.first() }
@@ -113,9 +121,10 @@ class OnBoardingViewModelTest {
     @Test
     fun `difficulty and category changes update state and persist`() = runTest(dispatcher) {
         val historyRepo = FakeHistoryRepository()
+        val achievementsRepo = FakeAchievementsRepository()
         val settingsRepo = FakeSettingsRepository()
         val audio = FakeBackgroundAudioController()
-        val viewModel = OnBoardingViewModel(historyRepo, settingsRepo, audio)
+        val viewModel = OnBoardingViewModel(historyRepo, achievementsRepo, settingsRepo, audio)
         advanceUntilIdle()
 
         viewModel.onEvent(OnBoardingEvent.OpenDifficultyDialog)
@@ -138,6 +147,7 @@ class OnBoardingViewModelTest {
     fun `toggle background music updates playback state`() = runTest(dispatcher) {
         val viewModel = OnBoardingViewModel(
             historyRepository = FakeHistoryRepository(),
+            achievementsRepository = FakeAchievementsRepository(),
             settingsRepository = FakeSettingsRepository(),
             audioController = FakeBackgroundAudioController(),
         )
@@ -149,6 +159,27 @@ class OnBoardingViewModelTest {
 
         viewModel.onEvent(OnBoardingEvent.ToggleBackgroundMusic)
         assertTrue(viewModel.uiState.value.isBackgroundMusicPlaying)
+    }
+
+    @Test
+    fun `unread achievements count reflects unlocked unread progress`() = runTest(dispatcher) {
+        val achievementsRepo = FakeAchievementsRepository()
+        val viewModel = OnBoardingViewModel(
+            historyRepository = FakeHistoryRepository(),
+            achievementsRepository = achievementsRepo,
+            settingsRepository = FakeSettingsRepository(),
+            audioController = FakeBackgroundAudioController(),
+        )
+        advanceUntilIdle()
+
+        achievementsRepo.emitProgress(
+            progressFor(AchievementId.FIRST_BLOOD, isUnlocked = true, isUnread = true),
+            progressFor(AchievementId.GRAVE_WALKER, isUnlocked = true, isUnread = false),
+            progressFor(AchievementId.NIGHT_SHIFT, isUnlocked = false, isUnread = true),
+        )
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.hasUnreadAchievements)
     }
 }
 
@@ -201,6 +232,27 @@ private class FakeHistoryRepository : HistoryRepository {
     }
 }
 
+private class FakeAchievementsRepository : AchievementsRepository {
+    private val progressState = MutableStateFlow<List<AchievementProgress>>(emptyList())
+    private val countersState = MutableStateFlow(AchievementStatCounters())
+
+    override fun observeAchievementProgress() = progressState
+
+    override suspend fun replaceAchievementProgress(progress: List<AchievementProgress>) {
+        progressState.value = progress
+    }
+
+    override fun observeAchievementStatCounters() = countersState
+
+    override suspend fun saveAchievementStatCounters(counters: AchievementStatCounters) {
+        countersState.value = counters
+    }
+
+    fun emitProgress(vararg progress: AchievementProgress) {
+        progressState.value = progress.toList()
+    }
+}
+
 private class FakeBackgroundAudioController : BackgroundAudioController {
     private var playing = false
 
@@ -225,5 +277,18 @@ private fun historyRecord(score: Int): HistoryRecord {
         gameSummary = true,
         gamePlayedTime = "10:00 AM",
         gamePlayedDate = "2026-02-24",
+    )
+}
+
+private fun progressFor(
+    id: AchievementId,
+    isUnlocked: Boolean,
+    isUnread: Boolean,
+): AchievementProgress {
+    val definition = AchievementCatalog.definitionFor(id)
+    return definition.initialProgress().copy(
+        isUnlocked = isUnlocked,
+        isUnread = isUnread,
+        progressCurrent = if (isUnlocked) definition.target else 0,
     )
 }
