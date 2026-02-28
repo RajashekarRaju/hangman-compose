@@ -2,9 +2,12 @@ package com.developersbreach.hangman.repository.di
 
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
+import com.developersbreach.game.core.AchievementStatCounters
+import com.developersbreach.game.core.AchievementProgress
 import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer
+import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
@@ -12,11 +15,13 @@ import com.developersbreach.hangman.repository.metadata.generateHistoryMetadata
 import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
 import com.developersbreach.hangman.repository.model.HistoryRecord
 import com.developersbreach.hangman.repository.storage.StoredHistoryRecord
+import com.developersbreach.hangman.repository.storage.StoredAchievementProgress
+import com.developersbreach.hangman.repository.storage.StoredAchievementStatCounters
 import com.developersbreach.hangman.repository.storage.StoredSettings
 import com.developersbreach.hangman.repository.storage.toDomain
+import com.developersbreach.hangman.repository.storage.toStored
 import com.developersbreach.hangman.repository.storage.toGameCategory
 import com.developersbreach.hangman.repository.storage.toGameDifficulty
-import com.developersbreach.hangman.repository.storage.toStored
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import com.developersbreach.hangman.ui.theme.toThemePaletteId
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -36,6 +41,7 @@ actual fun platformDataModule(): Module = module {
     single { IosUserDefaultsGameRepository() }
     single<HistoryRepository> { get<IosUserDefaultsGameRepository>() }
     single<GameSessionRepository> { get<IosUserDefaultsGameRepository>() }
+    single<AchievementsRepository> { IosUserDefaultsAchievementsRepository() }
     single<GameSettingsRepository> { IosUserDefaultsGameSettingsRepository() }
     single<BackgroundAudioController> { IosBackgroundAudioController() }
     single<GameSoundEffectPlayer> { IosGameSoundEffectPlayer() }
@@ -43,6 +49,8 @@ actual fun platformDataModule(): Module = module {
 
 private const val HISTORY_KEY = "hangman.history.v1"
 private const val SETTINGS_KEY = "hangman.settings.v1"
+private const val ACHIEVEMENTS_KEY = "hangman.achievements.v1"
+private const val ACHIEVEMENT_STATS_KEY = "hangman.achievement.stats.v1"
 
 private val json = Json { ignoreUnknownKeys = true }
 private val defaults = NSUserDefaults.standardUserDefaults
@@ -133,6 +141,56 @@ private class IosUserDefaultsGameSettingsRepository : GameSettingsRepository {
         settings = settings.copy(themePaletteId = themePaletteId.name)
         persist()
         themePaletteIdState.value = themePaletteId
+    }
+}
+
+private class IosUserDefaultsAchievementsRepository : AchievementsRepository {
+
+    private val achievementProgressState = MutableStateFlow(loadAchievementProgress())
+    private val achievementStatsState = MutableStateFlow(loadAchievementStats())
+
+    private fun loadAchievementProgress(): List<AchievementProgress> {
+        val raw = defaults.stringForKey(ACHIEVEMENTS_KEY) ?: return emptyList()
+        val stored = runCatching {
+            json.decodeFromString<List<StoredAchievementProgress>>(raw)
+        }.getOrDefault(emptyList())
+        return stored.mapNotNull { value -> value.toDomain() }
+    }
+
+    private fun loadAchievementStats(): AchievementStatCounters {
+        val raw = defaults.stringForKey(ACHIEVEMENT_STATS_KEY) ?: return AchievementStatCounters()
+        val stored = runCatching {
+            json.decodeFromString<StoredAchievementStatCounters>(raw)
+        }.getOrDefault(StoredAchievementStatCounters())
+        return stored.toDomain()
+    }
+
+    private fun persistProgress(progress: List<AchievementProgress>) {
+        defaults.setObject(
+            json.encodeToString(progress.map { value -> value.toStored() }),
+            forKey = ACHIEVEMENTS_KEY,
+        )
+    }
+
+    private fun persistStats(counters: AchievementStatCounters) {
+        defaults.setObject(
+            json.encodeToString(counters.toStored()),
+            forKey = ACHIEVEMENT_STATS_KEY,
+        )
+    }
+
+    override fun observeAchievementProgress(): Flow<List<AchievementProgress>> = achievementProgressState
+
+    override suspend fun replaceAchievementProgress(progress: List<AchievementProgress>) {
+        achievementProgressState.value = progress
+        persistProgress(progress)
+    }
+
+    override fun observeAchievementStatCounters(): Flow<AchievementStatCounters> = achievementStatsState
+
+    override suspend fun saveAchievementStatCounters(counters: AchievementStatCounters) {
+        achievementStatsState.value = counters
+        persistStats(counters)
     }
 }
 
