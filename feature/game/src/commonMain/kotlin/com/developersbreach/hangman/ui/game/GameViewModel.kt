@@ -3,7 +3,6 @@ package com.developersbreach.hangman.ui.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.developersbreach.game.core.achievements.AchievementCatalog
-import com.developersbreach.game.core.achievements.AchievementId
 import com.developersbreach.game.core.GameSessionEngine
 import com.developersbreach.game.core.GameSessionUpdate
 import com.developersbreach.game.core.GameSessionState
@@ -18,6 +17,7 @@ import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
+import com.developersbreach.hangman.ui.common.notification.AchievementNotificationCoordinator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.Job
@@ -38,6 +38,7 @@ class GameViewModel(
     private val sessionRepository: GameSessionRepository,
     private val achievementsRepository: AchievementsRepository,
     private val soundEffectPlayer: GameSoundEffectPlayer,
+    private val achievementNotificationCoordinator: AchievementNotificationCoordinator,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(GameUiState())
@@ -50,8 +51,6 @@ class GameViewModel(
     private var levelTimerJob: Job? = null
     private var hintCooldownJob: Job? = null
     private var hintFeedbackDismissJob: Job? = null
-    private var achievementBannerJob: Job? = null
-    private val pendingAchievementBanners = ArrayDeque<AchievementId>()
     private val achievementTracker = GameAchievementTracker(nowMillis = ::clockNowMillis)
 
     init {
@@ -324,7 +323,7 @@ class GameViewModel(
         achievementsRepository.replaceAchievementProgress(result.updatedProgress)
 
         if (result.newlyUnlockedIds.isNotEmpty()) {
-            enqueueAchievementBanners(result.newlyUnlockedIds)
+            achievementNotificationCoordinator.enqueueUnlocked(result.newlyUnlockedIds)
         }
     }
 
@@ -346,29 +345,7 @@ class GameViewModel(
         }
 
         if (result.newlyUnlockedIds.isNotEmpty()) {
-            enqueueAchievementBanners(result.newlyUnlockedIds)
-        }
-    }
-
-    private fun enqueueAchievementBanners(newlyUnlockedIds: List<AchievementId>) {
-        pendingAchievementBanners.addAll(newlyUnlockedIds)
-        if (achievementBannerJob?.isActive != true) {
-            startAchievementBannerLoop()
-        }
-    }
-
-    private fun startAchievementBannerLoop() {
-        achievementBannerJob?.cancel()
-        achievementBannerJob = viewModelScope.launch {
-            while (isActive) {
-                val nextBannerId = pendingAchievementBanners.removeFirstOrNull() ?: break
-                emitEffect(GameEffect.ShowAchievementBanner(nextBannerId.toBannerPayload()))
-
-                delay(ACHIEVEMENT_BANNER_VISIBLE_MILLIS)
-                emitEffect(GameEffect.HideAchievementBanner)
-
-                delay(ACHIEVEMENT_BANNER_EXIT_MILLIS)
-            }
+            achievementNotificationCoordinator.enqueueUnlocked(result.newlyUnlockedIds)
         }
     }
 
@@ -424,8 +401,6 @@ class GameViewModel(
         levelTimerJob?.cancel()
         hintCooldownJob?.cancel()
         hintFeedbackDismissJob?.cancel()
-        achievementBannerJob?.cancel()
-        pendingAchievementBanners.clear()
         super.onCleared()
     }
 
@@ -434,7 +409,5 @@ class GameViewModel(
         private const val LEVEL_TIMER_TOTAL_MILLIS = 60_000L
         private const val HINT_COOLDOWN_MILLIS = 2_000L
         private const val HINT_FEEDBACK_DISMISS_MILLIS = 2_000L
-        private const val ACHIEVEMENT_BANNER_VISIBLE_MILLIS = 2_500L
-        private const val ACHIEVEMENT_BANNER_EXIT_MILLIS = 250L
     }
 }

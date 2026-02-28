@@ -4,9 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import com.developersbreach.game.core.alphabetsList
 import com.developersbreach.hangman.ui.common.HangmanInstructionsDialog
 import com.developersbreach.hangman.ui.preview.HangmanScreenPreviews
@@ -21,21 +18,11 @@ fun GameScreen(
     viewModel: GameViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var bannerState by remember { mutableStateOf(AchievementBannerUiState()) }
 
     LaunchedEffect(viewModel) {
         viewModel.effects.collectLatest { effect ->
             when (effect) {
                 GameEffect.NavigateUp -> navigateUp()
-                is GameEffect.ShowAchievementBanner -> {
-                    bannerState = AchievementBannerUiState(
-                        payload = effect.payload,
-                        isVisible = true,
-                    )
-                }
-                GameEffect.HideAchievementBanner -> {
-                    bannerState = bannerState.copy(isVisible = false)
-                }
             }
         }
     }
@@ -75,7 +62,6 @@ fun GameScreen(
     }
 
     uiState.GameScreenUI(
-        achievementBannerState = bannerState,
         onEvent = viewModel::onEvent,
     )
 }
@@ -94,8 +80,6 @@ private fun GameScreenPreviewContent() {
             maxLevelReached = 5,
             alphabetsList = alphabetsList(),
             playerGuesses = listOf("H", "A", "N"),
-        ).GameScreenUI(
-            achievementBannerState = AchievementBannerUiState(),
-        ) {}
+        ).GameScreenUI {}
     }
 }

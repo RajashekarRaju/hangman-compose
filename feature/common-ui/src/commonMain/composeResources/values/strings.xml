@@ -8,6 +8,7 @@
     <string name="category_languages">Languages</string>
     <string name="category_companies">Companies</string>
     <string name="category_animals">Animals</string>
+    <string name="achievement_unlocked_subtitle">Achievement Unlocked</string>
 
     <string name="instructions_dialog_title">Instructions</string>
     <string name="instructions_dialog_subtitle">Guess the name of the %1$s.</string>

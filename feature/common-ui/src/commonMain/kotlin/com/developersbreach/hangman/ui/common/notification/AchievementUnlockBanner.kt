@@ -1,4 +1,4 @@
-package com.developersbreach.hangman.ui.game
+package com.developersbreach.hangman.ui.common.notification
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -16,24 +16,26 @@ import com.developersbreach.hangman.ui.components.BodyLargeText
 import com.developersbreach.hangman.ui.components.TitleSmallText
 import com.developersbreach.hangman.ui.components.creepyOutline
 import com.developersbreach.hangman.ui.theme.HangmanTheme
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
-internal fun AchievementBannerPayload?.AchievementUnlockBanner(
-    isVisible: Boolean,
-    modifier: Modifier = Modifier.Companion,
+fun AchievementUnlockBanner(
+    state: AchievementBannerUiState,
+    modifier: Modifier = Modifier,
 ) {
+    val payload = state.payload
     AnimatedVisibility(
-        visible = this != null && isVisible,
+        visible = payload != null && state.isVisible,
         enter = fadeIn() + slideInVertically(initialOffsetY = { fullHeight -> -fullHeight / 2 }),
         exit = fadeOut() + slideOutVertically(targetOffsetY = { fullHeight -> -fullHeight / 3 }),
         modifier = modifier,
     ) {
-        val bannerPayload = this@AchievementUnlockBanner ?: return@AnimatedVisibility
+        val bannerPayload = payload ?: return@AnimatedVisibility
 
         Column(
-            horizontalAlignment = Alignment.Companion.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(6.dp),
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .creepyOutline(
                     threshold = 0.09f,
                     seed = bannerPayload.seed,
@@ -44,7 +46,7 @@ internal fun AchievementBannerPayload?.AchievementUnlockBanner(
                 .padding(horizontal = 18.dp, vertical = 12.dp),
         ) {
             TitleSmallText(
-                text = bannerPayload.subtitle,
+                text = stringResource(bannerPayload.subtitleRes),
                 color = HangmanTheme.colorScheme.primary.copy(alpha = bannerPayload.colors.subtitleAlpha),
             )
             BodyLargeText(
@@ -54,8 +56,3 @@ internal fun AchievementBannerPayload?.AchievementUnlockBanner(
         }
     }
 }
-
-data class AchievementBannerUiState(
-    val payload: AchievementBannerPayload? = null,
-    val isVisible: Boolean = false,
-)

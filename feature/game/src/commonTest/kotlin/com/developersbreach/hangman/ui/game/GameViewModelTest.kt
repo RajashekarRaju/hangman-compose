@@ -13,6 +13,8 @@ import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
+import com.developersbreach.hangman.ui.common.notification.AchievementBannerUiState
+import com.developersbreach.hangman.ui.common.notification.AchievementNotificationCoordinator
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
@@ -198,12 +200,14 @@ class GameViewModelTest {
         sessionRepository: FakeGameSessionRepository = FakeGameSessionRepository(),
         achievementsRepository: FakeAchievementsRepository = FakeAchievementsRepository(),
         soundPlayer: FakeSoundEffectPlayer = FakeSoundEffectPlayer(),
+        notificationCoordinator: AchievementNotificationCoordinator = FakeAchievementNotificationCoordinator(),
     ): GameViewModel {
         return GameViewModel(
             settingsRepository = FakeGameSettingsRepository(difficulty, category),
             sessionRepository = sessionRepository,
             achievementsRepository = achievementsRepository,
             soundEffectPlayer = soundPlayer,
+            achievementNotificationCoordinator = notificationCoordinator,
         )
     }
 }
@@ -268,4 +272,10 @@ private class FakeAchievementsRepository : AchievementsRepository {
     }
 
     fun currentProgress(): List<AchievementProgress> = progress.value
+}
+
+private class FakeAchievementNotificationCoordinator : AchievementNotificationCoordinator {
+    override val bannerState = MutableStateFlow(AchievementBannerUiState())
+
+    override fun enqueueUnlocked(unlockedIds: List<AchievementId>) = Unit
 }

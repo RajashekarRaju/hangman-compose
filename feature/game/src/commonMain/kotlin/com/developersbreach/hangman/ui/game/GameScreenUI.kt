@@ -42,7 +42,6 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun GameUiState.GameScreenUI(
-    achievementBannerState: AchievementBannerUiState,
     onEvent: (GameEvent) -> Unit,
 ) {
     HangmanScaffold(
@@ -78,13 +77,6 @@ fun GameUiState.GameScreenUI(
                     modifier = Modifier.fillMaxSize(),
                 )
             }
-
-            achievementBannerState.payload.AchievementUnlockBanner(
-                isVisible = achievementBannerState.isVisible,
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 12.dp),
-            )
         }
     }
 }

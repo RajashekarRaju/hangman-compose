@@ -18,6 +18,11 @@ kotlin {
             implementation(libs.compose.material3)
             implementation(libs.compose.components.resources)
         }
+
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.kotlinx.coroutines.test)
+        }
     }
 }
 
