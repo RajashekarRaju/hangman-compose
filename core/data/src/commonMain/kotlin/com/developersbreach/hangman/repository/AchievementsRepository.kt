@@ -1,7 +1,7 @@
 package com.developersbreach.hangman.repository
 
-import com.developersbreach.game.core.AchievementProgress
-import com.developersbreach.game.core.AchievementStatCounters
+import com.developersbreach.game.core.achievements.AchievementProgress
+import com.developersbreach.game.core.achievements.AchievementStatCounters
 import kotlinx.coroutines.flow.Flow
 
 interface AchievementsRepository {

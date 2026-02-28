@@ -35,3 +35,9 @@ out/
 .kotlin
 /iosApp/iosApp.xcodeproj/project.xcworkspace/xcuserdata/raj.xcuserdatad/UserInterfaceState.xcuserstate
 /iosApp/iosApp.xcodeproj/xcuserdata/raj.xcuserdatad/xcschemes/xcschememanagement.plist
+/AGENTS.md
+/docs/
+/Makefile
+/.task-state/
+/scripts/task-close.sh
+/scripts/task-start.sh

@@ -1,7 +1,7 @@
 package com.developersbreach.hangman.ui.game
 
-import com.developersbreach.game.core.AchievementCatalog
-import com.developersbreach.game.core.AchievementId
+import com.developersbreach.game.core.achievements.AchievementCatalog
+import com.developersbreach.game.core.achievements.AchievementId
 
 sealed interface GameEffect {
     data object NavigateUp : GameEffect

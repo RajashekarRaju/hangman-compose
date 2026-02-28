@@ -1,8 +1,8 @@
 package com.developersbreach.hangman.ui.achievements
 
 import androidx.compose.ui.graphics.Color
-import com.developersbreach.game.core.AchievementGroup
-import com.developersbreach.game.core.AchievementId
+import com.developersbreach.game.core.achievements.AchievementGroup
+import com.developersbreach.game.core.achievements.AchievementId
 import com.developersbreach.hangman.feature.achievements.generated.resources.Res
 import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_group_collection
 import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_group_endurance

@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.developersbreach.game.core.AchievementCatalog
-import com.developersbreach.game.core.initialProgress
+import com.developersbreach.game.core.achievements.AchievementCatalog
+import com.developersbreach.game.core.achievements.initialProgress
 import com.developersbreach.hangman.ui.preview.HangmanScreenPreviews
 import com.developersbreach.hangman.ui.theme.HangmanTheme
 import com.developersbreach.hangman.ui.theme.ThemePaletteId

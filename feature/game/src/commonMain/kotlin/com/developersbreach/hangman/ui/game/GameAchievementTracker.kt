@@ -1,17 +1,17 @@
 package com.developersbreach.hangman.ui.game
 
-import com.developersbreach.game.core.AchievementCatalog
-import com.developersbreach.game.core.AchievementEvaluator
-import com.developersbreach.game.core.AchievementId
-import com.developersbreach.game.core.AchievementProgress
-import com.developersbreach.game.core.AchievementSessionSignals
-import com.developersbreach.game.core.AchievementStatCounters
+import com.developersbreach.game.core.achievements.AchievementCatalog
+import com.developersbreach.game.core.achievements.AchievementEvaluator
+import com.developersbreach.game.core.achievements.AchievementId
+import com.developersbreach.game.core.achievements.AchievementProgress
+import com.developersbreach.game.core.achievements.AchievementSessionSignals
+import com.developersbreach.game.core.achievements.AchievementStatCounters
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.game.core.GameSessionUpdate
 import com.developersbreach.game.core.HintType
 import com.developersbreach.game.core.MAX_ATTEMPTS_PER_LEVEL
-import com.developersbreach.game.core.initialProgress
+import com.developersbreach.game.core.achievements.initialProgress
 
 internal class GameAchievementTracker(
     private val nowMillis: () -> Long,

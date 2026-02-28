@@ -2,8 +2,8 @@ package com.developersbreach.hangman.ui.game
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.developersbreach.game.core.AchievementCatalog
-import com.developersbreach.game.core.AchievementId
+import com.developersbreach.game.core.achievements.AchievementCatalog
+import com.developersbreach.game.core.achievements.AchievementId
 import com.developersbreach.game.core.GameSessionEngine
 import com.developersbreach.game.core.GameSessionUpdate
 import com.developersbreach.game.core.GameSessionState
@@ -11,7 +11,7 @@ import com.developersbreach.game.core.HintType
 import com.developersbreach.game.core.MAX_ATTEMPTS_PER_LEVEL
 import com.developersbreach.game.core.getFilteredWordsByGameDifficulty
 import com.developersbreach.game.core.hintsPerLevelForDifficulty
-import com.developersbreach.game.core.initialProgress
+import com.developersbreach.game.core.achievements.initialProgress
 import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer
 import com.developersbreach.hangman.repository.AchievementsRepository

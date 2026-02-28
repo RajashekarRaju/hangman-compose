@@ -2,8 +2,8 @@ package com.developersbreach.hangman.repository.di
 
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
-import com.developersbreach.game.core.AchievementStatCounters
-import com.developersbreach.game.core.AchievementProgress
+import com.developersbreach.game.core.achievements.AchievementStatCounters
+import com.developersbreach.game.core.achievements.AchievementProgress
 import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer

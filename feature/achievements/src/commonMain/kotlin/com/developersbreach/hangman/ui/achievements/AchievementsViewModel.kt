@@ -2,8 +2,8 @@ package com.developersbreach.hangman.ui.achievements
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.developersbreach.game.core.AchievementCatalog
-import com.developersbreach.game.core.initialProgress
+import com.developersbreach.game.core.achievements.AchievementCatalog
+import com.developersbreach.game.core.achievements.initialProgress
 import com.developersbreach.hangman.repository.AchievementsRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

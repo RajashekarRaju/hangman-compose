@@ -1,8 +1,8 @@
 package com.developersbreach.hangman.repository
 
-import com.developersbreach.game.core.AchievementId
-import com.developersbreach.game.core.AchievementProgress
-import com.developersbreach.game.core.AchievementStatCounters
+import com.developersbreach.game.core.achievements.AchievementId
+import com.developersbreach.game.core.achievements.AchievementProgress
+import com.developersbreach.game.core.achievements.AchievementStatCounters
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.repository.database.entity.AchievementProgressEntity

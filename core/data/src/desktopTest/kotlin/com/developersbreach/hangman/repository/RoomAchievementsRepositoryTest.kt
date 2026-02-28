@@ -1,12 +1,12 @@
 package com.developersbreach.hangman.repository
 
 import androidx.room.Room
-import com.developersbreach.game.core.AchievementCatalog
-import com.developersbreach.game.core.AchievementId
-import com.developersbreach.game.core.AchievementStatCounters
+import com.developersbreach.game.core.achievements.AchievementCatalog
+import com.developersbreach.game.core.achievements.AchievementId
+import com.developersbreach.game.core.achievements.AchievementStatCounters
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
-import com.developersbreach.game.core.initialProgress
+import com.developersbreach.game.core.achievements.initialProgress
 import com.developersbreach.hangman.repository.database.GameDatabase
 import com.developersbreach.hangman.repository.database.buildDatabase
 import java.io.File

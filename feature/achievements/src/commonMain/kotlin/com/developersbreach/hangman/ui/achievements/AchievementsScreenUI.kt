@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.developersbreach.game.core.AchievementGroup
+import com.developersbreach.game.core.achievements.AchievementGroup
 import com.developersbreach.hangman.feature.achievements.generated.resources.Res
 import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_cd_back
 import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_empty
