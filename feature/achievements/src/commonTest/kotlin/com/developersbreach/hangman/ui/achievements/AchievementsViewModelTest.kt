@@ -2,6 +2,7 @@ package com.developersbreach.hangman.ui.achievements
 
 import com.developersbreach.game.core.achievements.AchievementCatalog
 import com.developersbreach.game.core.achievements.AchievementId
+import com.developersbreach.game.core.achievements.AchievementGroup
 import com.developersbreach.game.core.achievements.AchievementProgress
 import com.developersbreach.game.core.achievements.AchievementStatCounters
 import com.developersbreach.game.core.achievements.initialProgress
@@ -18,6 +19,8 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AchievementsViewModelTest {
@@ -53,6 +56,48 @@ class AchievementsViewModelTest {
         assertEquals(AchievementCatalog.definitions.size, summary.totalCount)
         assertEquals(15, summary.totalCoins)
     }
+
+    @Test
+    fun `clicking unlocked unread achievement opens details and marks it read`() = runTest(dispatcher) {
+        val repository = FakeAchievementsRepository(
+            initialProgress = listOf(
+                progressFor(
+                    id = AchievementId.FIRST_BLOOD,
+                    unlocked = true,
+                    isUnread = true,
+                )
+            )
+        )
+
+        val viewModel = AchievementsViewModel(repository)
+        advanceUntilIdle()
+
+        viewModel.onEvent(AchievementsEvent.AchievementClicked(AchievementId.FIRST_BLOOD))
+        advanceUntilIdle()
+
+        val details = viewModel.uiState.value.selectedAchievement
+        assertNotNull(details)
+        assertEquals(AchievementId.FIRST_BLOOD, details.id)
+        assertEquals(false, repository.currentProgress().first { it.achievementId == AchievementId.FIRST_BLOOD }.isUnread)
+
+        viewModel.onEvent(AchievementsEvent.AchievementDetailsDismissed)
+        assertEquals(null, viewModel.uiState.value.selectedAchievement)
+    }
+
+    @Test
+    fun `group toggle event updates collapsed groups set`() = runTest(dispatcher) {
+        val repository = FakeAchievementsRepository(
+            initialProgress = listOf(progressFor(AchievementId.FIRST_BLOOD, unlocked = false))
+        )
+        val viewModel = AchievementsViewModel(repository)
+        advanceUntilIdle()
+
+        viewModel.onEvent(AchievementsEvent.GroupToggleClicked(AchievementGroup.PROGRESS))
+        assertTrue(AchievementGroup.PROGRESS in viewModel.uiState.value.collapsedGroups)
+
+        viewModel.onEvent(AchievementsEvent.GroupToggleClicked(AchievementGroup.PROGRESS))
+        assertTrue(AchievementGroup.PROGRESS !in viewModel.uiState.value.collapsedGroups)
+    }
 }
 
 private class FakeAchievementsRepository(
@@ -72,15 +117,19 @@ private class FakeAchievementsRepository(
     override suspend fun saveAchievementStatCounters(counters: AchievementStatCounters) {
         countersState.value = counters
     }
+
+    fun currentProgress(): List<AchievementProgress> = progressState.value
 }
 
 private fun progressFor(
     id: AchievementId,
     unlocked: Boolean,
+    isUnread: Boolean = false,
 ): AchievementProgress {
     val definition = AchievementCatalog.definitionFor(id)
     return definition.initialProgress().copy(
         isUnlocked = unlocked,
+        isUnread = isUnread,
         progressCurrent = if (unlocked) definition.target else 0,
     )
 }

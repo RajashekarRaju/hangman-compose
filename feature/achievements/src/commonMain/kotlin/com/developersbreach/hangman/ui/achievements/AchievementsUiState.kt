@@ -19,6 +19,8 @@ import com.developersbreach.hangman.feature.achievements.generated.resources.ach
 data class AchievementsUiState(
     val items: List<AchievementItemUiState> = emptyList(),
     val summary: AchievementsSummary = AchievementsSummary(),
+    val selectedAchievement: AchievementDetailsUiState? = null,
+    val collapsedGroups: Set<AchievementGroup> = emptySet(),
 )
 
 data class AchievementsSummary(
@@ -34,9 +36,21 @@ data class AchievementItemUiState(
     val title: String,
     val description: String,
     val isUnlocked: Boolean,
+    val isUnread: Boolean,
     val progressCurrent: Int,
     val progressTarget: Int,
     val unlockedAtLabel: String? = null,
+)
+
+data class AchievementDetailsUiState(
+    val id: AchievementId,
+    val group: AchievementGroup,
+    val title: String,
+    val description: String,
+    val isUnlocked: Boolean,
+    val progressCurrent: Int,
+    val progressTarget: Int,
+    val unlockedAtLabel: String?,
 )
 
 data class AchievementSection(
@@ -76,4 +90,17 @@ internal fun List<AchievementProgress>.normalizeProgress(): List<AchievementProg
     return AchievementCatalog.definitions.map { definition ->
         byId[definition.id] ?: definition.initialProgress()
     }
+}
+
+internal fun AchievementItemUiState.toDetails(): AchievementDetailsUiState {
+    return AchievementDetailsUiState(
+        id = id,
+        group = group,
+        title = title,
+        description = description,
+        isUnlocked = isUnlocked,
+        progressCurrent = progressCurrent,
+        progressTarget = progressTarget,
+        unlockedAtLabel = unlockedAtLabel,
+    )
 }

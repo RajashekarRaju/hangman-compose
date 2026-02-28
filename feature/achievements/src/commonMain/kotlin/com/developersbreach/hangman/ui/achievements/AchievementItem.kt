@@ -1,12 +1,15 @@
 package com.developersbreach.hangman.ui.achievements
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
@@ -14,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.developersbreach.hangman.feature.achievements.generated.resources.Res
 import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_cd_locked
@@ -32,6 +36,7 @@ import org.jetbrains.compose.resources.stringResource
 internal fun AchievementItemUiState.AchievementItem(
     style: AchievementGroupStyle,
     showPaleBackground: Boolean,
+    onClick: () -> Unit,
 ) {
     val statusColor = when {
         isUnlocked -> style.accent
@@ -54,6 +59,7 @@ internal fun AchievementItemUiState.AchievementItem(
                 outlineColor = style.accent.copy(alpha = 0.28f),
                 strokeWidthFactor = 0.04f,
             )
+            .clickable(onClick = onClick)
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -78,11 +84,23 @@ internal fun AchievementItemUiState.AchievementItem(
                 tint = statusColor,
                 modifier = Modifier.size(20.dp),
             )
+            if (isUnread) {
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .background(
+                            color = HangmanTheme.colorScheme.primary,
+                            shape = CircleShape,
+                        )
+                )
+            }
         }
 
         BodyMediumText(
             text = description,
             color = HangmanTheme.colorScheme.onSurface,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
         )
 
         when {

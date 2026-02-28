@@ -1,6 +1,12 @@
 package com.developersbreach.hangman.ui.achievements
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -9,6 +15,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -24,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import com.developersbreach.game.core.achievements.AchievementGroup
 import com.developersbreach.hangman.feature.achievements.generated.resources.Res
 import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_cd_back
+import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_cd_collapse_group
+import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_cd_expand_group
 import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_empty
 import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_title
 import com.developersbreach.hangman.ui.components.AnimatedEnter
@@ -87,13 +98,22 @@ fun AchievementsUiState.AchievementsScreenUI(
                 return@Box
             }
 
-            AchievementsGridUI()
+            AchievementsGridUI(onEvent = onEvent)
         }
+    }
+
+    selectedAchievement?.let { details ->
+        AchievementDetailsDialog(
+            details = details,
+            onDismissRequest = { onEvent(AchievementsEvent.AchievementDetailsDismissed) },
+        )
     }
 }
 
 @Composable
-private fun AchievementsUiState.AchievementsGridUI() {
+private fun AchievementsUiState.AchievementsGridUI(
+    onEvent: (AchievementsEvent) -> Unit,
+) {
     val groupedItems = AchievementGroup.entries.mapNotNull { group ->
         val groupItems = items.filter { it.group == group }
         groupItems.takeIf { it.isNotEmpty() }?.let {
@@ -116,6 +136,7 @@ private fun AchievementsUiState.AchievementsGridUI() {
         }
 
         groupedItems.forEach { section ->
+            val isCollapsed = collapsedGroups.contains(section.group)
             item(
                 key = "section-${section.group.name}",
                 span = { GridItemSpan(maxLineSpan) },
@@ -123,17 +144,28 @@ private fun AchievementsUiState.AchievementsGridUI() {
                 GroupHeader(
                     group = section.group,
                     style = section.group.style(),
+                    isCollapsed = isCollapsed,
+                    onToggle = {
+                        onEvent(AchievementsEvent.GroupToggleClicked(section.group))
+                    },
                 )
             }
             itemsIndexed(
                 items = section.items,
                 key = { _, item -> item.id.name },
             ) { index, item ->
-                AnimatedEnter(offsetY = 10.dp) {
-                    item.AchievementItem(
-                        style = section.group.style(),
-                        showPaleBackground = index % 2 == 0,
-                    )
+                AnimatedVisibility(
+                    visible = !isCollapsed,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut(),
+                ) {
+                    AnimatedEnter(offsetY = 10.dp) {
+                        item.AchievementItem(
+                            style = section.group.style(),
+                            showPaleBackground = index % 2 == 0,
+                            onClick = { onEvent(AchievementsEvent.AchievementClicked(item.id)) },
+                        )
+                    }
                 }
             }
         }
@@ -157,15 +189,32 @@ private fun BoxScope.NoAchievementsAvailable() {
 private fun GroupHeader(
     group: AchievementGroup,
     style: AchievementGroupStyle,
+    isCollapsed: Boolean,
+    onToggle: () -> Unit,
 ) {
-    TitleMediumText(
-        text = stringResource(group.titleRes()),
-        color = style.accent,
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(style.headerBackground)
             .padding(horizontal = 12.dp, vertical = 8.dp),
-    )
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        val groupTitle = stringResource(group.titleRes())
+        TitleMediumText(
+            text = groupTitle,
+            color = style.accent,
+        )
+        HangmanIcon(
+            imageVector = if (isCollapsed) Icons.Filled.ExpandMore else Icons.Filled.ExpandLess,
+            contentDescription = when {
+                isCollapsed -> stringResource(Res.string.achievements_cd_expand_group, groupTitle)
+                else -> stringResource(Res.string.achievements_cd_collapse_group, groupTitle)
+            },
+            tint = style.accent,
+            modifier = Modifier.clickable(onClick = onToggle).padding(4.dp).size(28.dp),
+        )
+    }
 }
 
 @Composable

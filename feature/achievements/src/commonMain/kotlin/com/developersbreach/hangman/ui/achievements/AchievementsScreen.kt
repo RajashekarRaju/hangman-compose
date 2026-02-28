@@ -41,6 +41,7 @@ private fun AchievementsScreenPreview() {
             title = definition.title,
             description = definition.description,
             isUnlocked = progress.isUnlocked,
+            isUnread = progress.isUnread,
             progressCurrent = progress.progressCurrent,
             progressTarget = progress.progressTarget,
             unlockedAtLabel = progress.unlockedAtEpochMillis?.let(::formatEpochMillis),

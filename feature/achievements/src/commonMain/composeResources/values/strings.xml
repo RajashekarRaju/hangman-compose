@@ -8,9 +8,17 @@
     <string name="achievements_cd_back">Back</string>
     <string name="achievements_cd_locked">Locked achievement</string>
     <string name="achievements_cd_unlocked">Unlocked achievement</string>
+    <string name="achievements_cd_expand_group">Expand %1$s</string>
+    <string name="achievements_cd_collapse_group">Collapse %1$s</string>
     <string name="achievements_summary_progress">Unlocked %1$d/%2$d</string>
     <string name="achievements_summary_locked">Locked: %1$d</string>
     <string name="achievements_summary_coins">Coins: %1$d</string>
+    <string name="achievements_details_status">Status: %1$s</string>
+    <string name="achievements_details_group">Group: %1$s</string>
+    <string name="achievements_details_progress">Progress: %1$d/%2$d</string>
+    <string name="achievements_details_unlocked_at">Unlocked At: %1$s</string>
+    <string name="achievements_details_unlocked">Unlocked</string>
+    <string name="achievements_details_locked">Locked</string>
     <string name="achievements_group_progress">Progress</string>
     <string name="achievements_group_skill">Skill</string>
     <string name="achievements_group_collection">Collection</string>
