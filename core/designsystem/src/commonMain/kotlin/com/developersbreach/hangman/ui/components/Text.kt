@@ -10,10 +10,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
 import com.developersbreach.hangman.ui.theme.HangmanTheme
 
 @Composable
@@ -36,6 +38,11 @@ fun HangmanText(
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = HangmanTheme.typography.bodyMedium,
 ) {
+    val effectiveStyle = style.adjustForLocaleReadability(
+        text = text,
+        languageCode = Locale.current.language,
+    )
+
     Text(
         text = text,
         modifier = modifier,
@@ -53,7 +60,7 @@ fun HangmanText(
         maxLines = maxLines,
         minLines = minLines,
         onTextLayout = onTextLayout,
-        style = style,
+        style = effectiveStyle,
     )
 }
 
@@ -77,6 +84,11 @@ fun HangmanText(
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = HangmanTheme.typography.bodyMedium,
 ) {
+    val effectiveStyle = style.adjustForLocaleReadability(
+        text = text.text,
+        languageCode = Locale.current.language,
+    )
+
     Text(
         text = text,
         modifier = modifier,
@@ -94,8 +106,41 @@ fun HangmanText(
         maxLines = maxLines,
         minLines = minLines,
         onTextLayout = onTextLayout,
-        style = style,
+        style = effectiveStyle,
     )
+}
+
+private fun TextStyle.adjustForLocaleReadability(
+    text: String,
+    languageCode: String,
+): TextStyle {
+    if (!shouldUseReadableTypography(languageCode = languageCode, text = text)) {
+        return this
+    }
+    return copy(
+        letterSpacing = 0.sp,
+        fontFamily = FontFamily.Default,
+    )
+}
+
+private fun shouldUseReadableTypography(
+    languageCode: String,
+    text: String,
+): Boolean {
+    val normalizedLanguage = languageCode.lowercase()
+    if (normalizedLanguage == "en") {
+        return text.containsNonLatinLetters()
+    }
+    if (normalizedLanguage == "und" || normalizedLanguage.isBlank()) {
+        return text.containsNonLatinLetters()
+    }
+    return true
+}
+
+private fun String.containsNonLatinLetters(): Boolean {
+    return any { character ->
+        character.isLetter() && character.code > 0x024F
+    }
 }
 
 @Composable

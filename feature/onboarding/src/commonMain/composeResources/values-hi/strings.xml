@@ -5,10 +5,12 @@
     <string name="onboarding_button_achievements">उपलब्धियाँ</string>
     <string name="onboarding_button_difficulty">कठिनाई</string>
     <string name="onboarding_button_category">श्रेणी</string>
+    <string name="onboarding_button_language">भाषा</string>
     <string name="onboarding_button_report_issue">समस्या रिपोर्ट करें</string>
 
     <string name="onboarding_difficulty_dialog_title">कठिनाई</string>
     <string name="onboarding_category_dialog_title">श्रेणी</string>
+    <string name="onboarding_language_dialog_title">भाषा</string>
 
     <string name="onboarding_game_tagline">सावधान रहें। अक्षर आपको हरा सकते हैं</string>
     <string name="onboarding_highest_score_header">सर्वाधिक स्कोर - %1$d</string>

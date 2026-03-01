@@ -5,10 +5,12 @@
     <string name="onboarding_button_achievements">Achievements</string>
     <string name="onboarding_button_difficulty">Difficulty</string>
     <string name="onboarding_button_category">Category</string>
+    <string name="onboarding_button_language">Language</string>
     <string name="onboarding_button_report_issue">Report Issue</string>
 
     <string name="onboarding_difficulty_dialog_title">Difficulty</string>
     <string name="onboarding_category_dialog_title">Category</string>
+    <string name="onboarding_language_dialog_title">Language</string>
 
     <string name="onboarding_game_tagline">Be Aware. Letters Can Demise You</string>
     <string name="onboarding_highest_score_header">Highest Score - %1$d</string>

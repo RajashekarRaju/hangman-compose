@@ -8,4 +8,5 @@ data class PersistedGameSettings(
     val gameDifficulty: GameDifficulty,
     val gameCategory: GameCategory,
     val themePaletteId: ThemePaletteId,
+    val appLanguage: AppLanguage,
 )

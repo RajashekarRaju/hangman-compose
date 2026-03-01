@@ -10,6 +10,7 @@ import com.developersbreach.game.core.achievements.AchievementStatCounters
 import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer
 import com.developersbreach.hangman.repository.AchievementsRepository
+import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
@@ -217,6 +218,7 @@ private class FakeGameSettingsRepository(
     private var category: GameCategory,
 ) : GameSettingsRepository {
     private val themePaletteState = MutableStateFlow(ThemePaletteId.INSANE_RED)
+    private val languageState = MutableStateFlow(AppLanguage.default)
 
     override suspend fun getGameDifficulty(): GameDifficulty = difficulty
 
@@ -224,7 +226,11 @@ private class FakeGameSettingsRepository(
 
     override suspend fun getThemePaletteId(): ThemePaletteId = ThemePaletteId.INSANE_RED
 
+    override suspend fun getAppLanguage(): AppLanguage = AppLanguage.default
+
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themePaletteState
+
+    override fun observeAppLanguage(): StateFlow<AppLanguage> = languageState
 
     override suspend fun setGameDifficulty(gameDifficulty: GameDifficulty) {
         difficulty = gameDifficulty
@@ -236,6 +242,10 @@ private class FakeGameSettingsRepository(
 
     override suspend fun setThemePaletteId(themePaletteId: ThemePaletteId) {
         themePaletteState.value = themePaletteId
+    }
+
+    override suspend fun setAppLanguage(appLanguage: AppLanguage) {
+        languageState.value = appLanguage
     }
 }
 

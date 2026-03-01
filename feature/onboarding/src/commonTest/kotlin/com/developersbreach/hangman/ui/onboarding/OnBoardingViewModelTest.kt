@@ -9,6 +9,7 @@ import com.developersbreach.game.core.achievements.AchievementStatCounters
 import com.developersbreach.game.core.achievements.initialProgress
 import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.repository.AchievementsRepository
+import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
 import com.developersbreach.hangman.repository.model.HistoryRecord
@@ -119,7 +120,7 @@ class OnBoardingViewModelTest {
     }
 
     @Test
-    fun `difficulty and category changes update state and persist`() = runTest(dispatcher) {
+    fun `difficulty category and language changes update state and persist`() = runTest(dispatcher) {
         val historyRepo = FakeHistoryRepository()
         val achievementsRepo = FakeAchievementsRepository()
         val settingsRepo = FakeSettingsRepository()
@@ -131,6 +132,7 @@ class OnBoardingViewModelTest {
         viewModel.onEvent(OnBoardingEvent.DifficultySliderPositionChanged(4f))
         viewModel.onEvent(OnBoardingEvent.DifficultyChanged(GameDifficulty.VERY_HARD))
         viewModel.onEvent(OnBoardingEvent.CategoryChanged(GameCategory.ANIMALS))
+        viewModel.onEvent(OnBoardingEvent.LanguageChanged(AppLanguage.HINDI))
         advanceUntilIdle()
 
         with(viewModel.uiState.value) {
@@ -138,9 +140,11 @@ class OnBoardingViewModelTest {
             assertEquals(GameDifficulty.VERY_HARD, gameDifficulty)
             assertEquals(4f, pendingDifficultySliderPosition)
             assertEquals(GameCategory.ANIMALS, gameCategory)
+            assertEquals(AppLanguage.HINDI, selectedLanguage)
         }
         assertEquals(GameDifficulty.VERY_HARD, settingsRepo.lastSetDifficulty)
         assertEquals(GameCategory.ANIMALS, settingsRepo.lastSetCategory)
+        assertEquals(AppLanguage.HINDI, settingsRepo.lastSetLanguage)
     }
 
     @Test
@@ -187,11 +191,14 @@ private class FakeSettingsRepository(
     private var difficulty: GameDifficulty = GameDifficulty.EASY,
     private var category: GameCategory = GameCategory.COUNTRIES,
     private var themePaletteId: ThemePaletteId = ThemePaletteId.EMERALD,
+    private var appLanguage: AppLanguage = AppLanguage.default,
 ) : GameSettingsRepository {
     private val themeState = MutableStateFlow(themePaletteId)
+    private val languageState = MutableStateFlow(appLanguage)
 
     var lastSetDifficulty: GameDifficulty? = null
     var lastSetCategory: GameCategory? = null
+    var lastSetLanguage: AppLanguage? = null
 
     override suspend fun getGameDifficulty(): GameDifficulty = difficulty
 
@@ -199,7 +206,11 @@ private class FakeSettingsRepository(
 
     override suspend fun getThemePaletteId(): ThemePaletteId = themePaletteId
 
+    override suspend fun getAppLanguage(): AppLanguage = appLanguage
+
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themeState
+
+    override fun observeAppLanguage(): StateFlow<AppLanguage> = languageState
 
     override suspend fun setGameDifficulty(gameDifficulty: GameDifficulty) {
         difficulty = gameDifficulty
@@ -214,6 +225,12 @@ private class FakeSettingsRepository(
     override suspend fun setThemePaletteId(themePaletteId: ThemePaletteId) {
         this.themePaletteId = themePaletteId
         themeState.value = themePaletteId
+    }
+
+    override suspend fun setAppLanguage(appLanguage: AppLanguage) {
+        this.appLanguage = appLanguage
+        languageState.value = appLanguage
+        lastSetLanguage = appLanguage
     }
 }
 

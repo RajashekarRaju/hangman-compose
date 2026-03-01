@@ -2,6 +2,7 @@ package com.developersbreach.hangman.ui.onboarding
 
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
+import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import kotlin.math.abs
 import org.jetbrains.compose.resources.StringResource
@@ -14,11 +15,14 @@ data class OnBoardingUiState(
     val gameDifficultyLabelRes: StringResource = GameDifficulty.EASY.labelRes(),
     val gameCategory: GameCategory = GameCategory.COUNTRIES,
     val gameCategoryLabelRes: StringResource = GameCategory.COUNTRIES.labelRes(),
+    val availableLanguages: List<AppLanguage> = AppLanguage.entries,
+    val selectedLanguage: AppLanguage = AppLanguage.default,
     val themePaletteId: ThemePaletteId = ThemePaletteId.INSANE_RED,
     val isBackgroundMusicPlaying: Boolean = false,
     val isPaletteMenuExpanded: Boolean = false,
     val isDifficultyDialogOpen: Boolean = false,
     val isCategoryDialogOpen: Boolean = false,
+    val isLanguageDialogOpen: Boolean = false,
     val isInstructionsDialogOpen: Boolean = false,
     val pendingDifficulty: GameDifficulty = GameDifficulty.EASY,
     val pendingDifficultySliderPosition: Float = 1f,

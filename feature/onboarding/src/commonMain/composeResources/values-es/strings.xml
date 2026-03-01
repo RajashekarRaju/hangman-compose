@@ -5,10 +5,12 @@
     <string name="onboarding_button_achievements">Logros</string>
     <string name="onboarding_button_difficulty">Dificultad</string>
     <string name="onboarding_button_category">Categoría</string>
+    <string name="onboarding_button_language">Idioma</string>
     <string name="onboarding_button_report_issue">Reportar problema</string>
 
     <string name="onboarding_difficulty_dialog_title">Dificultad</string>
     <string name="onboarding_category_dialog_title">Categoría</string>
+    <string name="onboarding_language_dialog_title">Idioma</string>
 
     <string name="onboarding_game_tagline">Ten cuidado. Las letras pueden acabar contigo</string>
     <string name="onboarding_highest_score_header">Puntuación más alta - %1$d</string>
