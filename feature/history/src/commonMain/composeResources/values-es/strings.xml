@@ -1,0 +1,13 @@
+<resources>
+    <string name="history_app_bar_title">Historial de partidas</string>
+    <string name="history_cd_navigate_up">Navegar hacia arriba</string>
+    <string name="history_cd_delete_all">Eliminar historial</string>
+    <string name="history_cd_delete_item">Eliminar elemento del historial</string>
+    <string name="history_summary_won">GANADA</string>
+    <string name="history_summary_lost">PERDIDA</string>
+    <string name="history_empty_state">Aún no se han jugado partidas</string>
+    <string name="history_hints_used">Pistas usadas: %1$d</string>
+    <string name="history_hint_types_used">Tipos de pista: %1$s</string>
+    <string name="history_hint_type_reveal_letter">Revelar</string>
+    <string name="history_hint_type_eliminate_letters">Eliminar</string>
+</resources>

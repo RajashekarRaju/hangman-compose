@@ -4,6 +4,11 @@ plugins {
     id("hangman.kmp.compose-library")
 }
 
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "com.developersbreach.hangman.composeapp.generated.resources"
+}
+
 kotlin {
     compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
 

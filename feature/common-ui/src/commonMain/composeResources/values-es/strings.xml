@@ -1,0 +1,30 @@
+<resources>
+    <string name="difficulty_easy">Fácil</string>
+    <string name="difficulty_medium">Media</string>
+    <string name="difficulty_hard">Difícil</string>
+    <string name="difficulty_very_hard">Muy difícil</string>
+
+    <string name="category_countries">Países</string>
+    <string name="category_languages">Idiomas</string>
+    <string name="category_companies">Empresas</string>
+    <string name="category_animals">Animales</string>
+    <string name="achievement_unlocked_subtitle">Logro desbloqueado</string>
+
+    <string name="instructions_dialog_title">Instrucciones</string>
+    <string name="instructions_dialog_subtitle">Adivina el nombre en la categoría %1$s.</string>
+    <string name="instructions_dialog_step_number">%1$d.</string>
+    <string name="instructions_label_difficulty">Dificultad: %1$s</string>
+    <string name="instructions_label_category">Categoría: %1$s</string>
+    <string name="instructions_dialog_body">
+        Una partida tiene 5 niveles. Solo ganas después de completar los 5 niveles.\n
+        Cada nivel tiene un temporizador de 60 segundos. Si se acaba el tiempo, la partida termina en derrota.\n
+        Comienzas cada nivel con 8 intentos. Los intentos se reinician al pasar al siguiente nivel.\n
+        Las letras incorrectas reducen los intentos en 1. Las letras correctas no los reducen.\n
+        Los puntos del nivel se basan en la longitud de la palabra y se suman a tu puntuación total.\n
+        Las pistas son opcionales y limitadas por nivel. En Fácil hay 2 pistas; en Media/Difícil/Muy difícil hay 1.\n
+        Los tipos de pista disponibles son Revelar letra y Eliminar letras.\n
+        Usar pistas no reduce puntos. Las pistas solo consumen tus créditos de pista del nivel.\n
+        Puedes jugar con 4 categorías: Países, Idiomas, Empresas y Animales.\n
+        Los resultados de tus partidas completadas se guardan en Historial.
+    </string>
+</resources>

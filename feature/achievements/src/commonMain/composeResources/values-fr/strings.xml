@@ -1,0 +1,29 @@
+<resources>
+    <string name="achievements_title">Succès</string>
+    <string name="achievements_empty">Aucun succès disponible.</string>
+    <string name="achievements_locked">Verrouillé</string>
+    <string name="achievements_unlocked">Déverrouillé</string>
+    <string name="achievements_progress">Progression : %1$d/%2$d</string>
+    <string name="achievements_unlocked_at">Déverrouillé : %1$s</string>
+    <string name="achievements_cd_back">Retour</string>
+    <string name="achievements_cd_locked">Succès verrouillé</string>
+    <string name="achievements_cd_unlocked">Succès déverrouillé</string>
+    <string name="achievements_cd_expand_group">Développer %1$s</string>
+    <string name="achievements_cd_collapse_group">Réduire %1$s</string>
+    <string name="achievements_summary_progress">Déverrouillés %1$d/%2$d</string>
+    <string name="achievements_summary_locked">Verrouillés : %1$d</string>
+    <string name="achievements_summary_coins">Pièces : %1$d</string>
+    <string name="achievements_details_status">Statut : %1$s</string>
+    <string name="achievements_details_group">Groupe : %1$s</string>
+    <string name="achievements_details_progress">Progression : %1$d/%2$d</string>
+    <string name="achievements_details_unlocked_at">Déverrouillé le : %1$s</string>
+    <string name="achievements_details_unlocked">Déverrouillé</string>
+    <string name="achievements_details_locked">Verrouillé</string>
+    <string name="achievements_group_progress">Progression</string>
+    <string name="achievements_group_skill">Compétence</string>
+    <string name="achievements_group_collection">Collection</string>
+    <string name="achievements_group_endurance">Endurance</string>
+    <string name="achievements_group_hint_discipline">Discipline des indices</string>
+    <string name="achievements_group_time_control">Contrôle du temps</string>
+    <string name="achievements_group_meta">Méta</string>
+</resources>

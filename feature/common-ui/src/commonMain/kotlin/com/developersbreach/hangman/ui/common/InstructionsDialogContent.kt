@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.developersbreach.hangman.feature.common.ui.generated.resources.Res
 import com.developersbreach.hangman.feature.common.ui.generated.resources.instructions_dialog_body
+import com.developersbreach.hangman.feature.common.ui.generated.resources.instructions_dialog_step_number
 import com.developersbreach.hangman.feature.common.ui.generated.resources.instructions_dialog_subtitle
 import com.developersbreach.hangman.feature.common.ui.generated.resources.instructions_dialog_title
 import com.developersbreach.hangman.feature.common.ui.generated.resources.instructions_label_category
@@ -125,7 +126,10 @@ fun HangmanInstructionsDialog(
                         verticalAlignment = Alignment.Top,
                     ) {
                         BodyLargeText(
-                            text = "${index + 1}.",
+                            text = stringResource(
+                                resource = Res.string.instructions_dialog_step_number,
+                                index + 1,
+                            ),
                             color = HangmanTheme.colorScheme.onSurfaceVariant,
                             letterSpacing = 2.sp,
                             modifier = Modifier.width(30.dp),

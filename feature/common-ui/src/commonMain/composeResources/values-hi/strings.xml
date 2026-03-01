@@ -1,0 +1,30 @@
+<resources>
+    <string name="difficulty_easy">आसान</string>
+    <string name="difficulty_medium">मध्यम</string>
+    <string name="difficulty_hard">कठिन</string>
+    <string name="difficulty_very_hard">बहुत कठिन</string>
+
+    <string name="category_countries">देश</string>
+    <string name="category_languages">भाषाएँ</string>
+    <string name="category_companies">कंपनियाँ</string>
+    <string name="category_animals">जानवर</string>
+    <string name="achievement_unlocked_subtitle">उपलब्धि अनलॉक हुई</string>
+
+    <string name="instructions_dialog_title">निर्देश</string>
+    <string name="instructions_dialog_subtitle">%1$s श्रेणी का नाम पहचानें।</string>
+    <string name="instructions_dialog_step_number">%1$d.</string>
+    <string name="instructions_label_difficulty">कठिनाई: %1$s</string>
+    <string name="instructions_label_category">श्रेणी: %1$s</string>
+    <string name="instructions_dialog_body">
+        एक मैच में 5 स्तर होते हैं। आप तभी जीतते हैं जब सभी 5 स्तर पूरे हों।\n
+        हर स्तर में 60 सेकंड का टाइमर होता है। समय समाप्त होने पर गेम हार मानी जाती है।\n
+        हर स्तर की शुरुआत 8 प्रयासों से होती है। अगले स्तर पर जाने पर प्रयास रीसेट हो जाते हैं।\n
+        गलत अक्षर चुनने पर प्रयास 1 कम होता है। सही अक्षर चुनने पर प्रयास कम नहीं होता।\n
+        स्तर के अंक शब्द की लंबाई पर आधारित होते हैं और कुल स्कोर में जुड़ते हैं।\n
+        संकेत वैकल्पिक हैं और प्रति स्तर सीमित हैं। आसान में 2 संकेत, मध्यम/कठिन/बहुत कठिन में 1 संकेत मिलता है।\n
+        उपलब्ध संकेत प्रकार हैं: अक्षर प्रकट करें और अक्षर हटाएँ।\n
+        संकेत उपयोग करने से अंक कम नहीं होते। संकेत केवल स्तर के संकेत क्रेडिट का उपयोग करते हैं।\n
+        आप 4 श्रेणियों में खेल सकते हैं: देश, भाषाएँ, कंपनियाँ और जानवर।\n
+        पूर्ण किए गए गेम के परिणाम इतिहास में सहेजे जाते हैं।
+    </string>
+</resources>

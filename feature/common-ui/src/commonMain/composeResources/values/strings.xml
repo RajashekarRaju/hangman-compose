@@ -12,6 +12,7 @@
 
     <string name="instructions_dialog_title">Instructions</string>
     <string name="instructions_dialog_subtitle">Guess the name of the %1$s.</string>
+    <string name="instructions_dialog_step_number">%1$d.</string>
     <string name="instructions_label_difficulty">Difficulty: %1$s</string>
     <string name="instructions_label_category">Category: %1$s</string>
     <string name="instructions_dialog_body">

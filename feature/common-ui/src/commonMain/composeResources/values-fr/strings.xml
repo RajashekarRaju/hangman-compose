@@ -1,0 +1,30 @@
+<resources>
+    <string name="difficulty_easy">Facile</string>
+    <string name="difficulty_medium">Moyen</string>
+    <string name="difficulty_hard">Difficile</string>
+    <string name="difficulty_very_hard">Très difficile</string>
+
+    <string name="category_countries">Pays</string>
+    <string name="category_languages">Langues</string>
+    <string name="category_companies">Entreprises</string>
+    <string name="category_animals">Animaux</string>
+    <string name="achievement_unlocked_subtitle">Succès débloqué</string>
+
+    <string name="instructions_dialog_title">Instructions</string>
+    <string name="instructions_dialog_subtitle">Devinez le nom dans la catégorie %1$s.</string>
+    <string name="instructions_dialog_step_number">%1$d.</string>
+    <string name="instructions_label_difficulty">Difficulté : %1$s</string>
+    <string name="instructions_label_category">Catégorie : %1$s</string>
+    <string name="instructions_dialog_body">
+        Une partie comporte 5 niveaux. Vous gagnez uniquement après avoir terminé les 5 niveaux.\n
+        Chaque niveau a un chronomètre de 60 secondes. Si le temps est écoulé, la partie se termine par une défaite.\n
+        Vous commencez chaque niveau avec 8 essais. Les essais sont réinitialisés quand vous passez au niveau suivant.\n
+        Les lettres incorrectes réduisent les essais de 1. Les lettres correctes ne réduisent pas les essais.\n
+        Les points du niveau dépendent de la longueur du mot et sont ajoutés à votre score total.\n
+        Les indices sont optionnels et limités par niveau. Facile donne 2 indices, Moyen/Difficile/Très difficile donnent 1 indice.\n
+        Les types d'indice disponibles sont Révéler une lettre et Éliminer des lettres.\n
+        Utiliser des indices ne réduit pas les points. Les indices consomment uniquement vos crédits d'indice du niveau.\n
+        Vous pouvez jouer avec 4 catégories : Pays, Langues, Entreprises et Animaux.\n
+        Les résultats de vos parties terminées sont enregistrés dans l'Historique.
+    </string>
+</resources>
