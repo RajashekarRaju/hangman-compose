@@ -61,7 +61,9 @@ fun GameScreen(
         )
     }
 
-    uiState.GameScreenUI(onEvent = viewModel::onEvent)
+    uiState.GameScreenUI(
+        onEvent = viewModel::onEvent,
+    )
 }
 
 @HangmanScreenPreviews

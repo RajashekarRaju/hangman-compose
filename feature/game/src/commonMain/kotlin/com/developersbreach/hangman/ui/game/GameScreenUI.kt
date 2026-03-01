@@ -48,7 +48,7 @@ fun GameUiState.GameScreenUI(
         topBar = {
             AnimatedEnter(offsetY = 16.dp) {
                 GameNavigationActionIcons(
-                    uiState = this@GameScreenUI,
+                    uiState = this,
                     onEvent = onEvent,
                 )
             }

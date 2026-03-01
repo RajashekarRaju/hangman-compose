@@ -4,11 +4,17 @@ import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.game.core.HintError
 import com.developersbreach.game.core.HintType
+import com.developersbreach.game.core.achievements.AchievementId
+import com.developersbreach.game.core.achievements.AchievementProgress
+import com.developersbreach.game.core.achievements.AchievementStatCounters
 import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer
+import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
+import com.developersbreach.hangman.ui.common.notification.AchievementBannerUiState
+import com.developersbreach.hangman.ui.common.notification.AchievementNotificationCoordinator
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
@@ -127,9 +133,11 @@ class GameViewModelTest {
     fun `timer expiry reveals word and saves history as loss`() = runTest(dispatcher) {
         val sessionRepository = FakeGameSessionRepository()
         val soundPlayer = FakeSoundEffectPlayer()
+        val achievementsRepository = FakeAchievementsRepository()
         val viewModel = createViewModel(
             difficulty = GameDifficulty.HARD,
             sessionRepository = sessionRepository,
+            achievementsRepository = achievementsRepository,
             soundPlayer = soundPlayer,
         )
         advanceUntilIdle()
@@ -143,18 +151,63 @@ class GameViewModelTest {
         assertEquals(0, state.attemptsLeftToGuess)
         assertEquals(1, sessionRepository.savedRequests.size)
         assertTrue(soundPlayer.playedEffects.contains(GameSoundEffect.GAME_LOST))
+        assertTrue(
+            achievementsRepository.currentProgress().any { progress ->
+                progress.achievementId == AchievementId.FIRST_BLOOD && progress.isUnlocked
+            }
+        )
+    }
+
+    @Test
+    fun `first blood unlock persists across relaunch and is not re-notified`() = runTest(dispatcher) {
+        val sharedAchievementsRepository = FakeAchievementsRepository()
+
+        val firstViewModel = createViewModel(
+            difficulty = GameDifficulty.HARD,
+            achievementsRepository = sharedAchievementsRepository,
+        )
+        advanceUntilIdle()
+
+        advanceTimeBy(60_000)
+        runCurrent()
+        advanceUntilIdle()
+
+        val firstBloodAfterFirstGame = sharedAchievementsRepository.currentProgress()
+            .first { progress -> progress.achievementId == AchievementId.FIRST_BLOOD }
+        assertTrue(firstBloodAfterFirstGame.isUnlocked)
+        val firstUnlockAt = firstBloodAfterFirstGame.unlockedAtEpochMillis
+        assertNotNull(firstUnlockAt)
+
+        val secondViewModel = createViewModel(
+            difficulty = GameDifficulty.HARD,
+            achievementsRepository = sharedAchievementsRepository,
+        )
+        advanceUntilIdle()
+
+        advanceTimeBy(60_000)
+        runCurrent()
+        advanceUntilIdle()
+
+        val firstBloodAfterSecondGame = sharedAchievementsRepository.currentProgress()
+            .first { progress -> progress.achievementId == AchievementId.FIRST_BLOOD }
+        assertTrue(firstBloodAfterSecondGame.isUnlocked)
+        assertEquals(firstUnlockAt, firstBloodAfterSecondGame.unlockedAtEpochMillis)
     }
 
     private fun createViewModel(
         difficulty: GameDifficulty = GameDifficulty.EASY,
         category: GameCategory = GameCategory.COUNTRIES,
         sessionRepository: FakeGameSessionRepository = FakeGameSessionRepository(),
+        achievementsRepository: FakeAchievementsRepository = FakeAchievementsRepository(),
         soundPlayer: FakeSoundEffectPlayer = FakeSoundEffectPlayer(),
+        notificationCoordinator: AchievementNotificationCoordinator = FakeAchievementNotificationCoordinator(),
     ): GameViewModel {
         return GameViewModel(
             settingsRepository = FakeGameSettingsRepository(difficulty, category),
             sessionRepository = sessionRepository,
+            achievementsRepository = achievementsRepository,
             soundEffectPlayer = soundPlayer,
+            achievementNotificationCoordinator = notificationCoordinator,
         )
     }
 }
@@ -200,4 +253,29 @@ private class FakeSoundEffectPlayer : GameSoundEffectPlayer {
     override fun play(soundEffect: GameSoundEffect) {
         playedEffects += soundEffect
     }
+}
+
+private class FakeAchievementsRepository : AchievementsRepository {
+    private val progress = MutableStateFlow<List<AchievementProgress>>(emptyList())
+    private val counters = MutableStateFlow(AchievementStatCounters())
+
+    override fun observeAchievementProgress() = progress
+
+    override suspend fun replaceAchievementProgress(progress: List<AchievementProgress>) {
+        this.progress.value = progress
+    }
+
+    override fun observeAchievementStatCounters() = counters
+
+    override suspend fun saveAchievementStatCounters(counters: AchievementStatCounters) {
+        this.counters.value = counters
+    }
+
+    fun currentProgress(): List<AchievementProgress> = progress.value
+}
+
+private class FakeAchievementNotificationCoordinator : AchievementNotificationCoordinator {
+    override val bannerState = MutableStateFlow(AchievementBannerUiState())
+
+    override fun enqueueUnlocked(unlockedIds: List<AchievementId>) = Unit
 }

@@ -3,10 +3,13 @@ package com.developersbreach.hangman.repository.di
 import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer
+import com.developersbreach.hangman.logging.Log
 import com.developersbreach.hangman.repository.GameRepository
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
+import com.developersbreach.hangman.repository.AchievementsRepository
+import com.developersbreach.hangman.repository.RoomAchievementsRepository
 import com.developersbreach.hangman.repository.RoomGameSettingsRepository
 import com.developersbreach.hangman.repository.database.GameDatabase
 import com.developersbreach.hangman.repository.database.getDatabaseInstance
@@ -17,11 +20,15 @@ import javax.sound.sampled.Clip
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
+private const val LOG_TAG = "PlatformDataDesktop"
+
 actual fun platformDataModule(): Module = module {
     single { getDatabaseInstance() }
     single { get<GameDatabase>().gameSettingsDao }
+    single { get<GameDatabase>().achievementsDao }
 
     single { GameRepository(get()) }
+    single<AchievementsRepository> { RoomAchievementsRepository(get()) }
     single<HistoryRepository> { get<GameRepository>() }
     single<GameSessionRepository> { get<GameRepository>() }
     single<GameSettingsRepository> { RoomGameSettingsRepository(get()) }
@@ -92,12 +99,14 @@ private fun createClip(resourceName: String): Clip? {
                 }
             }
         }.onFailure { error ->
-            System.err.println("Failed to load desktop audio resource '$resourcePath': ${error.message}")
+            Log.e(LOG_TAG, error) {
+                "Failed to load desktop audio resource '$resourcePath'"
+            }
         }.getOrNull()
 
         if (clip != null) return clip
     }
 
-    System.err.println("Desktop audio resource not found: $resourceName")
+    Log.w(LOG_TAG) { "Desktop audio resource not found: $resourceName" }
     return null
 }

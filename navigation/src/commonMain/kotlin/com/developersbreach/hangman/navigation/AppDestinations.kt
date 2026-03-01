@@ -15,6 +15,9 @@ data object GameRoute : Destination
 @Serializable
 data object HistoryRoute : Destination
 
+@Serializable
+data object AchievementsRoute : Destination
+
 internal enum class RouteSpec(
     val hash: String,
     val destination: Destination,
@@ -22,7 +25,8 @@ internal enum class RouteSpec(
 ) {
     ONBOARDING(hash = "#/", destination = OnBoardingRoute, clearBackStack = true),
     GAME(hash = "#/game", destination = GameRoute),
-    HISTORY(hash = "#/history", destination = HistoryRoute);
+    HISTORY(hash = "#/history", destination = HistoryRoute),
+    ACHIEVEMENTS(hash = "#/achievements", destination = AchievementsRoute);
 
     companion object {
         val root: RouteSpec = ONBOARDING

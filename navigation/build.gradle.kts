@@ -8,10 +8,12 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":logging"))
             implementation(project(":core:designsystem"))
             implementation(project(":feature:onboarding"))
             implementation(project(":feature:game"))
             implementation(project(":feature:history"))
+            implementation(project(":feature:achievements"))
             implementation(libs.compose.runtime)
             implementation(libs.jetbrains.navigation)
             implementation(libs.koin.compose.viewmodel)

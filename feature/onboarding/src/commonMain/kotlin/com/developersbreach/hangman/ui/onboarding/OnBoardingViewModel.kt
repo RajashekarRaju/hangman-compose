@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.audio.BackgroundAudioController
+import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 
 class OnBoardingViewModel(
     private val historyRepository: HistoryRepository,
+    private val achievementsRepository: AchievementsRepository,
     private val settingsRepository: GameSettingsRepository,
     private val audioController: BackgroundAudioController
 ) : ViewModel() {
@@ -33,6 +35,7 @@ class OnBoardingViewModel(
         hydrateFromPreferences()
         observeThemePalette()
         observeHighestScore()
+        observeUnreadAchievementsCount()
         playBackgroundMusic()
     }
 
@@ -45,6 +48,10 @@ class OnBoardingViewModel(
 
             OnBoardingEvent.NavigateToHistoryClicked -> {
                 emitEffect(OnBoardingEffect.NavigateToHistory)
+            }
+
+            OnBoardingEvent.NavigateToAchievementsClicked -> {
+                emitEffect(OnBoardingEffect.NavigateToAchievements)
             }
 
             OnBoardingEvent.ExitClicked -> {
@@ -144,6 +151,19 @@ class OnBoardingViewModel(
                 val highScore = history.maxOfOrNull { it.gameScore } ?: 0
                 _uiState.update { current ->
                     current.copy(highScore = highScore)
+                }
+            }
+        }
+    }
+
+    private fun observeUnreadAchievementsCount() {
+        viewModelScope.launch {
+            achievementsRepository.observeAchievementProgress().collect { progress ->
+                val hasUnreadAchievements = progress.any { value ->
+                    value.isUnlocked && value.isUnread
+                }
+                _uiState.update { current ->
+                    current.copy(hasUnreadAchievements = hasUnreadAchievements)
                 }
             }
         }

@@ -28,11 +28,13 @@
             <option value="$PROJECT_DIR$/core/data" />
             <option value="$PROJECT_DIR$/core/designsystem" />
             <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/achievements" />
             <option value="$PROJECT_DIR$/feature/common-ui" />
             <option value="$PROJECT_DIR$/feature/game" />
             <option value="$PROJECT_DIR$/feature/history" />
             <option value="$PROJECT_DIR$/feature/onboarding" />
             <option value="$PROJECT_DIR$/game-core" />
+            <option value="$PROJECT_DIR$/logging" />
             <option value="$PROJECT_DIR$/navigation" />
           </set>
         </option>

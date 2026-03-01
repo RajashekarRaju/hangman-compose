@@ -4,6 +4,10 @@ plugins {
 
 kotlin {
     sourceSets {
+        commonMain.dependencies {
+            implementation(project(":logging"))
+        }
+
         commonTest.dependencies {
             implementation(kotlin("test"))
         }

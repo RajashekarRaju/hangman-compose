@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun OnBoardingScreen(
     navigateToGameScreen: () -> Unit,
     navigateToHistoryScreen: () -> Unit,
+    navigateToAchievementsScreen: () -> Unit,
     viewModel: OnBoardingViewModel,
     finishActivity: () -> Unit,
 ) {
@@ -26,6 +27,7 @@ fun OnBoardingScreen(
             when (effect) {
                 OnBoardingEffect.NavigateToGame -> navigateToGameScreen()
                 OnBoardingEffect.NavigateToHistory -> navigateToHistoryScreen()
+                OnBoardingEffect.NavigateToAchievements -> navigateToAchievementsScreen()
                 OnBoardingEffect.FinishActivity -> finishActivity()
                 is OnBoardingEffect.OpenIssueTracker -> uriHandler.openUri(effect.url)
             }
@@ -44,7 +46,10 @@ private fun OnBoardingScreenUIPreview() {
         darkTheme = true,
         palette = ThemePalettes.byId(ThemePaletteId.INSANE_RED)
     ) {
-        OnBoardingUiState(highScore = 1520).OnBoardingScreenUI(
+        OnBoardingUiState(
+            highScore = 1520,
+            hasUnreadAchievements = true,
+        ).OnBoardingScreenUI(
             onEvent = {},
         )
     }

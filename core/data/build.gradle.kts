@@ -11,9 +11,17 @@ kotlin {
             dependencies {
                 implementation(project(":game-core"))
                 implementation(project(":core:designsystem"))
+                implementation(project(":logging"))
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.koin.core)
+            }
+        }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation(libs.kotlinx.coroutines.test)
             }
         }
 

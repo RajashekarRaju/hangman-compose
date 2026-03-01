@@ -1,0 +1,106 @@
+package com.developersbreach.hangman.ui.achievements
+
+import androidx.compose.ui.graphics.Color
+import com.developersbreach.game.core.achievements.AchievementCatalog
+import com.developersbreach.game.core.achievements.AchievementGroup
+import com.developersbreach.game.core.achievements.AchievementId
+import com.developersbreach.game.core.achievements.AchievementProgress
+import com.developersbreach.game.core.achievements.initialProgress
+import com.developersbreach.game.core.achievements.totalAchievementCoins
+import com.developersbreach.hangman.feature.achievements.generated.resources.Res
+import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_group_collection
+import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_group_endurance
+import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_group_hint_discipline
+import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_group_meta
+import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_group_progress
+import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_group_skill
+import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_group_time_control
+
+data class AchievementsUiState(
+    val items: List<AchievementItemUiState> = emptyList(),
+    val summary: AchievementsSummary = AchievementsSummary(),
+    val selectedAchievement: AchievementDetailsUiState? = null,
+    val collapsedGroups: Set<AchievementGroup> = emptySet(),
+)
+
+data class AchievementsSummary(
+    val unlockedCount: Int = 0,
+    val lockedCount: Int = 0,
+    val totalCount: Int = 0,
+    val totalCoins: Int = 0,
+)
+
+data class AchievementItemUiState(
+    val id: AchievementId,
+    val group: AchievementGroup,
+    val title: String,
+    val description: String,
+    val isUnlocked: Boolean,
+    val isUnread: Boolean,
+    val progressCurrent: Int,
+    val progressTarget: Int,
+    val unlockedAtLabel: String? = null,
+)
+
+data class AchievementDetailsUiState(
+    val id: AchievementId,
+    val group: AchievementGroup,
+    val title: String,
+    val description: String,
+    val isUnlocked: Boolean,
+    val progressCurrent: Int,
+    val progressTarget: Int,
+    val unlockedAtLabel: String?,
+)
+
+data class AchievementSection(
+    val group: AchievementGroup,
+    val items: List<AchievementItemUiState>,
+)
+
+data class AchievementGroupStyle(
+    val accent: Color,
+    val background: Color,
+    val altBackground: Color,
+    val headerBackground: Color,
+)
+
+internal fun AchievementGroup.titleRes() = when (this) {
+    AchievementGroup.PROGRESS -> Res.string.achievements_group_progress
+    AchievementGroup.SKILL -> Res.string.achievements_group_skill
+    AchievementGroup.COLLECTION -> Res.string.achievements_group_collection
+    AchievementGroup.ENDURANCE -> Res.string.achievements_group_endurance
+    AchievementGroup.HINT_DISCIPLINE -> Res.string.achievements_group_hint_discipline
+    AchievementGroup.TIME_CONTROL -> Res.string.achievements_group_time_control
+    AchievementGroup.META -> Res.string.achievements_group_meta
+}
+
+internal fun List<AchievementProgress>.toAchievementsSummary(): AchievementsSummary {
+    val unlockedCount = count { value -> value.isUnlocked }
+    return AchievementsSummary(
+        unlockedCount = unlockedCount,
+        lockedCount = size - unlockedCount,
+        totalCount = size,
+        totalCoins = totalAchievementCoins(this),
+    )
+}
+
+internal fun List<AchievementProgress>.normalizeProgress(): List<AchievementProgress> {
+    val byId = associateBy { value -> value.achievementId }
+    return AchievementCatalog.definitions.map { definition ->
+        byId[definition.id] ?: definition.initialProgress()
+    }
+}
+
+internal fun AchievementItemUiState.toDetails(): AchievementDetailsUiState {
+    return AchievementDetailsUiState(
+        id = id,
+        group = group,
+        title = title,
+        description = description,
+        isUnlocked = isUnlocked,
+        progressCurrent = progressCurrent,
+        progressTarget = progressTarget,
+        unlockedAtLabel = unlockedAtLabel,
+    )
+}

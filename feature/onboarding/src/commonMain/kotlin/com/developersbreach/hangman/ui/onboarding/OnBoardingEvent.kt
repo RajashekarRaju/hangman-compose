@@ -7,6 +7,7 @@ import com.developersbreach.hangman.ui.theme.ThemePaletteId
 sealed interface OnBoardingEvent {
     data object NavigateToGameClicked : OnBoardingEvent
     data object NavigateToHistoryClicked : OnBoardingEvent
+    data object NavigateToAchievementsClicked : OnBoardingEvent
     data object ExitClicked : OnBoardingEvent
     data object OpenDifficultyDialog : OnBoardingEvent
     data object DismissDifficultyDialog : OnBoardingEvent

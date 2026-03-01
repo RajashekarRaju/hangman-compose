@@ -23,12 +23,15 @@ kotlin {
 
         commonMain.dependencies {
             implementation(project(":game-core"))
+            implementation(project(":logging"))
             implementation(project(":navigation"))
             implementation(project(":core:designsystem"))
             implementation(project(":core:data"))
             implementation(project(":feature:onboarding"))
+            implementation(project(":feature:common-ui"))
             implementation(project(":feature:game"))
             implementation(project(":feature:history"))
+            implementation(project(":feature:achievements"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.ui)
             implementation(libs.compose.foundation)
