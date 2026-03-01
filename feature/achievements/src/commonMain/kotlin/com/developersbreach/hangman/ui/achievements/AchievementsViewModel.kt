@@ -7,6 +7,8 @@ import com.developersbreach.game.core.achievements.AchievementId
 import com.developersbreach.game.core.achievements.AchievementProgress
 import com.developersbreach.game.core.achievements.initialProgress
 import com.developersbreach.hangman.repository.AchievementsRepository
+import com.developersbreach.hangman.ui.common.achievement.descriptionRes
+import com.developersbreach.hangman.ui.common.achievement.titleRes
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -68,8 +70,8 @@ class AchievementsViewModel(
                     AchievementItemUiState(
                         id = definition.id,
                         group = definition.group,
-                        title = definition.title,
-                        description = definition.description,
+                        titleRes = definition.id.titleRes(),
+                        descriptionRes = definition.id.descriptionRes(),
                         isUnlocked = progress.isUnlocked,
                         isUnread = progress.isUnread,
                         progressCurrent = progress.progressCurrent,

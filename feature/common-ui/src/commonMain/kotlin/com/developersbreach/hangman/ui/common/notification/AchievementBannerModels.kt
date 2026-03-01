@@ -1,14 +1,14 @@
 package com.developersbreach.hangman.ui.common.notification
 
-import com.developersbreach.game.core.achievements.AchievementCatalog
 import com.developersbreach.game.core.achievements.AchievementId
 import com.developersbreach.hangman.feature.common.ui.generated.resources.Res
 import com.developersbreach.hangman.feature.common.ui.generated.resources.achievement_unlocked_subtitle
+import com.developersbreach.hangman.ui.common.achievement.titleRes
 import org.jetbrains.compose.resources.StringResource
 
 data class AchievementBannerPayload(
     val id: AchievementId,
-    val title: String,
+    val titleRes: StringResource,
     val subtitleRes: StringResource,
     val seed: Int,
     val colors: AchievementBannerColors = AchievementBannerColors(),
@@ -26,11 +26,10 @@ data class AchievementBannerUiState(
 )
 
 internal fun AchievementId.toBannerPayload(): AchievementBannerPayload {
-    val definition = AchievementCatalog.definitionFor(this)
     return AchievementBannerPayload(
         id = this,
-        title = definition.title,
+        titleRes = titleRes(),
         subtitleRes = Res.string.achievement_unlocked_subtitle,
-        seed = definition.id.name.hashCode(),
+        seed = name.hashCode(),
     )
 }

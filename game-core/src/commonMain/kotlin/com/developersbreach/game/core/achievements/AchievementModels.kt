@@ -5,8 +5,6 @@ import com.developersbreach.game.core.GameDifficulty
 
 data class AchievementDefinition(
     val id: AchievementId,
-    val title: String,
-    val description: String,
     val group: AchievementGroup,
     val rarity: AchievementRarity,
     val trigger: AchievementTrigger,

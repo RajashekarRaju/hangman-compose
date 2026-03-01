@@ -15,6 +15,7 @@ import com.developersbreach.hangman.feature.achievements.generated.resources.ach
 import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_group_progress
 import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_group_skill
 import com.developersbreach.hangman.feature.achievements.generated.resources.achievements_group_time_control
+import org.jetbrains.compose.resources.StringResource
 
 data class AchievementsUiState(
     val items: List<AchievementItemUiState> = emptyList(),
@@ -33,8 +34,8 @@ data class AchievementsSummary(
 data class AchievementItemUiState(
     val id: AchievementId,
     val group: AchievementGroup,
-    val title: String,
-    val description: String,
+    val titleRes: StringResource,
+    val descriptionRes: StringResource,
     val isUnlocked: Boolean,
     val isUnread: Boolean,
     val progressCurrent: Int,
@@ -45,8 +46,8 @@ data class AchievementItemUiState(
 data class AchievementDetailsUiState(
     val id: AchievementId,
     val group: AchievementGroup,
-    val title: String,
-    val description: String,
+    val titleRes: StringResource,
+    val descriptionRes: StringResource,
     val isUnlocked: Boolean,
     val progressCurrent: Int,
     val progressTarget: Int,
@@ -96,8 +97,8 @@ internal fun AchievementItemUiState.toDetails(): AchievementDetailsUiState {
     return AchievementDetailsUiState(
         id = id,
         group = group,
-        title = title,
-        description = description,
+        titleRes = titleRes,
+        descriptionRes = descriptionRes,
         isUnlocked = isUnlocked,
         progressCurrent = progressCurrent,
         progressTarget = progressTarget,

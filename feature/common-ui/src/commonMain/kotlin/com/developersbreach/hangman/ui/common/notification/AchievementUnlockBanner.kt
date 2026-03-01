@@ -50,7 +50,7 @@ fun AchievementUnlockBanner(
                 color = HangmanTheme.colorScheme.primary.copy(alpha = bannerPayload.colors.subtitleAlpha),
             )
             BodyLargeText(
-                text = bannerPayload.title,
+                text = stringResource(bannerPayload.titleRes),
                 color = HangmanTheme.colorScheme.onBackground,
             )
         }
