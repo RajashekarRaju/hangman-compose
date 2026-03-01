@@ -4,10 +4,6 @@ plugins {
 
 kotlin {
     sourceSets {
-        commonMain.dependencies {
-            implementation(project(":logging"))
-        }
-
         commonTest.dependencies {
             implementation(kotlin("test"))
         }
@@ -15,5 +11,5 @@ kotlin {
 }
 
 android {
-    namespace = "com.developersbreach.game.core"
+    namespace = "com.developersbreach.hangman.logging"
 }

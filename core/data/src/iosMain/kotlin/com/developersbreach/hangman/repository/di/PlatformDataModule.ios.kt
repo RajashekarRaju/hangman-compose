@@ -7,6 +7,7 @@ import com.developersbreach.game.core.achievements.AchievementProgress
 import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer
+import com.developersbreach.hangman.logging.Log
 import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
@@ -51,6 +52,7 @@ private const val HISTORY_KEY = "hangman.history.v1"
 private const val SETTINGS_KEY = "hangman.settings.v1"
 private const val ACHIEVEMENTS_KEY = "hangman.achievements.v1"
 private const val ACHIEVEMENT_STATS_KEY = "hangman.achievement.stats.v1"
+private const val LOG_TAG = "PlatformDataIos"
 
 private val json = Json { ignoreUnknownKeys = true }
 private val defaults = NSUserDefaults.standardUserDefaults
@@ -233,7 +235,7 @@ private fun createAudioPlayer(fileName: String): AVAudioPlayer? {
     val extension = fileName.substringAfterLast('.', missingDelimiterValue = "")
     val path = NSBundle.mainBundle.pathForResource(baseName, extension)
     if (path == null) {
-        println("iOS audio resource not found in bundle: $fileName")
+        Log.w(LOG_TAG) { "iOS audio resource not found in bundle: $fileName" }
         return null
     }
     return runCatching {
@@ -241,6 +243,6 @@ private fun createAudioPlayer(fileName: String): AVAudioPlayer? {
             prepareToPlay()
         }
     }.onFailure { error ->
-        println("Failed to load iOS audio resource '$fileName': ${error.message}")
+        Log.e(LOG_TAG, error) { "Failed to load iOS audio resource '$fileName'" }
     }.getOrNull()
 }

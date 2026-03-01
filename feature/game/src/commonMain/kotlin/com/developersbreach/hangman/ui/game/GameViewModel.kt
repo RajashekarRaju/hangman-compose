@@ -13,6 +13,7 @@ import com.developersbreach.game.core.hintsPerLevelForDifficulty
 import com.developersbreach.game.core.achievements.initialProgress
 import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer
+import com.developersbreach.hangman.logging.Log
 import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
@@ -391,10 +392,10 @@ class GameViewModel(
         hintsRemaining: Int,
         word: String,
     ) {
-        println(
+        Log.w(LOG_TAG) {
             "HintUnavailable type=$hintType error=$error level=$level attemptsLeft=$attemptsLeft " +
                 "hintsRemaining=$hintsRemaining word=\"$word\""
-        )
+        }
     }
 
     override fun onCleared() {
@@ -405,6 +406,7 @@ class GameViewModel(
     }
 
     companion object {
+        private const val LOG_TAG = "GameViewModel"
         private const val TIMER_TICK_MILLIS = 100L
         private const val LEVEL_TIMER_TOTAL_MILLIS = 60_000L
         private const val HINT_COOLDOWN_MILLIS = 2_000L

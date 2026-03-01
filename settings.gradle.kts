@@ -17,6 +17,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Hangman"
 include(":app")
+include(":logging")
 include(":game-core")
 include(":composeApp")
 include(":navigation")

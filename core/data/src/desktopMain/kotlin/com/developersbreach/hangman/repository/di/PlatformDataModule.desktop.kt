@@ -3,6 +3,7 @@ package com.developersbreach.hangman.repository.di
 import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer
+import com.developersbreach.hangman.logging.Log
 import com.developersbreach.hangman.repository.GameRepository
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
@@ -18,6 +19,8 @@ import javax.sound.sampled.AudioSystem
 import javax.sound.sampled.Clip
 import org.koin.core.module.Module
 import org.koin.dsl.module
+
+private const val LOG_TAG = "PlatformDataDesktop"
 
 actual fun platformDataModule(): Module = module {
     single { getDatabaseInstance() }
@@ -96,12 +99,14 @@ private fun createClip(resourceName: String): Clip? {
                 }
             }
         }.onFailure { error ->
-            System.err.println("Failed to load desktop audio resource '$resourcePath': ${error.message}")
+            Log.e(LOG_TAG, error) {
+                "Failed to load desktop audio resource '$resourcePath'"
+            }
         }.getOrNull()
 
         if (clip != null) return clip
     }
 
-    System.err.println("Desktop audio resource not found: $resourceName")
+    Log.w(LOG_TAG) { "Desktop audio resource not found: $resourceName" }
     return null
 }

@@ -34,6 +34,7 @@
             <option value="$PROJECT_DIR$/feature/history" />
             <option value="$PROJECT_DIR$/feature/onboarding" />
             <option value="$PROJECT_DIR$/game-core" />
+            <option value="$PROJECT_DIR$/logging" />
             <option value="$PROJECT_DIR$/navigation" />
           </set>
         </option>

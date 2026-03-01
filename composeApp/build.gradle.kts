@@ -23,6 +23,7 @@ kotlin {
 
         commonMain.dependencies {
             implementation(project(":game-core"))
+            implementation(project(":logging"))
             implementation(project(":navigation"))
             implementation(project(":core:designsystem"))
             implementation(project(":core:data"))

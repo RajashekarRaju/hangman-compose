@@ -86,6 +86,7 @@ kotlin {
 
 dependencies {
     implementation(project(":composeApp"))
+    implementation(project(":logging"))
 
     // Core Android + Compose UI
     implementation(libs.androidx.core.ktx)
