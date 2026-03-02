@@ -1,4 +1,4 @@
-package com.developersbreach.hangman.ui.game
+package com.developersbreach.hangman.ui.game.simple
 
 import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.LinearEasing
@@ -6,6 +6,8 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import com.developersbreach.hangman.ui.game.attemptsUsedProgress
+import com.developersbreach.hangman.ui.game.levelProgress
 
 @Composable
 fun animateCurrentLevelProgress(

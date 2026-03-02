@@ -1,4 +1,4 @@
-package com.developersbreach.hangman.ui.game
+package com.developersbreach.hangman.ui.game.simple
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,12 +32,13 @@ import com.developersbreach.hangman.feature.game.generated.resources.game_curren
 import com.developersbreach.hangman.ui.components.BodyLargeText
 import com.developersbreach.hangman.ui.components.HangmanDivider
 import com.developersbreach.hangman.ui.components.HeadlineSmallText
+import com.developersbreach.hangman.ui.game.resolveDisplayedLevel
 import com.developersbreach.hangman.ui.theme.HangmanTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun LevelPointsAttemptsInformation(
+fun LevelPointsAttemptsVisual(
     modifier: Modifier,
     currentPlayerLevel: Int,
     attemptsLeftToGuess: Int,

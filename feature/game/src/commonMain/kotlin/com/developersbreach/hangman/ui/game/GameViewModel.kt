@@ -3,6 +3,7 @@ package com.developersbreach.hangman.ui.game
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.developersbreach.game.core.achievements.AchievementCatalog
+import com.developersbreach.game.core.Alphabet
 import com.developersbreach.game.core.GameSessionEngine
 import com.developersbreach.game.core.GameSessionUpdate
 import com.developersbreach.game.core.GameSessionState
@@ -52,6 +53,10 @@ class GameViewModel(
     private var levelTimerJob: Job? = null
     private var hintCooldownJob: Job? = null
     private var hintFeedbackDismissJob: Job? = null
+    private var lossDialogRevealJob: Job? = null
+    private var winDialogRevealJob: Job? = null
+    private var levelSuccessTransitionJob: Job? = null
+    private var pendingLevelState: GameSessionState? = null
     private val achievementTracker = GameAchievementTracker(nowMillis = ::clockNowMillis)
 
     init {
@@ -59,6 +64,9 @@ class GameViewModel(
     }
 
     fun onEvent(event: GameEvent) {
+        if (_uiState.value.isInteractionLocked) {
+            return
+        }
         when (event) {
             is GameEvent.AlphabetClicked -> checkIfLetterMatches(event.alphabetId)
             GameEvent.BackPressed -> {
@@ -172,37 +180,49 @@ class GameViewModel(
         update: GameSessionUpdate,
         playTapSound: Boolean,
     ) {
+        if (!update.gameLost) {
+            lossDialogRevealJob?.cancel()
+        }
+        if (!update.gameWon) {
+            winDialogRevealJob?.cancel()
+        }
         val levelTimeRemainingAtUpdate = _uiState.value.levelTimeRemainingMillis
-        syncState(update.state)
-        evaluateAchievements(
-            update = update,
-            levelTimeRemainingAtUpdate = levelTimeRemainingAtUpdate,
-        )
-
-        if (update.levelCompleted && !update.gameWon) {
-            soundEffectPlayer.play(GameSoundEffect.LEVEL_WON)
-            resetLevelTimer()
-        }
-
-        if (update.gameWon) {
-            levelTimerJob?.cancel()
-            soundEffectPlayer.play(GameSoundEffect.GAME_WON)
-            viewModelScope.launch {
-                delay(500)
-                saveCurrentGameToHistory()
+        when {
+            update.levelCompleted && !update.gameWon -> {
+                handleNonFinalLevelCompletion(update)
+                evaluateAchievements(
+                    update = update,
+                    levelTimeRemainingAtUpdate = levelTimeRemainingAtUpdate,
+                )
+                if (playTapSound) {
+                    soundEffectPlayer.play(GameSoundEffect.ALPHABET_TAP)
+                }
             }
-        }
 
-        if (update.gameLost) {
-            levelTimerJob?.cancel()
-            viewModelScope.launch {
-                soundEffectPlayer.play(GameSoundEffect.GAME_LOST)
-                saveCurrentGameToHistory()
+            else -> {
+                syncState(update.state)
+                evaluateAchievements(
+                    update = update,
+                    levelTimeRemainingAtUpdate = levelTimeRemainingAtUpdate,
+                )
+
+                if (update.gameWon) {
+                    handleFinalGameWinHold()
+                }
+
+                if (update.gameLost) {
+                    levelTimerJob?.cancel()
+                    scheduleGameLostDialogReveal()
+                    viewModelScope.launch {
+                        soundEffectPlayer.play(GameSoundEffect.GAME_LOST)
+                        saveCurrentGameToHistory()
+                    }
+                }
+
+                if (playTapSound) {
+                    soundEffectPlayer.play(GameSoundEffect.ALPHABET_TAP)
+                }
             }
-        }
-
-        if (playTapSound) {
-            soundEffectPlayer.play(GameSoundEffect.ALPHABET_TAP)
         }
     }
 
@@ -217,6 +237,11 @@ class GameViewModel(
                 pointsScoredOverall = state.pointsScoredOverall,
                 gameOverByWinning = state.gameOverByWinning,
                 revealGuessingWord = state.gameOverByNoAttemptsLeft,
+                uiPhase = resolvePhaseAfterStateSync(
+                    currentPhase = current.uiPhase,
+                    gameWon = state.gameOverByWinning,
+                    gameLost = state.gameOverByNoAttemptsLeft,
+                ),
                 showInstructionsDialog = when {
                     state.gameOverByWinning || state.gameOverByNoAttemptsLeft -> false
                     else -> current.showInstructionsDialog
@@ -233,6 +258,109 @@ class GameViewModel(
                     category = current.gameCategory,
                 ),
             )
+        }
+    }
+
+    private fun handleNonFinalLevelCompletion(update: GameSessionUpdate) {
+        levelSuccessTransitionJob?.cancel()
+        pendingLevelState = update.state
+        levelTimerJob?.cancel()
+        hintCooldownJob?.cancel()
+        val currentState = _uiState.value
+        val completedGuesses = revealFullWordGuesses(currentState.wordToGuess)
+        _uiState.update { current ->
+            current.copy(
+                playerGuesses = completedGuesses,
+                alphabetsList = markWordLettersAsGuessed(
+                    alphabets = current.alphabetsList,
+                    word = current.wordToGuess,
+                ),
+                pointsScoredOverall = update.state.pointsScoredOverall,
+                showInstructionsDialog = false,
+                showExitDialog = false,
+                showHintFeedbackDialog = false,
+                hintFeedback = null,
+                uiPhase = GameUiPhase.LevelSuccess(step = GameUiPhase.LevelSuccess.Step.SHIMMER),
+            )
+        }
+        soundEffectPlayer.play(GameSoundEffect.LEVEL_WON)
+        scheduleLevelSuccessTransition()
+    }
+
+    private fun scheduleLevelSuccessTransition() {
+        levelSuccessTransitionJob?.cancel()
+        levelSuccessTransitionJob = viewModelScope.launch {
+            delay(LEVEL_SUCCESS_SHIMMER_MILLIS)
+            _uiState.update { current ->
+                val phase = current.uiPhase
+                if (
+                    phase !is GameUiPhase.LevelSuccess ||
+                    phase.step != GameUiPhase.LevelSuccess.Step.SHIMMER
+                ) {
+                    current
+                } else {
+                    current.copy(uiPhase = GameUiPhase.LevelSuccess(step = GameUiPhase.LevelSuccess.Step.RETURN))
+                }
+            }
+            delay(LEVEL_SUCCESS_RETURN_MILLIS)
+            val nextState = pendingLevelState ?: return@launch
+            pendingLevelState = null
+            syncState(nextState)
+            _uiState.update { current ->
+                current.copy(
+                    uiPhase = GameUiPhase.Playing,
+                )
+            }
+            resetLevelTimer()
+        }
+    }
+
+    private fun handleFinalGameWinHold() {
+        levelTimerJob?.cancel()
+        lossDialogRevealJob?.cancel()
+        levelSuccessTransitionJob?.cancel()
+        pendingLevelState = null
+        _uiState.update { current ->
+            current.copy(
+                showInstructionsDialog = false,
+                showExitDialog = false,
+                showHintFeedbackDialog = false,
+                hintFeedback = null,
+                uiPhase = GameUiPhase.FinalWinHold,
+            )
+        }
+        soundEffectPlayer.play(GameSoundEffect.GAME_WON)
+        scheduleGameWonDialogReveal()
+        viewModelScope.launch {
+            delay(500)
+            saveCurrentGameToHistory()
+        }
+    }
+
+    private fun revealFullWordGuesses(word: String): List<String> {
+        return word.map { char ->
+            if (char == ' ') {
+                " "
+            } else {
+                char.lowercaseChar().toString()
+            }
+        }
+    }
+
+    private fun markWordLettersAsGuessed(
+        alphabets: List<Alphabet>,
+        word: String,
+    ): List<Alphabet> {
+        val lettersInWord = word
+            .filter { !it.isWhitespace() }
+            .map { it.lowercaseChar().toString() }
+            .toSet()
+        return alphabets.map { alphabet ->
+            if (alphabet.alphabet.lowercase() in lettersInWord) {
+                alphabet.copy(isAlphabetGuessed = true)
+            } else {
+                alphabet
+            }
         }
     }
 
@@ -271,12 +399,17 @@ class GameViewModel(
     private fun onTimerExpired() {
         levelTimerJob?.cancel()
         hintCooldownJob?.cancel()
+        lossDialogRevealJob?.cancel()
+        winDialogRevealJob?.cancel()
+        levelSuccessTransitionJob?.cancel()
+        pendingLevelState = null
         val stateAfterTimeout = _uiState.updateAndGet { current ->
             current.copy(
                 revealGuessingWord = true,
                 showInstructionsDialog = false,
                 showExitDialog = false,
                 attemptsLeftToGuess = 0,
+                uiPhase = GameUiPhase.LossHold,
             )
         }
         evaluateAchievements(
@@ -292,6 +425,7 @@ class GameViewModel(
             soundEffectPlayer.play(GameSoundEffect.GAME_LOST)
             saveCurrentGameToHistory()
         }
+        scheduleGameLostDialogReveal()
     }
 
     private fun shouldPauseTimer(): Boolean {
@@ -299,7 +433,8 @@ class GameViewModel(
         return state.showExitDialog ||
             state.showInstructionsDialog ||
             state.gameOverByWinning ||
-            state.revealGuessingWord
+            state.revealGuessingWord ||
+            state.isInteractionLocked
     }
 
     private suspend fun saveCurrentGameToHistory() {
@@ -384,6 +519,35 @@ class GameViewModel(
         }
     }
 
+    private fun scheduleGameLostDialogReveal() {
+        lossDialogRevealJob?.cancel()
+        lossDialogRevealJob = viewModelScope.launch {
+            delay(GAME_LOSS_DIALOG_DELAY_MILLIS)
+            _uiState.update { current ->
+                when {
+                    !current.revealGuessingWord || current.gameOverByWinning -> current
+                    else -> current.copy(uiPhase = GameUiPhase.LossDialog)
+                }
+            }
+        }
+    }
+
+    private fun scheduleGameWonDialogReveal() {
+        winDialogRevealJob?.cancel()
+        winDialogRevealJob = viewModelScope.launch {
+            delay(GAME_WIN_DIALOG_DELAY_MILLIS)
+            _uiState.update { current ->
+                if (!current.gameOverByWinning) {
+                    current
+                } else {
+                    current.copy(
+                        uiPhase = GameUiPhase.WinDialog,
+                    )
+                }
+            }
+        }
+    }
+
     private fun logHintUnavailable(
         hintType: HintType,
         error: String,
@@ -402,6 +566,9 @@ class GameViewModel(
         levelTimerJob?.cancel()
         hintCooldownJob?.cancel()
         hintFeedbackDismissJob?.cancel()
+        lossDialogRevealJob?.cancel()
+        winDialogRevealJob?.cancel()
+        levelSuccessTransitionJob?.cancel()
         super.onCleared()
     }
 
@@ -411,5 +578,9 @@ class GameViewModel(
         private const val LEVEL_TIMER_TOTAL_MILLIS = 60_000L
         private const val HINT_COOLDOWN_MILLIS = 2_000L
         private const val HINT_FEEDBACK_DISMISS_MILLIS = 2_000L
+        private const val LEVEL_SUCCESS_SHIMMER_MILLIS = 1_000L
+        private const val LEVEL_SUCCESS_RETURN_MILLIS = 1_000L
+        private const val GAME_WIN_DIALOG_DELAY_MILLIS = 3_000L
+        private const val GAME_LOSS_DIALOG_DELAY_MILLIS = 3_000L
     }
 }

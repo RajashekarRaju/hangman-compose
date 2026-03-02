@@ -1,4 +1,4 @@
-package com.developersbreach.hangman.ui.game
+package com.developersbreach.hangman.ui.game.alphabets
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp

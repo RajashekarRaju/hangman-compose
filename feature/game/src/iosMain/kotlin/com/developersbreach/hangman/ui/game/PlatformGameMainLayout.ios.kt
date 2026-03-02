@@ -14,6 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.developersbreach.hangman.ui.game.alphabets.GamePhaseGuessesAndAlphabets
+import com.developersbreach.hangman.ui.game.alphabets.compactGameLayoutSizing
+import com.developersbreach.hangman.ui.game.alphabets.wideGameLayoutSizing
 
 @Composable
 internal actual fun PlatformGameMainLayout(
@@ -24,7 +27,14 @@ internal actual fun PlatformGameMainLayout(
     BoxWithConstraints(modifier = modifier) {
         val isShortHeight = maxHeight < 760.dp
         val useWideLayout = maxWidth >= 840.dp && maxWidth > maxHeight
-        val sizing = if (useWideLayout) wideGameLayoutSizing(isShortHeight) else compactGameLayoutSizing(isShortHeight)
+        val sizing = if (useWideLayout) wideGameLayoutSizing(isShortHeight) else compactGameLayoutSizing(
+            isShortHeight
+        )
+        val useLegacyProgressVisual =
+            uiState.progressVisualType == GameProgressVisualType.LevelPointsAttemptsInformation
+        val progressPaneMinWidth = if (useLegacyProgressVisual) 280.dp else 360.dp
+        val progressPaneMaxWidth = if (useLegacyProgressVisual) 430.dp else 560.dp
+        val guessesPaneMaxWidth = if (useLegacyProgressVisual) 920.dp else 860.dp
 
         if (useWideLayout) {
             Row(
@@ -41,14 +51,17 @@ internal actual fun PlatformGameMainLayout(
                 GamePhaseProgress(
                     uiState = uiState,
                     progressScale = sizing.progressScale,
-                    modifier = Modifier.widthIn(min = 280.dp, max = 430.dp),
+                    modifier = Modifier.widthIn(
+                        min = progressPaneMinWidth,
+                        max = progressPaneMaxWidth,
+                    ),
                 )
 
                 GamePhaseGuessesAndAlphabets(
                     uiState = uiState,
                     onEvent = onEvent,
                     sizing = sizing,
-                    modifier = Modifier.widthIn(max = 920.dp),
+                    modifier = Modifier.widthIn(max = guessesPaneMaxWidth),
                 )
             }
         } else {

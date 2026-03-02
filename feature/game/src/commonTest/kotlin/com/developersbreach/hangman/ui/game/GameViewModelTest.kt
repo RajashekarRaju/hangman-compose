@@ -4,6 +4,7 @@ import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.game.core.HintError
 import com.developersbreach.game.core.HintType
+import com.developersbreach.game.core.MAX_ATTEMPTS_PER_LEVEL
 import com.developersbreach.game.core.achievements.AchievementId
 import com.developersbreach.game.core.achievements.AchievementProgress
 import com.developersbreach.game.core.achievements.AchievementStatCounters
@@ -141,15 +142,20 @@ class GameViewModelTest {
             achievementsRepository = achievementsRepository,
             soundPlayer = soundPlayer,
         )
-        advanceUntilIdle()
+        runCurrent()
 
         advanceTimeBy(60_000)
         runCurrent()
-        advanceUntilIdle()
 
         val state = viewModel.uiState.value
         assertTrue(state.revealGuessingWord)
         assertEquals(0, state.attemptsLeftToGuess)
+        assertFalse(state.showGameLostDialog)
+
+        advanceTimeBy(3_000)
+        runCurrent()
+        assertTrue(viewModel.uiState.value.showGameLostDialog)
+
         assertEquals(1, sessionRepository.savedRequests.size)
         assertTrue(soundPlayer.playedEffects.contains(GameSoundEffect.GAME_LOST))
         assertTrue(
@@ -157,6 +163,151 @@ class GameViewModelTest {
                 progress.achievementId == AchievementId.FIRST_BLOOD && progress.isUnlocked
             }
         )
+    }
+
+    @Test
+    fun `attempt loss reveals execution immediately and delays loss dialog`() = runTest(dispatcher) {
+        val viewModel = createViewModel(difficulty = GameDifficulty.EASY)
+        runCurrent()
+
+        repeat(MAX_ATTEMPTS_PER_LEVEL) {
+            val state = viewModel.uiState.value
+            if (state.revealGuessingWord) return@repeat
+            val wrongAlphabet = state.alphabetsList.first { alphabet ->
+                !alphabet.isAlphabetGuessed &&
+                    !state.wordToGuess.contains(alphabet.alphabet, ignoreCase = true)
+            }
+            viewModel.onEvent(GameEvent.AlphabetClicked(wrongAlphabet.alphabetId))
+            runCurrent()
+        }
+
+        val stateAfterLoss = viewModel.uiState.value
+        assertTrue(stateAfterLoss.revealGuessingWord)
+        assertEquals(0, stateAfterLoss.attemptsLeftToGuess)
+        assertFalse(stateAfterLoss.showGameLostDialog)
+        assertTrue(stateAfterLoss.isInteractionLocked)
+
+        viewModel.onEvent(GameEvent.BackPressed)
+        runCurrent()
+        assertFalse(viewModel.uiState.value.showExitDialog)
+
+        advanceTimeBy(3_000)
+        runCurrent()
+        assertTrue(viewModel.uiState.value.showGameLostDialog)
+        assertFalse(viewModel.uiState.value.isInteractionLocked)
+    }
+
+    @Test
+    fun `non-final level completion transitions shimmer then return before next level`() = runTest(dispatcher) {
+        val viewModel = createViewModel(difficulty = GameDifficulty.EASY)
+        runCurrent()
+
+        val initialLevel = viewModel.uiState.value.currentPlayerLevel
+        val initialWord = viewModel.uiState.value.wordToGuess
+
+        fun solveCurrentWord() {
+            val state = viewModel.uiState.value
+            val letters = state.wordToGuess
+                .filter { it.isLetter() }
+                .map { it.lowercaseChar().toString() }
+                .distinct()
+            letters.forEach { letter ->
+                val latest = viewModel.uiState.value
+                if (latest.gameOverByWinning || latest.revealGuessingWord) return@forEach
+                val alphabet = latest.alphabetsList.firstOrNull { candidate ->
+                    candidate.alphabet.equals(letter, ignoreCase = true) && !candidate.isAlphabetGuessed
+                } ?: return@forEach
+                viewModel.onEvent(GameEvent.AlphabetClicked(alphabet.alphabetId))
+                runCurrent()
+            }
+        }
+
+        solveCurrentWord()
+
+        val holdingState = viewModel.uiState.value
+        assertTrue(holdingState.isInteractionLocked)
+        assertEquals(LevelTransitionPhase.SUCCESS_SHIMMER, holdingState.levelTransitionPhase)
+        assertEquals(initialLevel, holdingState.currentPlayerLevel)
+        assertEquals(initialWord, holdingState.wordToGuess)
+
+        viewModel.onEvent(GameEvent.BackPressed)
+        runCurrent()
+        assertFalse(viewModel.uiState.value.showExitDialog)
+
+        advanceTimeBy(999)
+        runCurrent()
+        assertEquals(LevelTransitionPhase.SUCCESS_SHIMMER, viewModel.uiState.value.levelTransitionPhase)
+        assertEquals(initialLevel, viewModel.uiState.value.currentPlayerLevel)
+
+        advanceTimeBy(1)
+        runCurrent()
+        assertEquals(LevelTransitionPhase.SUCCESS_RETURN, viewModel.uiState.value.levelTransitionPhase)
+        assertTrue(viewModel.uiState.value.isInteractionLocked)
+        assertEquals(initialLevel, viewModel.uiState.value.currentPlayerLevel)
+
+        advanceTimeBy(999)
+        runCurrent()
+        assertTrue(viewModel.uiState.value.isInteractionLocked)
+        assertEquals(LevelTransitionPhase.SUCCESS_RETURN, viewModel.uiState.value.levelTransitionPhase)
+
+        advanceTimeBy(1)
+        runCurrent()
+        val nextLevelState = viewModel.uiState.value
+        assertFalse(nextLevelState.isInteractionLocked)
+        assertEquals(LevelTransitionPhase.NONE, nextLevelState.levelTransitionPhase)
+        assertEquals(initialLevel + 1, nextLevelState.currentPlayerLevel)
+        assertEquals(60_000L, nextLevelState.levelTimeRemainingMillis)
+    }
+
+    @Test
+    fun `final win dialog is delayed for 3 seconds and interaction stays locked during hold`() = runTest(dispatcher) {
+        val viewModel = createViewModel(difficulty = GameDifficulty.EASY)
+        runCurrent()
+
+        fun solveCurrentWord() {
+            val state = viewModel.uiState.value
+            val letters = state.wordToGuess
+                .filter { it.isLetter() }
+                .map { it.lowercaseChar().toString() }
+                .distinct()
+            letters.forEach { letter ->
+                val latest = viewModel.uiState.value
+                if (latest.gameOverByWinning || latest.revealGuessingWord) return@forEach
+                val alphabet = latest.alphabetsList.firstOrNull { candidate ->
+                    candidate.alphabet.equals(letter, ignoreCase = true) && !candidate.isAlphabetGuessed
+                } ?: return@forEach
+                viewModel.onEvent(GameEvent.AlphabetClicked(alphabet.alphabetId))
+                runCurrent()
+            }
+        }
+
+        while (!viewModel.uiState.value.gameOverByWinning) {
+            solveCurrentWord()
+            if (
+                viewModel.uiState.value.levelTransitionPhase == LevelTransitionPhase.SUCCESS_SHIMMER ||
+                viewModel.uiState.value.levelTransitionPhase == LevelTransitionPhase.SUCCESS_RETURN
+            ) {
+                advanceTimeBy(2_000)
+                runCurrent()
+            }
+        }
+
+        val winHoldState = viewModel.uiState.value
+        assertTrue(winHoldState.gameOverByWinning)
+        assertFalse(winHoldState.showGameWonDialog)
+        assertTrue(winHoldState.isInteractionLocked)
+        assertEquals(LevelTransitionPhase.FINAL_WIN_HOLD, winHoldState.levelTransitionPhase)
+
+        advanceTimeBy(2_999)
+        runCurrent()
+        assertFalse(viewModel.uiState.value.showGameWonDialog)
+
+        advanceTimeBy(1)
+        runCurrent()
+        val revealedWinDialogState = viewModel.uiState.value
+        assertTrue(revealedWinDialogState.showGameWonDialog)
+        assertFalse(revealedWinDialogState.isInteractionLocked)
+        assertEquals(LevelTransitionPhase.NONE, revealedWinDialogState.levelTransitionPhase)
     }
 
     @Test

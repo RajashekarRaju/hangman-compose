@@ -1,4 +1,4 @@
-package com.developersbreach.hangman.ui.game
+package com.developersbreach.hangman.ui.game.alphabets
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -26,6 +29,7 @@ import com.developersbreach.hangman.ui.theme.HangmanTheme
 fun AlphabetsList(
     modifier: Modifier,
     alphabetsList: List<Alphabet>,
+    onTileCenterChanged: (alphabetId: Int, symbol: String, centerInRoot: Offset) -> Unit,
     tileSize: Dp,
     spacing: Dp,
     contentPadding: Dp,
@@ -55,6 +59,7 @@ fun AlphabetsList(
                     onAlphabetClicked = onAlphabetClicked,
                     tileSize = tileSize,
                     creepinessThreshold = creepinessThreshold,
+                    onTileCenterChanged = onTileCenterChanged,
                 )
             }
         }
@@ -67,11 +72,23 @@ private fun ItemAlphabetText(
     onAlphabetClicked: (alphabetId: Int) -> Unit,
     tileSize: Dp,
     creepinessThreshold: Float,
+    onTileCenterChanged: (alphabetId: Int, symbol: String, centerInRoot: Offset) -> Unit,
 ) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .alpha(if (!alphabet.isAlphabetGuessed) 1f else 0.25f)
+            .onGloballyPositioned { coordinates ->
+                val position = coordinates.positionInRoot()
+                onTileCenterChanged(
+                    alphabet.alphabetId,
+                    alphabet.alphabet.lowercase(),
+                    Offset(
+                        x = position.x + (coordinates.size.width / 2f),
+                        y = position.y + (coordinates.size.height / 2f),
+                    ),
+                )
+            }
             .size(tileSize)
             .creepyOutline(
                 seed = alphabet.alphabetId,

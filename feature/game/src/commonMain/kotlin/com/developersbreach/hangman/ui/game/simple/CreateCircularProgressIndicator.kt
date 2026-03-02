@@ -1,4 +1,4 @@
-package com.developersbreach.hangman.ui.game
+package com.developersbreach.hangman.ui.game.simple
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable

@@ -26,6 +26,7 @@ data class GameUiState(
     val playerGuesses: List<String> = emptyList(),
     val gameOverByWinning: Boolean = false,
     val revealGuessingWord: Boolean = false,
+    val uiPhase: GameUiPhase = GameUiPhase.Playing,
     val wordToGuess: String = "",
     val attemptsLeftToGuess: Int = MAX_ATTEMPTS_PER_LEVEL,
     val pointsScoredOverall: Int = 0,
@@ -44,7 +45,35 @@ data class GameUiState(
     val levelTimeTotalMillis: Long = 60_000L,
     val levelTimeRemainingMillis: Long = 60_000L,
     val categoryHint: GameCategoryHintUiModel? = null,
-)
+    val progressVisualType: GameProgressVisualType = GameProgressVisualType.TraditionalHangman,
+) {
+    val showGameLostDialog: Boolean
+        get() = uiPhase is GameUiPhase.LossDialog
+
+    val showGameWonDialog: Boolean
+        get() = uiPhase is GameUiPhase.WinDialog
+
+    val levelTransitionPhase: LevelTransitionPhase
+        get() = when (uiPhase) {
+            is GameUiPhase.LevelSuccess -> when (uiPhase.step) {
+                GameUiPhase.LevelSuccess.Step.SHIMMER -> LevelTransitionPhase.SUCCESS_SHIMMER
+                GameUiPhase.LevelSuccess.Step.RETURN -> LevelTransitionPhase.SUCCESS_RETURN
+            }
+
+            GameUiPhase.FinalWinHold -> LevelTransitionPhase.FINAL_WIN_HOLD
+            else -> LevelTransitionPhase.NONE
+        }
+
+    val isInteractionLocked: Boolean
+        get() = when (uiPhase) {
+            is GameUiPhase.LevelSuccess,
+            GameUiPhase.FinalWinHold,
+            GameUiPhase.LossHold,
+            -> true
+
+            else -> false
+        }
+}
 
 data class HintFeedback(
     val selectedHintType: HintType,
@@ -97,9 +126,17 @@ internal fun levelProgress(currentPlayerLevel: Int): Float {
 }
 
 internal fun attemptsUsedProgress(attemptsLeft: Int): Float {
-    val clampedAttemptsLeft = attemptsLeft.coerceIn(0, MAX_ATTEMPTS_PER_LEVEL)
-    val attemptsUsed = MAX_ATTEMPTS_PER_LEVEL - clampedAttemptsLeft
+    val attemptsUsed = wrongGuessPhasesUsed(attemptsLeft)
     return (attemptsUsed.toFloat() / MAX_ATTEMPTS_PER_LEVEL.toFloat()).coerceIn(0f, 1f)
+}
+
+internal fun wrongGuessPhasesUsed(attemptsLeft: Int): Int {
+    val clampedAttemptsLeft = attemptsLeft.coerceIn(0, MAX_ATTEMPTS_PER_LEVEL)
+    return MAX_ATTEMPTS_PER_LEVEL - clampedAttemptsLeft
+}
+
+internal fun timerFillProgress(levelTimeProgress: Float): Float {
+    return (1f - levelTimeProgress.coerceIn(0f, 1f)).coerceIn(0f, 1f)
 }
 
 internal fun HintError.messageRes(): StringResource {
