@@ -69,8 +69,8 @@ class OnBoardingViewModelTest {
 
         with(viewModel.uiState.value) {
             assertEquals(155, highScore)
-            assertTrue(isBackgroundMusicPlaying)
         }
+        assertTrue(audio.isPlaying())
     }
 
     @Test
@@ -137,21 +137,20 @@ class OnBoardingViewModelTest {
     }
 
     @Test
-    fun `toggle background music updates playback state`() = runTest(dispatcher) {
+    fun `init keeps music off when disabled in settings`() = runTest(dispatcher) {
+        val settingsRepository = FakeSettingsRepository(
+            isBackgroundMusicEnabled = false,
+        )
+        val audioController = FakeBackgroundAudioController()
         val viewModel = OnBoardingViewModel(
             historyRepository = FakeHistoryRepository(),
             achievementsRepository = FakeAchievementsRepository(),
-            settingsRepository = FakeSettingsRepository(),
-            audioController = FakeBackgroundAudioController(),
+            settingsRepository = settingsRepository,
+            audioController = audioController,
         )
         advanceUntilIdle()
-        assertTrue(viewModel.uiState.value.isBackgroundMusicPlaying)
 
-        viewModel.onEvent(OnBoardingEvent.ToggleBackgroundMusic)
-        assertFalse(viewModel.uiState.value.isBackgroundMusicPlaying)
-
-        viewModel.onEvent(OnBoardingEvent.ToggleBackgroundMusic)
-        assertTrue(viewModel.uiState.value.isBackgroundMusicPlaying)
+        assertFalse(audioController.isPlaying())
     }
 
     @Test
@@ -181,6 +180,8 @@ private class FakeSettingsRepository(
     private var category: GameCategory = GameCategory.COUNTRIES,
     private var themePaletteId: ThemePaletteId = ThemePaletteId.EMERALD,
     private var appLanguage: AppLanguage = AppLanguage.default,
+    private var isBackgroundMusicEnabled: Boolean = true,
+    private var isSoundEffectsEnabled: Boolean = true,
 ) : GameSettingsRepository {
     private val themeState = MutableStateFlow(themePaletteId)
     private val languageState = MutableStateFlow(appLanguage)
@@ -196,6 +197,10 @@ private class FakeSettingsRepository(
     override suspend fun getThemePaletteId(): ThemePaletteId = themePaletteId
 
     override suspend fun getAppLanguage(): AppLanguage = appLanguage
+
+    override suspend fun isBackgroundMusicEnabled(): Boolean = isBackgroundMusicEnabled
+
+    override suspend fun isSoundEffectsEnabled(): Boolean = isSoundEffectsEnabled
 
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themeState
 
@@ -220,6 +225,14 @@ private class FakeSettingsRepository(
         this.appLanguage = appLanguage
         languageState.value = appLanguage
         lastSetLanguage = appLanguage
+    }
+
+    override suspend fun setBackgroundMusicEnabled(isEnabled: Boolean) {
+        isBackgroundMusicEnabled = isEnabled
+    }
+
+    override suspend fun setSoundEffectsEnabled(isEnabled: Boolean) {
+        isSoundEffectsEnabled = isEnabled
     }
 }
 

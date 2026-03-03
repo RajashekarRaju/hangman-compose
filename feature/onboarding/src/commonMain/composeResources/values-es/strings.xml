@@ -8,12 +8,18 @@
     <string name="onboarding_button_language">Idioma</string>
     <string name="onboarding_button_report_issue">Reportar problema</string>
     <string name="onboarding_button_settings">Configuración</string>
+    <string name="onboarding_button_game_guide">Guía del juego</string>
 
     <string name="onboarding_difficulty_dialog_title">Dificultad</string>
     <string name="onboarding_category_dialog_title">Categoría</string>
     <string name="onboarding_language_dialog_title">Idioma</string>
     <string name="settings_title">Configuración</string>
     <string name="settings_button_theme_palette">Paleta de tema</string>
+    <string name="settings_button_audio">Audio</string>
+    <string name="settings_audio_background_music">Música de fondo</string>
+    <string name="settings_audio_sound_effects">Efectos de sonido</string>
+    <string name="settings_audio_on">Activado</string>
+    <string name="settings_audio_off">Desactivado</string>
 
     <string name="onboarding_game_tagline">Ten cuidado. Las letras pueden acabar contigo</string>
     <string name="onboarding_highest_score_header">Puntuación más alta - %1$d</string>
@@ -21,7 +27,6 @@
     <string name="onboarding_cd_game_banner">Banner del juego Hangman</string>
     <string name="onboarding_cd_play_game_button">Jugar</string>
     <string name="onboarding_cd_exit_game">Salir del juego</string>
-    <string name="onboarding_cd_game_sound_play_pause">Reproducir o pausar el sonido de fondo del juego.</string>
     <string name="onboarding_cd_image_screen_bg">Imagen de fondo de la pantalla.</string>
     <string name="onboarding_cd_open_instructions_dialog">Abrir el diálogo de instrucciones del juego.</string>
     <string name="onboarding_cd_report_issue">Abrir la página de incidencias del repositorio.</string>

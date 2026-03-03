@@ -1,10 +1,8 @@
-package com.developersbreach.hangman.ui.settings
+package com.developersbreach.hangman.ui.settings.components
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,54 +14,36 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import com.developersbreach.hangman.feature.onboarding.generated.resources.Res
-import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_language_dialog_title
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.ui.components.BodyLargeText
 import com.developersbreach.hangman.ui.components.CreepyRadioButton
-import com.developersbreach.hangman.ui.components.HangmanDialog
-import com.developersbreach.hangman.ui.components.TitleMediumText
 import com.developersbreach.hangman.ui.theme.HangmanTheme
-import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun ChooseLanguageDialog(
+internal fun SettingsInlineLanguageSection(
     languages: List<AppLanguage>,
     selectedLanguage: AppLanguage,
     onLanguageChanged: (AppLanguage) -> Unit,
-    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier.Companion,
 ) {
-    HangmanDialog(
-        onDismissRequest = onDismissRequest,
-        seed = 813,
-        threshold = 0.10f,
-        modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(60.dp),
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .selectableGroup(),
+        horizontalAlignment = Alignment.Start,
     ) {
-        TitleMediumText(
-            text = stringResource(Res.string.onboarding_language_dialog_title),
-            color = HangmanTheme.colorScheme.primary.copy(alpha = 0.75f),
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Column(
-            modifier = Modifier.selectableGroup(),
-            horizontalAlignment = Alignment.Start,
-        ) {
-            languages.forEach { language ->
-                LanguageRow(
-                    language = language,
-                    selectedLanguage = selectedLanguage,
-                    onLanguageChanged = onLanguageChanged,
-                )
-            }
+        languages.forEach { language ->
+            SettingsLanguageRow(
+                language = language,
+                selectedLanguage = selectedLanguage,
+                onLanguageChanged = onLanguageChanged,
+            )
         }
     }
 }
 
 @Composable
-private fun LanguageRow(
+private fun SettingsLanguageRow(
     language: AppLanguage,
     selectedLanguage: AppLanguage,
     onLanguageChanged: (AppLanguage) -> Unit,

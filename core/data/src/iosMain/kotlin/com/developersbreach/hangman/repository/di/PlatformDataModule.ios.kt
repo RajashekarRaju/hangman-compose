@@ -134,6 +134,10 @@ private class IosUserDefaultsGameSettingsRepository : GameSettingsRepository {
         return settings.appLanguageCode.toAppLanguage().also { appLanguageState.value = it }
     }
 
+    override suspend fun isBackgroundMusicEnabled(): Boolean = settings.isBackgroundMusicEnabled
+
+    override suspend fun isSoundEffectsEnabled(): Boolean = settings.isSoundEffectsEnabled
+
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themePaletteIdState.asStateFlow()
 
     override fun observeAppLanguage(): StateFlow<AppLanguage> = appLanguageState.asStateFlow()
@@ -158,6 +162,16 @@ private class IosUserDefaultsGameSettingsRepository : GameSettingsRepository {
         settings = settings.copy(appLanguageCode = appLanguage.languageTag)
         persist()
         appLanguageState.value = appLanguage
+    }
+
+    override suspend fun setBackgroundMusicEnabled(isEnabled: Boolean) {
+        settings = settings.copy(isBackgroundMusicEnabled = isEnabled)
+        persist()
+    }
+
+    override suspend fun setSoundEffectsEnabled(isEnabled: Boolean) {
+        settings = settings.copy(isSoundEffectsEnabled = isEnabled)
+        persist()
     }
 }
 

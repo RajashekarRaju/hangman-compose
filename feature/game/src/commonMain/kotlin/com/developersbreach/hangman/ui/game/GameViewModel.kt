@@ -57,6 +57,7 @@ class GameViewModel(
     private var winDialogRevealJob: Job? = null
     private var levelSuccessTransitionJob: Job? = null
     private var pendingLevelState: GameSessionState? = null
+    private var isSoundEffectsEnabled: Boolean = true
     private val achievementTracker = GameAchievementTracker(nowMillis = ::clockNowMillis)
 
     init {
@@ -113,6 +114,7 @@ class GameViewModel(
 
             val gameDifficulty = settingsRepository.getGameDifficulty()
             val gameCategory = settingsRepository.getGameCategory()
+            isSoundEffectsEnabled = settingsRepository.isSoundEffectsEnabled()
             val guessingWordsForCurrentGame =
                 getFilteredWordsByGameDifficulty(gameDifficulty, gameCategory)
 
@@ -148,7 +150,7 @@ class GameViewModel(
         processSessionUpdate(update = update, playTapSound = false)
 
         if (update.hintApplied) {
-            soundEffectPlayer.play(GameSoundEffect.ALPHABET_TAP)
+            playSoundEffect(GameSoundEffect.ALPHABET_TAP)
             startHintCooldown()
         }
 
@@ -195,7 +197,7 @@ class GameViewModel(
                     levelTimeRemainingAtUpdate = levelTimeRemainingAtUpdate,
                 )
                 if (playTapSound) {
-                    soundEffectPlayer.play(GameSoundEffect.ALPHABET_TAP)
+                    playSoundEffect(GameSoundEffect.ALPHABET_TAP)
                 }
             }
 
@@ -214,13 +216,13 @@ class GameViewModel(
                     levelTimerJob?.cancel()
                     scheduleGameLostDialogReveal()
                     viewModelScope.launch {
-                        soundEffectPlayer.play(GameSoundEffect.GAME_LOST)
+                        playSoundEffect(GameSoundEffect.GAME_LOST)
                         saveCurrentGameToHistory()
                     }
                 }
 
                 if (playTapSound) {
-                    soundEffectPlayer.play(GameSoundEffect.ALPHABET_TAP)
+                    playSoundEffect(GameSoundEffect.ALPHABET_TAP)
                 }
             }
         }
@@ -283,7 +285,7 @@ class GameViewModel(
                 uiPhase = GameUiPhase.LevelSuccess(step = GameUiPhase.LevelSuccess.Step.SHIMMER),
             )
         }
-        soundEffectPlayer.play(GameSoundEffect.LEVEL_WON)
+        playSoundEffect(GameSoundEffect.LEVEL_WON)
         scheduleLevelSuccessTransition()
     }
 
@@ -329,7 +331,7 @@ class GameViewModel(
                 uiPhase = GameUiPhase.FinalWinHold,
             )
         }
-        soundEffectPlayer.play(GameSoundEffect.GAME_WON)
+        playSoundEffect(GameSoundEffect.GAME_WON)
         scheduleGameWonDialogReveal()
         viewModelScope.launch {
             delay(500)
@@ -422,7 +424,7 @@ class GameViewModel(
             levelTimeRemainingAtUpdate = 0L,
         )
         viewModelScope.launch {
-            soundEffectPlayer.play(GameSoundEffect.GAME_LOST)
+            playSoundEffect(GameSoundEffect.GAME_LOST)
             saveCurrentGameToHistory()
         }
         scheduleGameLostDialogReveal()
@@ -560,6 +562,11 @@ class GameViewModel(
             "HintUnavailable type=$hintType error=$error level=$level attemptsLeft=$attemptsLeft " +
                 "hintsRemaining=$hintsRemaining word=\"$word\""
         }
+    }
+
+    private fun playSoundEffect(soundEffect: GameSoundEffect) {
+        if (!isSoundEffectsEnabled) return
+        soundEffectPlayer.play(soundEffect)
     }
 
     override fun onCleared() {

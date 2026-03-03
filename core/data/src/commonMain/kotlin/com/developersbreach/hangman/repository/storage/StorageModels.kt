@@ -59,6 +59,8 @@ data class StoredSettings(
     val gameCategory: String = GameCategory.COUNTRIES.name,
     val themePaletteId: String = "INSANE_RED",
     val appLanguageCode: String = AppLanguage.ENGLISH.languageTag,
+    val isBackgroundMusicEnabled: Boolean = true,
+    val isSoundEffectsEnabled: Boolean = true,
 )
 
 fun String.toGameDifficulty(): GameDifficulty {

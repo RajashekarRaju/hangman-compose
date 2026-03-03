@@ -7,17 +7,12 @@ import com.developersbreach.hangman.ui.theme.ThemePaletteId
 
 sealed interface SettingsEvent {
     data object NavigateUpClicked : SettingsEvent
-    data object OpenDifficultyDialog : SettingsEvent
-    data object DismissDifficultyDialog : SettingsEvent
+    data class SettingsSectionSelected(val section: SettingsSection) : SettingsEvent
     data class DifficultySliderPositionChanged(val sliderPosition: Float) : SettingsEvent
     data class DifficultyChanged(val difficulty: GameDifficulty) : SettingsEvent
-    data object OpenCategoryDialog : SettingsEvent
-    data object DismissCategoryDialog : SettingsEvent
     data class CategoryChanged(val category: GameCategory) : SettingsEvent
-    data object OpenLanguageDialog : SettingsEvent
-    data object DismissLanguageDialog : SettingsEvent
     data class LanguageChanged(val language: AppLanguage) : SettingsEvent
-    data object OpenThemePaletteMenu : SettingsEvent
-    data object DismissThemePaletteMenu : SettingsEvent
     data class ThemePaletteChanged(val paletteId: ThemePaletteId) : SettingsEvent
+    data class BackgroundMusicToggled(val isEnabled: Boolean) : SettingsEvent
+    data class SoundEffectsToggled(val isEnabled: Boolean) : SettingsEvent
 }

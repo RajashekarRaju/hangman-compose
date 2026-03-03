@@ -8,12 +8,18 @@
     <string name="onboarding_button_language">Language</string>
     <string name="onboarding_button_report_issue">Report Issue</string>
     <string name="onboarding_button_settings">Settings</string>
+    <string name="onboarding_button_game_guide">Game Guide</string>
 
     <string name="onboarding_difficulty_dialog_title">Difficulty</string>
     <string name="onboarding_category_dialog_title">Category</string>
     <string name="onboarding_language_dialog_title">Language</string>
     <string name="settings_title">Settings</string>
     <string name="settings_button_theme_palette">Theme Palette</string>
+    <string name="settings_button_audio">Audio</string>
+    <string name="settings_audio_background_music">Background Music</string>
+    <string name="settings_audio_sound_effects">Sound Effects</string>
+    <string name="settings_audio_on">On</string>
+    <string name="settings_audio_off">Off</string>
 
     <string name="onboarding_game_tagline">Be Aware. Letters Can Demise You</string>
     <string name="onboarding_highest_score_header">Highest Score - %1$d</string>
@@ -21,7 +27,6 @@
     <string name="onboarding_cd_game_banner">Hangman game banner</string>
     <string name="onboarding_cd_play_game_button">Play game</string>
     <string name="onboarding_cd_exit_game">Exit game</string>
-    <string name="onboarding_cd_game_sound_play_pause">Play or pause background game sound.</string>
     <string name="onboarding_cd_image_screen_bg">Background image of the screen.</string>
     <string name="onboarding_cd_open_instructions_dialog">Open game instructions dialog.</string>
     <string name="onboarding_cd_report_issue">Open repository issues page.</string>

@@ -10,6 +10,5 @@ data class OnBoardingUiState(
     val hasUnreadAchievements: Boolean = false,
     val gameDifficultyLabelRes: StringResource = GameDifficulty.EASY.labelRes(),
     val gameCategoryLabelRes: StringResource = GameCategory.COUNTRIES.labelRes(),
-    val isBackgroundMusicPlaying: Boolean = false,
     val isInstructionsDialogOpen: Boolean = false,
 )

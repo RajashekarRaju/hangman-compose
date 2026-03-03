@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -14,10 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.VolumeOff
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,15 +29,14 @@ import com.developersbreach.hangman.feature.onboarding.generated.resources.Res
 import com.developersbreach.hangman.feature.onboarding.generated.resources.demon
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_achievements
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_exit
+import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_game_guide
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_history
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_play
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_report_issue
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_settings
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_exit_game
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_game_banner
-import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_game_sound_play_pause
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_image_screen_bg
-import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_open_instructions_dialog
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_play_game_button
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_game_tagline
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_highest_score_header
@@ -52,7 +46,6 @@ import com.developersbreach.hangman.ui.common.HangmanInstructionsDialog
 import com.developersbreach.hangman.ui.components.AnimatedEnter
 import com.developersbreach.hangman.ui.components.BodySmallText
 import com.developersbreach.hangman.ui.components.HangmanIcon
-import com.developersbreach.hangman.ui.components.HangmanIconActionButton
 import com.developersbreach.hangman.ui.components.HangmanPrimaryButton
 import com.developersbreach.hangman.ui.components.HangmanTextActionButton
 import com.developersbreach.hangman.ui.components.LabelLargeText
@@ -142,11 +135,7 @@ private fun OnBoardingScreenContent(
         item {
             Spacer(modifier = Modifier.height(16.dp))
 
-            HangmanActionRow(
-                isBackgroundMusicPlaying = uiState.isBackgroundMusicPlaying,
-                onToggleBackgroundMusic = { onEvent(OnBoardingEvent.ToggleBackgroundMusic) },
-                onOpenInstructions = { onEvent(OnBoardingEvent.OpenInstructionsDialog) },
-            )
+            GameGuideButton(onClick = { onEvent(OnBoardingEvent.OpenInstructionsDialog) })
 
             Spacer(modifier = Modifier.height(24.dp))
         }
@@ -303,65 +292,13 @@ private fun SettingsButton(onClick: () -> Unit) {
 }
 
 @Composable
-private fun HangmanActionRow(
-    isBackgroundMusicPlaying: Boolean,
-    onToggleBackgroundMusic: () -> Unit,
-    onOpenInstructions: () -> Unit,
-) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        GameInstructionIconButton(onClick = onOpenInstructions)
-
-        BackgroundVolumeIconButton(
-            isBackgroundMusicPlaying = isBackgroundMusicPlaying,
-            onToggleBackgroundMusic = onToggleBackgroundMusic,
-        )
-    }
-}
-
-@Composable
-private fun GameInstructionIconButton(
+private fun GameGuideButton(
     onClick: () -> Unit
 ) {
-    HangmanIconActionButton(
+    OnBoardingActionButton(
+        text = stringResource(Res.string.onboarding_button_game_guide),
         onClick = onClick,
-        seed = 701,
-        size = 42,
-        threshold = 0.14f,
-        backgroundColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.06f),
-    ) {
-        HangmanIcon(
-            imageVector = Icons.Filled.Info,
-            contentDescription = stringResource(Res.string.onboarding_cd_open_instructions_dialog),
-            tint = HangmanTheme.colorScheme.primary
-        )
-    }
-}
-
-@Composable
-private fun BackgroundVolumeIconButton(
-    isBackgroundMusicPlaying: Boolean,
-    onToggleBackgroundMusic: () -> Unit,
-) {
-    val icon = when {
-        isBackgroundMusicPlaying -> Icons.AutoMirrored.Filled.VolumeUp
-        else -> Icons.AutoMirrored.Filled.VolumeOff
-    }
-
-    HangmanIconActionButton(
-        onClick = onToggleBackgroundMusic,
-        seed = 702,
-        size = 42,
-        threshold = 0.14f,
-        backgroundColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.06f),
-    ) {
-        HangmanIcon(
-            imageVector = icon,
-            contentDescription = stringResource(Res.string.onboarding_cd_game_sound_play_pause),
-            tint = HangmanTheme.colorScheme.primary
-        )
-    }
+    )
 }
 
 @Composable

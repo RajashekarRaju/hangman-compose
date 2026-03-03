@@ -13,8 +13,6 @@ import com.developersbreach.hangman.feature.common.ui.generated.resources.diffic
 import com.developersbreach.hangman.feature.common.ui.generated.resources.difficulty_very_hard
 import org.jetbrains.compose.resources.StringResource
 
-internal val categoryOptions: List<GameCategory> = GameCategory.entries
-
 internal fun GameCategory.labelRes(): StringResource {
     return when (this) {
         GameCategory.COUNTRIES -> Res.string.category_countries

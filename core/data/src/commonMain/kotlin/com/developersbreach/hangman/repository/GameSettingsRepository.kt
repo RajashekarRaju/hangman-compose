@@ -15,6 +15,10 @@ interface GameSettingsRepository {
 
     suspend fun getAppLanguage(): AppLanguage
 
+    suspend fun isBackgroundMusicEnabled(): Boolean
+
+    suspend fun isSoundEffectsEnabled(): Boolean
+
     fun observeThemePaletteId(): StateFlow<ThemePaletteId>
 
     fun observeAppLanguage(): StateFlow<AppLanguage>
@@ -26,4 +30,8 @@ interface GameSettingsRepository {
     suspend fun setThemePaletteId(themePaletteId: ThemePaletteId)
 
     suspend fun setAppLanguage(appLanguage: AppLanguage)
+
+    suspend fun setBackgroundMusicEnabled(isEnabled: Boolean)
+
+    suspend fun setSoundEffectsEnabled(isEnabled: Boolean)
 }

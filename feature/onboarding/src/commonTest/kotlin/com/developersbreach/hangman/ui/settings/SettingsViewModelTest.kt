@@ -21,8 +21,6 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsViewModelTest {
@@ -46,6 +44,8 @@ class SettingsViewModelTest {
             category = GameCategory.ANIMALS,
             themePaletteId = ThemePaletteId.EMERALD,
             appLanguage = AppLanguage.HINDI,
+            isBackgroundMusicEnabled = false,
+            isSoundEffectsEnabled = false,
         )
         val viewModel = SettingsViewModel(settingsRepo)
         advanceUntilIdle()
@@ -55,47 +55,42 @@ class SettingsViewModelTest {
             assertEquals(GameCategory.ANIMALS, gameCategory)
             assertEquals(ThemePaletteId.EMERALD, themePaletteId)
             assertEquals(AppLanguage.HINDI, selectedLanguage)
+            assertEquals(false, isBackgroundMusicEnabled)
+            assertEquals(false, isSoundEffectsEnabled)
             assertEquals(4f, pendingDifficultySliderPosition)
+            assertEquals(SettingsSection.DIFFICULTY, selectedSettingsSection)
         }
     }
 
     @Test
-    fun `settings updates persist and dialog states close as expected`() = runTest(dispatcher) {
+    fun `settings updates persist as expected`() = runTest(dispatcher) {
         val settingsRepo = FakeSettingsRepository()
         val viewModel = SettingsViewModel(settingsRepo)
         advanceUntilIdle()
 
-        viewModel.onEvent(SettingsEvent.OpenDifficultyDialog)
-        assertTrue(viewModel.uiState.value.isDifficultyDialogOpen)
         viewModel.onEvent(SettingsEvent.DifficultySliderPositionChanged(4f))
         viewModel.onEvent(SettingsEvent.DifficultyChanged(GameDifficulty.VERY_HARD))
 
-        viewModel.onEvent(SettingsEvent.OpenCategoryDialog)
-        assertTrue(viewModel.uiState.value.isCategoryDialogOpen)
         viewModel.onEvent(SettingsEvent.CategoryChanged(GameCategory.ANIMALS))
-        viewModel.onEvent(SettingsEvent.DismissCategoryDialog)
 
-        viewModel.onEvent(SettingsEvent.OpenLanguageDialog)
-        assertTrue(viewModel.uiState.value.isLanguageDialogOpen)
         viewModel.onEvent(SettingsEvent.LanguageChanged(AppLanguage.HINDI))
 
-        viewModel.onEvent(SettingsEvent.OpenThemePaletteMenu)
-        assertTrue(viewModel.uiState.value.isPaletteMenuExpanded)
         viewModel.onEvent(SettingsEvent.ThemePaletteChanged(ThemePaletteId.EMERALD))
+        viewModel.onEvent(SettingsEvent.BackgroundMusicToggled(false))
+        viewModel.onEvent(SettingsEvent.SoundEffectsToggled(false))
 
         advanceUntilIdle()
 
         with(viewModel.uiState.value) {
             assertEquals(GameDifficulty.VERY_HARD, gameDifficulty)
-            assertFalse(isCategoryDialogOpen)
-            assertFalse(isLanguageDialogOpen)
-            assertFalse(isPaletteMenuExpanded)
         }
 
         assertEquals(GameDifficulty.VERY_HARD, settingsRepo.lastSetDifficulty)
         assertEquals(GameCategory.ANIMALS, settingsRepo.lastSetCategory)
         assertEquals(AppLanguage.HINDI, settingsRepo.lastSetLanguage)
         assertEquals(ThemePaletteId.EMERALD, settingsRepo.lastSetPalette)
+        assertEquals(false, settingsRepo.lastSetBackgroundMusicEnabled)
+        assertEquals(false, settingsRepo.lastSetSoundEffectsEnabled)
     }
 
     @Test
@@ -109,6 +104,16 @@ class SettingsViewModelTest {
 
         assertEquals(SettingsEffect.NavigateUp, effect.await())
     }
+
+    @Test
+    fun `section selected updates ui state`() = runTest(dispatcher) {
+        val viewModel = SettingsViewModel(FakeSettingsRepository())
+        advanceUntilIdle()
+
+        viewModel.onEvent(SettingsEvent.SettingsSectionSelected(SettingsSection.LANGUAGE))
+
+        assertEquals(SettingsSection.LANGUAGE, viewModel.uiState.value.selectedSettingsSection)
+    }
 }
 
 private class FakeSettingsRepository(
@@ -116,6 +121,8 @@ private class FakeSettingsRepository(
     private var category: GameCategory = GameCategory.COUNTRIES,
     private var themePaletteId: ThemePaletteId = ThemePaletteId.INSANE_RED,
     private var appLanguage: AppLanguage = AppLanguage.default,
+    private var isBackgroundMusicEnabled: Boolean = true,
+    private var isSoundEffectsEnabled: Boolean = true,
 ) : GameSettingsRepository {
 
     private val themeState = MutableStateFlow(themePaletteId)
@@ -125,6 +132,8 @@ private class FakeSettingsRepository(
     var lastSetCategory: GameCategory? = null
     var lastSetLanguage: AppLanguage? = null
     var lastSetPalette: ThemePaletteId? = null
+    var lastSetBackgroundMusicEnabled: Boolean? = null
+    var lastSetSoundEffectsEnabled: Boolean? = null
 
     override suspend fun getGameDifficulty(): GameDifficulty = difficulty
 
@@ -133,6 +142,10 @@ private class FakeSettingsRepository(
     override suspend fun getThemePaletteId(): ThemePaletteId = themePaletteId
 
     override suspend fun getAppLanguage(): AppLanguage = appLanguage
+
+    override suspend fun isBackgroundMusicEnabled(): Boolean = isBackgroundMusicEnabled
+
+    override suspend fun isSoundEffectsEnabled(): Boolean = isSoundEffectsEnabled
 
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themeState
 
@@ -158,5 +171,15 @@ private class FakeSettingsRepository(
         this.appLanguage = appLanguage
         languageState.value = appLanguage
         lastSetLanguage = appLanguage
+    }
+
+    override suspend fun setBackgroundMusicEnabled(isEnabled: Boolean) {
+        isBackgroundMusicEnabled = isEnabled
+        lastSetBackgroundMusicEnabled = isEnabled
+    }
+
+    override suspend fun setSoundEffectsEnabled(isEnabled: Boolean) {
+        isSoundEffectsEnabled = isEnabled
+        lastSetSoundEffectsEnabled = isEnabled
     }
 }

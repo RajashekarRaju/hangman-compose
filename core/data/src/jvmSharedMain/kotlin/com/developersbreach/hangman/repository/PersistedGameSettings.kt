@@ -9,4 +9,6 @@ data class PersistedGameSettings(
     val gameCategory: GameCategory,
     val themePaletteId: ThemePaletteId,
     val appLanguage: AppLanguage,
+    val isBackgroundMusicEnabled: Boolean,
+    val isSoundEffectsEnabled: Boolean,
 )

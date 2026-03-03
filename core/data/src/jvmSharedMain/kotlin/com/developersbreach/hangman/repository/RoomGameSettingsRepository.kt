@@ -34,6 +34,14 @@ class RoomGameSettingsRepository(
         return getOrDefaultSettings().appLanguage.also { appLanguageState.value = it }
     }
 
+    override suspend fun isBackgroundMusicEnabled(): Boolean {
+        return getOrDefaultSettings().isBackgroundMusicEnabled
+    }
+
+    override suspend fun isSoundEffectsEnabled(): Boolean {
+        return getOrDefaultSettings().isSoundEffectsEnabled
+    }
+
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> {
         return themePaletteIdState.asStateFlow()
     }
@@ -50,6 +58,8 @@ class RoomGameSettingsRepository(
                 gameCategoryOrdinal = current.gameCategory.ordinal,
                 themePaletteId = current.themePaletteId.name,
                 appLanguageCode = current.appLanguage.languageTag,
+                isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
+                isSoundEffectsEnabled = current.isSoundEffectsEnabled,
             ),
         )
     }
@@ -62,6 +72,8 @@ class RoomGameSettingsRepository(
                 gameCategoryOrdinal = gameCategory.ordinal,
                 themePaletteId = current.themePaletteId.name,
                 appLanguageCode = current.appLanguage.languageTag,
+                isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
+                isSoundEffectsEnabled = current.isSoundEffectsEnabled,
             ),
         )
     }
@@ -74,6 +86,8 @@ class RoomGameSettingsRepository(
                 gameCategoryOrdinal = current.gameCategory.ordinal,
                 themePaletteId = themePaletteId.name,
                 appLanguageCode = current.appLanguage.languageTag,
+                isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
+                isSoundEffectsEnabled = current.isSoundEffectsEnabled,
             ),
         )
         themePaletteIdState.value = themePaletteId
@@ -87,9 +101,39 @@ class RoomGameSettingsRepository(
                 gameCategoryOrdinal = current.gameCategory.ordinal,
                 themePaletteId = current.themePaletteId.name,
                 appLanguageCode = appLanguage.languageTag,
+                isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
+                isSoundEffectsEnabled = current.isSoundEffectsEnabled,
             ),
         )
         appLanguageState.value = appLanguage
+    }
+
+    override suspend fun setBackgroundMusicEnabled(isEnabled: Boolean) {
+        val current = getOrDefaultSettings()
+        gameSettingsDao.upsertSettings(
+            GameSettingsEntity(
+                gameDifficulty = current.gameDifficulty.name,
+                gameCategoryOrdinal = current.gameCategory.ordinal,
+                themePaletteId = current.themePaletteId.name,
+                appLanguageCode = current.appLanguage.languageTag,
+                isBackgroundMusicEnabled = isEnabled,
+                isSoundEffectsEnabled = current.isSoundEffectsEnabled,
+            ),
+        )
+    }
+
+    override suspend fun setSoundEffectsEnabled(isEnabled: Boolean) {
+        val current = getOrDefaultSettings()
+        gameSettingsDao.upsertSettings(
+            GameSettingsEntity(
+                gameDifficulty = current.gameDifficulty.name,
+                gameCategoryOrdinal = current.gameCategory.ordinal,
+                themePaletteId = current.themePaletteId.name,
+                appLanguageCode = current.appLanguage.languageTag,
+                isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
+                isSoundEffectsEnabled = isEnabled,
+            ),
+        )
     }
 
     private suspend fun getOrDefaultSettings(): PersistedGameSettings {
@@ -99,6 +143,8 @@ class RoomGameSettingsRepository(
                 gameCategory = GameCategory.COUNTRIES,
                 themePaletteId = ThemePaletteId.INSANE_RED,
                 appLanguage = AppLanguage.default,
+                isBackgroundMusicEnabled = true,
+                isSoundEffectsEnabled = true,
             )
 
         val difficulty = runCatching { GameDifficulty.valueOf(settings.gameDifficulty) }
@@ -114,6 +160,8 @@ class RoomGameSettingsRepository(
                 .ifBlank { ThemePaletteId.INSANE_RED.name }
                 .toThemePaletteId(),
             appLanguage = settings.appLanguageCode.toAppLanguage(),
+            isBackgroundMusicEnabled = settings.isBackgroundMusicEnabled,
+            isSoundEffectsEnabled = settings.isSoundEffectsEnabled,
         )
     }
 }

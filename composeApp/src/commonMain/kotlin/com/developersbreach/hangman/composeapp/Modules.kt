@@ -30,7 +30,7 @@ private val viewModelModule = module {
         OnBoardingViewModel(get(), get(), get(), get())
     }
     viewModel {
-        SettingsViewModel(get())
+        SettingsViewModel(get(), get())
     }
     viewModel {
         GameViewModel(get(), get(), get(), get(), get())

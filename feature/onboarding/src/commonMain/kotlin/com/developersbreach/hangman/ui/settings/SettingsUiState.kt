@@ -8,20 +8,27 @@ import kotlin.math.abs
 import org.jetbrains.compose.resources.StringResource
 
 data class SettingsUiState(
-    val availableCategories: List<GameCategory> = categoryOptions,
+    val availableCategories: List<GameCategory> = GameCategory.entries,
     val gameDifficulty: GameDifficulty = GameDifficulty.EASY,
     val gameDifficultyLabelRes: StringResource = GameDifficulty.EASY.labelRes(),
     val gameCategory: GameCategory = GameCategory.COUNTRIES,
     val selectedLanguage: AppLanguage = AppLanguage.default,
     val availableLanguages: List<AppLanguage> = AppLanguage.entries,
     val themePaletteId: ThemePaletteId = ThemePaletteId.INSANE_RED,
-    val isPaletteMenuExpanded: Boolean = false,
-    val isDifficultyDialogOpen: Boolean = false,
-    val isCategoryDialogOpen: Boolean = false,
-    val isLanguageDialogOpen: Boolean = false,
+    val isBackgroundMusicEnabled: Boolean = true,
+    val isSoundEffectsEnabled: Boolean = true,
     val pendingDifficulty: GameDifficulty = GameDifficulty.EASY,
     val pendingDifficultySliderPosition: Float = 1f,
+    val selectedSettingsSection: SettingsSection = SettingsSection.DIFFICULTY,
 )
+
+enum class SettingsSection {
+    DIFFICULTY,
+    CATEGORY,
+    LANGUAGE,
+    THEME,
+    AUDIO,
+}
 
 internal fun GameDifficulty.toSliderPosition(): Float {
     return DIFFICULTY_TO_SLIDER_VALUE[this]

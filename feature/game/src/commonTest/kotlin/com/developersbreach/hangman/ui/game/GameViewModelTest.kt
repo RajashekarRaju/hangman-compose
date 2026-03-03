@@ -346,16 +346,38 @@ class GameViewModelTest {
         assertEquals(firstUnlockAt, firstBloodAfterSecondGame.unlockedAtEpochMillis)
     }
 
+    @Test
+    fun `sound effects are not played when disabled in settings`() = runTest(dispatcher) {
+        val soundPlayer = FakeSoundEffectPlayer()
+        val viewModel = createViewModel(
+            difficulty = GameDifficulty.EASY,
+            soundEffectsEnabled = false,
+            soundPlayer = soundPlayer,
+        )
+        advanceUntilIdle()
+
+        val firstGuess = viewModel.uiState.value.alphabetsList.first().alphabetId
+        viewModel.onEvent(GameEvent.AlphabetClicked(firstGuess))
+        runCurrent()
+
+        assertTrue(soundPlayer.playedEffects.isEmpty())
+    }
+
     private fun createViewModel(
         difficulty: GameDifficulty = GameDifficulty.EASY,
         category: GameCategory = GameCategory.COUNTRIES,
+        soundEffectsEnabled: Boolean = true,
         sessionRepository: FakeGameSessionRepository = FakeGameSessionRepository(),
         achievementsRepository: FakeAchievementsRepository = FakeAchievementsRepository(),
         soundPlayer: FakeSoundEffectPlayer = FakeSoundEffectPlayer(),
         notificationCoordinator: AchievementNotificationCoordinator = FakeAchievementNotificationCoordinator(),
     ): GameViewModel {
         return GameViewModel(
-            settingsRepository = FakeGameSettingsRepository(difficulty, category),
+            settingsRepository = FakeGameSettingsRepository(
+                difficulty = difficulty,
+                category = category,
+                soundEffectsEnabled = soundEffectsEnabled,
+            ),
             sessionRepository = sessionRepository,
             achievementsRepository = achievementsRepository,
             soundEffectPlayer = soundPlayer,
@@ -367,6 +389,7 @@ class GameViewModelTest {
 private class FakeGameSettingsRepository(
     private var difficulty: GameDifficulty,
     private var category: GameCategory,
+    private var soundEffectsEnabled: Boolean,
 ) : GameSettingsRepository {
     private val themePaletteState = MutableStateFlow(ThemePaletteId.INSANE_RED)
     private val languageState = MutableStateFlow(AppLanguage.default)
@@ -378,6 +401,10 @@ private class FakeGameSettingsRepository(
     override suspend fun getThemePaletteId(): ThemePaletteId = ThemePaletteId.INSANE_RED
 
     override suspend fun getAppLanguage(): AppLanguage = AppLanguage.default
+
+    override suspend fun isBackgroundMusicEnabled(): Boolean = true
+
+    override suspend fun isSoundEffectsEnabled(): Boolean = soundEffectsEnabled
 
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themePaletteState
 
@@ -397,6 +424,12 @@ private class FakeGameSettingsRepository(
 
     override suspend fun setAppLanguage(appLanguage: AppLanguage) {
         languageState.value = appLanguage
+    }
+
+    override suspend fun setBackgroundMusicEnabled(isEnabled: Boolean) = Unit
+
+    override suspend fun setSoundEffectsEnabled(isEnabled: Boolean) {
+        soundEffectsEnabled = isEnabled
     }
 }
 

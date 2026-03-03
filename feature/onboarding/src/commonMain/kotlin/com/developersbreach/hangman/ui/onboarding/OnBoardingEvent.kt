@@ -9,5 +9,4 @@ sealed interface OnBoardingEvent {
     data object OpenInstructionsDialog : OnBoardingEvent
     data object DismissInstructionsDialog : OnBoardingEvent
     data object ReportIssueClicked : OnBoardingEvent
-    data object ToggleBackgroundMusic : OnBoardingEvent
 }

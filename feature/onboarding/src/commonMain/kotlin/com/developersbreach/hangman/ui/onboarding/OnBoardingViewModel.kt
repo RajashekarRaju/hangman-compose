@@ -33,7 +33,6 @@ class OnBoardingViewModel(
         hydrateFromPreferences()
         observeHighestScore()
         observeUnreadAchievementsCount()
-        playBackgroundMusic()
     }
 
     fun onEvent(event: OnBoardingEvent) {
@@ -70,14 +69,6 @@ class OnBoardingViewModel(
 
             OnBoardingEvent.ReportIssueClicked -> {
                 emitEffect(OnBoardingEffect.OpenIssueTracker(ISSUES_URL))
-            }
-
-            OnBoardingEvent.ToggleBackgroundMusic -> {
-                if (_uiState.value.isBackgroundMusicPlaying) {
-                    stopBackgroundMusic()
-                } else {
-                    playBackgroundMusic()
-                }
             }
         }
     }
@@ -116,28 +107,22 @@ class OnBoardingViewModel(
         viewModelScope.launch {
             val difficulty = settingsRepository.getGameDifficulty()
             val category = settingsRepository.getGameCategory()
+            val isBackgroundMusicEnabled = settingsRepository.isBackgroundMusicEnabled()
+            when {
+                isBackgroundMusicEnabled -> audioController.playLoop()
+                else -> audioController.stop()
+            }
             _uiState.update { current ->
                 current.copy(
                     gameDifficultyLabelRes = difficulty.labelRes(),
                     gameCategoryLabelRes = category.labelRes(),
-                    isBackgroundMusicPlaying = audioController.isPlaying(),
                 )
             }
         }
     }
 
-    private fun playBackgroundMusic() {
-        audioController.playLoop()
-        _uiState.update { current ->
-            current.copy(isBackgroundMusicPlaying = true)
-        }
-    }
-
     private fun stopBackgroundMusic() {
         audioController.stop()
-        _uiState.update { current ->
-            current.copy(isBackgroundMusicPlaying = false)
-        }
     }
 
     override fun onCleared() {
