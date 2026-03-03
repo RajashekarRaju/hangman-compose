@@ -13,15 +13,15 @@ import com.developersbreach.hangman.ui.guide.GameGuideScreen
 import com.developersbreach.hangman.ui.game.GameViewModel
 import com.developersbreach.hangman.ui.history.HistoryScreen
 import com.developersbreach.hangman.ui.history.HistoryViewModel
-import com.developersbreach.hangman.ui.onboarding.OnBoardingScreen
-import com.developersbreach.hangman.ui.onboarding.OnBoardingViewModel
+import com.developersbreach.hangman.ui.mainmenu.MainMenuScreen
+import com.developersbreach.hangman.ui.mainmenu.MainMenuViewModel
 import com.developersbreach.hangman.ui.settings.SettingsScreen
 import com.developersbreach.hangman.ui.settings.SettingsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AppNavigation(
-    startDestination: Destination = OnBoardingRoute,
+    startDestination: Destination = MainMenuRoute,
     closeApplication: () -> Unit,
 ) {
     val navController = rememberNavController()
@@ -40,9 +40,9 @@ fun AppNavigation(
         navController = navController,
         startDestination = resolvedStartDestination
     ) {
-        composable<OnBoardingRoute> {
-            val viewModel = koinViewModel<OnBoardingViewModel>()
-            OnBoardingScreen(
+        composable<MainMenuRoute> {
+            val viewModel = koinViewModel<MainMenuViewModel>()
+            MainMenuScreen(
                 navigateToGameScreen = { navController.navigateToDestination(GameRoute) },
                 navigateToSettingsScreen = { navController.navigateToDestination(SettingsRoute) },
                 navigateToHistoryScreen = { navController.navigateToDestination(HistoryRoute) },
@@ -58,9 +58,9 @@ fun AppNavigation(
             SettingsScreen(
                 navigateUp = {
                     if (navController.navigateUp()) {
-                        updateUrlForDestination(OnBoardingRoute)
+                        updateUrlForDestination(MainMenuRoute)
                     } else {
-                        navController.navigateToDestination(OnBoardingRoute)
+                        navController.navigateToDestination(MainMenuRoute)
                     }
                 },
                 viewModel = viewModel,

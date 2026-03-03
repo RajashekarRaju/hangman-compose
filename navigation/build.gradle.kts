@@ -10,7 +10,8 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":logging"))
             implementation(project(":core:designsystem"))
-            implementation(project(":feature:onboarding"))
+            implementation(project(":feature:mainmenu"))
+            implementation(project(":feature:settings"))
             implementation(project(":feature:game"))
             implementation(project(":feature:history"))
             implementation(project(":feature:achievements"))
