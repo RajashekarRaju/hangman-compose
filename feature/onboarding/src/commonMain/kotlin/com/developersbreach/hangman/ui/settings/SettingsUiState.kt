@@ -3,6 +3,14 @@ package com.developersbreach.hangman.ui.settings
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.repository.AppLanguage
+import com.developersbreach.hangman.repository.CursorStyle
+import com.developersbreach.hangman.feature.onboarding.generated.resources.Res
+import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_category
+import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_difficulty
+import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_language
+import com.developersbreach.hangman.feature.onboarding.generated.resources.settings_button_audio
+import com.developersbreach.hangman.feature.onboarding.generated.resources.settings_button_cursor
+import com.developersbreach.hangman.feature.onboarding.generated.resources.settings_button_theme_palette
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import kotlin.math.abs
 import org.jetbrains.compose.resources.StringResource
@@ -17,17 +25,42 @@ data class SettingsUiState(
     val themePaletteId: ThemePaletteId = ThemePaletteId.INSANE_RED,
     val isBackgroundMusicEnabled: Boolean = true,
     val isSoundEffectsEnabled: Boolean = true,
+    val selectedCursorStyle: CursorStyle = CursorStyle.default,
+    val availableCursorStyles: List<CursorStyle> = CursorStyle.entries,
     val pendingDifficulty: GameDifficulty = GameDifficulty.EASY,
     val pendingDifficultySliderPosition: Float = 1f,
-    val selectedSettingsSection: SettingsSection = SettingsSection.DIFFICULTY,
+    val visibleSettingsSections: List<SettingsSection> = SettingsSection.all,
+    val selectedSettingsSection: SettingsSection = SettingsSection.Difficulty,
 )
 
-enum class SettingsSection {
-    DIFFICULTY,
-    CATEGORY,
-    LANGUAGE,
-    THEME,
-    AUDIO,
+sealed class SettingsSection(
+    val labelRes: StringResource,
+    private val requiresCursorSupport: Boolean = false,
+) {
+    data object Difficulty : SettingsSection(Res.string.onboarding_button_difficulty)
+    data object Category : SettingsSection(Res.string.onboarding_button_category)
+    data object Language : SettingsSection(Res.string.onboarding_button_language)
+    data object Theme : SettingsSection(Res.string.settings_button_theme_palette)
+    data object Audio : SettingsSection(Res.string.settings_button_audio)
+    data object Cursor : SettingsSection(
+        labelRes = Res.string.settings_button_cursor,
+        requiresCursorSupport = true,
+    )
+
+    fun isVisible(cursorSettingsSupported: Boolean): Boolean {
+        return !requiresCursorSupport || cursorSettingsSupported
+    }
+
+    companion object {
+        val all: List<SettingsSection> = listOf(
+            Difficulty,
+            Category,
+            Language,
+            Theme,
+            Audio,
+            Cursor,
+        )
+    }
 }
 
 internal fun GameDifficulty.toSliderPosition(): Float {

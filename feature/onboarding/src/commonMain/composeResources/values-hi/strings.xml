@@ -16,10 +16,17 @@
     <string name="settings_title">सेटिंग्स</string>
     <string name="settings_button_theme_palette">थीम पैलेट</string>
     <string name="settings_button_audio">ऑडियो</string>
+    <string name="settings_button_cursor">कर्सर</string>
     <string name="settings_audio_background_music">बैकग्राउंड म्यूज़िक</string>
     <string name="settings_audio_sound_effects">साउंड इफेक्ट्स</string>
     <string name="settings_audio_on">चालू</string>
     <string name="settings_audio_off">बंद</string>
+    <string name="settings_cursor_default">डिफ़ॉल्ट</string>
+    <string name="settings_cursor_skull">स्कल</string>
+    <string name="settings_cursor_demon">डेविल</string>
+    <string name="settings_cursor_hand">हाथ</string>
+    <string name="settings_cursor_hand_bones">हाथ हड्डियां</string>
+    <string name="settings_cursor_bone">हड्डी</string>
 
     <string name="onboarding_game_tagline">सावधान रहें। अक्षर आपको हरा सकते हैं</string>
     <string name="onboarding_highest_score_header">सर्वाधिक स्कोर - %1$d</string>

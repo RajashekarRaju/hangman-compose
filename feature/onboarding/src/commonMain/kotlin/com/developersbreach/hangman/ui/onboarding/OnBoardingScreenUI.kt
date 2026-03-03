@@ -23,10 +23,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.developersbreach.hangman.feature.common.ui.generated.resources.Res as CommonUiRes
+import com.developersbreach.hangman.feature.common.ui.generated.resources.cursor_demon
+import com.developersbreach.hangman.feature.common.ui.generated.resources.cursor_skull
 import com.developersbreach.hangman.core.designsystem.generated.resources.Res as DesignRes
 import com.developersbreach.hangman.core.designsystem.generated.resources.game_background
 import com.developersbreach.hangman.feature.onboarding.generated.resources.Res
-import com.developersbreach.hangman.feature.onboarding.generated.resources.demon
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_achievements
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_exit
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_game_guide
@@ -41,7 +43,6 @@ import com.developersbreach.hangman.feature.onboarding.generated.resources.onboa
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_game_tagline
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_highest_score_header
 import com.developersbreach.hangman.feature.onboarding.generated.resources.rope_with_title
-import com.developersbreach.hangman.feature.onboarding.generated.resources.skull
 import com.developersbreach.hangman.ui.common.HangmanInstructionsDialog
 import com.developersbreach.hangman.ui.components.AnimatedEnter
 import com.developersbreach.hangman.ui.components.BodySmallText
@@ -197,7 +198,7 @@ private fun PlayGameButton(onClick: () -> Unit) {
         creepinessThreshold = 0.28f,
         icon = {
             HangmanIcon(
-                painter = painterResource(Res.drawable.skull),
+                painter = painterResource(CommonUiRes.drawable.cursor_skull),
                 contentDescription = stringResource(Res.string.onboarding_cd_play_game_button),
                 tint = HangmanTheme.colorScheme.primary,
                 modifier = Modifier
@@ -218,7 +219,7 @@ private fun ExitGameButton(onClick: () -> Unit) {
         creepinessThreshold = 0.28f,
         icon = {
             HangmanIcon(
-                painter = painterResource(Res.drawable.demon),
+                painter = painterResource(CommonUiRes.drawable.cursor_demon),
                 contentDescription = stringResource(Res.string.onboarding_cd_exit_game),
                 tint = HangmanTheme.colorScheme.primary,
                 modifier = Modifier

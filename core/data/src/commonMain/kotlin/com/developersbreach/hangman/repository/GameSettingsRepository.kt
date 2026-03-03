@@ -19,9 +19,13 @@ interface GameSettingsRepository {
 
     suspend fun isSoundEffectsEnabled(): Boolean
 
+    suspend fun getCursorStyle(): CursorStyle
+
     fun observeThemePaletteId(): StateFlow<ThemePaletteId>
 
     fun observeAppLanguage(): StateFlow<AppLanguage>
+
+    fun observeCursorStyle(): StateFlow<CursorStyle>
 
     suspend fun setGameDifficulty(gameDifficulty: GameDifficulty)
 
@@ -34,4 +38,6 @@ interface GameSettingsRepository {
     suspend fun setBackgroundMusicEnabled(isEnabled: Boolean)
 
     suspend fun setSoundEffectsEnabled(isEnabled: Boolean)
+
+    suspend fun setCursorStyle(cursorStyle: CursorStyle)
 }

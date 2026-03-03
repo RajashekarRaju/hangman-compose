@@ -32,14 +32,15 @@ fun initKoinIfNeeded() {
 fun HangmanRoot(closeApplication: () -> Unit) {
     val viewModel = koinViewModel<AppInitializerViewModel>()
     val appState by viewModel.appState.collectAsState()
-    val skullCursorEnabled = isCustomSkullCursorSupported()
+    val customCursorEnabled = isCustomCursorSupported(appState.cursorStyle)
 
     HangmanTheme(
         palette = ThemePalettes.byId(appState.themePaletteId)
     ) {
         key(appState.appLanguage) {
             ThemedSkullCursorContainer(
-                enabled = skullCursorEnabled
+                enabled = customCursorEnabled,
+                cursorStyle = appState.cursorStyle,
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     AppNavigation(closeApplication = closeApplication)

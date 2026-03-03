@@ -11,4 +11,5 @@ data class PersistedGameSettings(
     val appLanguage: AppLanguage,
     val isBackgroundMusicEnabled: Boolean,
     val isSoundEffectsEnabled: Boolean,
+    val cursorStyle: CursorStyle,
 )

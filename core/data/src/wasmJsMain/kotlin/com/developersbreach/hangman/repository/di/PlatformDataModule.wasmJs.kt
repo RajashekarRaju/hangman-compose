@@ -9,6 +9,7 @@ import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer
 import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.AppLanguage
+import com.developersbreach.hangman.repository.CursorStyle
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
@@ -108,6 +109,7 @@ private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
     private var settings: StoredSettings = loadSettings()
     private val themePaletteIdState = MutableStateFlow(settings.themePaletteId.toThemePaletteId())
     private val appLanguageState = MutableStateFlow(settings.appLanguageCode.toAppLanguage())
+    private val cursorStyleState = MutableStateFlow(CursorStyle.fromStorage(settings.cursorStyle))
 
     private fun loadSettings(): StoredSettings {
         val raw = window.localStorage.getItem(SETTINGS_KEY) ?: return StoredSettings()
@@ -134,9 +136,15 @@ private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
 
     override suspend fun isSoundEffectsEnabled(): Boolean = settings.isSoundEffectsEnabled
 
+    override suspend fun getCursorStyle(): CursorStyle {
+        return CursorStyle.fromStorage(settings.cursorStyle).also { cursorStyleState.value = it }
+    }
+
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themePaletteIdState.asStateFlow()
 
     override fun observeAppLanguage(): StateFlow<AppLanguage> = appLanguageState.asStateFlow()
+
+    override fun observeCursorStyle(): StateFlow<CursorStyle> = cursorStyleState.asStateFlow()
 
     override suspend fun setGameDifficulty(gameDifficulty: GameDifficulty) {
         settings = settings.copy(gameDifficulty = gameDifficulty.name)
@@ -168,6 +176,12 @@ private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
     override suspend fun setSoundEffectsEnabled(isEnabled: Boolean) {
         settings = settings.copy(isSoundEffectsEnabled = isEnabled)
         persist()
+    }
+
+    override suspend fun setCursorStyle(cursorStyle: CursorStyle) {
+        settings = settings.copy(cursorStyle = cursorStyle.name)
+        persist()
+        cursorStyleState.value = cursorStyle
     }
 }
 

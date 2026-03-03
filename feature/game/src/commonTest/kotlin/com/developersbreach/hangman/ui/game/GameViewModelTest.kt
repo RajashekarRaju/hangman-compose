@@ -12,6 +12,7 @@ import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer
 import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.AppLanguage
+import com.developersbreach.hangman.repository.CursorStyle
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
@@ -393,6 +394,7 @@ private class FakeGameSettingsRepository(
 ) : GameSettingsRepository {
     private val themePaletteState = MutableStateFlow(ThemePaletteId.INSANE_RED)
     private val languageState = MutableStateFlow(AppLanguage.default)
+    private val cursorStyleState = MutableStateFlow(CursorStyle.default)
 
     override suspend fun getGameDifficulty(): GameDifficulty = difficulty
 
@@ -406,9 +408,13 @@ private class FakeGameSettingsRepository(
 
     override suspend fun isSoundEffectsEnabled(): Boolean = soundEffectsEnabled
 
+    override suspend fun getCursorStyle(): CursorStyle = cursorStyleState.value
+
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themePaletteState
 
     override fun observeAppLanguage(): StateFlow<AppLanguage> = languageState
+
+    override fun observeCursorStyle(): StateFlow<CursorStyle> = cursorStyleState
 
     override suspend fun setGameDifficulty(gameDifficulty: GameDifficulty) {
         difficulty = gameDifficulty
@@ -430,6 +436,10 @@ private class FakeGameSettingsRepository(
 
     override suspend fun setSoundEffectsEnabled(isEnabled: Boolean) {
         soundEffectsEnabled = isEnabled
+    }
+
+    override suspend fun setCursorStyle(cursorStyle: CursorStyle) {
+        cursorStyleState.value = cursorStyle
     }
 }
 

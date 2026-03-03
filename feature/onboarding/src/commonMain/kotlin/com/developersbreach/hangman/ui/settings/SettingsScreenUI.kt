@@ -35,11 +35,6 @@ import androidx.compose.ui.unit.dp
 import com.developersbreach.hangman.core.designsystem.generated.resources.Res as DesignRes
 import com.developersbreach.hangman.core.designsystem.generated.resources.game_background
 import com.developersbreach.hangman.feature.onboarding.generated.resources.Res
-import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_category
-import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_difficulty
-import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_language
-import com.developersbreach.hangman.feature.onboarding.generated.resources.settings_button_audio
-import com.developersbreach.hangman.feature.onboarding.generated.resources.settings_button_theme_palette
 import com.developersbreach.hangman.feature.onboarding.generated.resources.settings_title
 import com.developersbreach.hangman.ui.settings.components.SettingsInlineAudioSection
 import com.developersbreach.hangman.ui.components.HangmanIcon
@@ -48,6 +43,7 @@ import com.developersbreach.hangman.ui.components.LabelLargeText
 import com.developersbreach.hangman.ui.components.TitleMediumText
 import com.developersbreach.hangman.ui.components.creepyOutline
 import com.developersbreach.hangman.ui.settings.components.SettingsInlineCategorySection
+import com.developersbreach.hangman.ui.settings.components.SettingsInlineCursorSection
 import com.developersbreach.hangman.ui.settings.components.SettingsInlineDifficultySection
 import com.developersbreach.hangman.ui.settings.components.SettingsInlineLanguageSection
 import com.developersbreach.hangman.ui.settings.components.SettingsInlineThemeSection
@@ -69,11 +65,15 @@ fun SettingsUiState.SettingsScreenUI(
         when {
             isWideLayout -> SettingsVerticalSplitLayout(
                 uiState = this@SettingsScreenUI,
+                visibleSections = visibleSettingsSections,
+                selectedSection = selectedSettingsSection,
                 onEvent = onEvent,
             )
 
             else -> SettingsHorizontalSplitLayout(
                 uiState = this@SettingsScreenUI,
+                visibleSections = visibleSettingsSections,
+                selectedSection = selectedSettingsSection,
                 onEvent = onEvent,
             )
         }
@@ -83,13 +83,16 @@ fun SettingsUiState.SettingsScreenUI(
 @Composable
 private fun SettingsVerticalSplitLayout(
     uiState: SettingsUiState,
+    visibleSections: List<SettingsSection>,
+    selectedSection: SettingsSection,
     onEvent: (SettingsEvent) -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxSize()
     ) {
         SettingsNavigationPane(
-            uiState = uiState,
+            visibleSections = visibleSections,
+            selectedSection = selectedSection,
             onEvent = onEvent,
             modifier = Modifier
                 .weight(3f)
@@ -117,6 +120,7 @@ private fun SettingsVerticalSplitLayout(
         ) {
             SettingsDetailPane(
                 uiState = uiState,
+                selectedSection = selectedSection,
                 onEvent = onEvent,
                 centerContent = false,
                 contentWidth = 460.dp,
@@ -128,13 +132,16 @@ private fun SettingsVerticalSplitLayout(
 @Composable
 private fun SettingsHorizontalSplitLayout(
     uiState: SettingsUiState,
+    visibleSections: List<SettingsSection>,
+    selectedSection: SettingsSection,
     onEvent: (SettingsEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         SettingsNavigationPane(
-            uiState = uiState,
+            visibleSections = visibleSections,
+            selectedSection = selectedSection,
             onEvent = onEvent,
             modifier = Modifier
                 .weight(1f)
@@ -163,6 +170,7 @@ private fun SettingsHorizontalSplitLayout(
         ) {
             SettingsDetailPane(
                 uiState = uiState,
+                selectedSection = selectedSection,
                 onEvent = onEvent,
                 centerContent = true,
                 contentWidth = 340.dp,
@@ -173,7 +181,8 @@ private fun SettingsHorizontalSplitLayout(
 
 @Composable
 private fun SettingsNavigationPane(
-    uiState: SettingsUiState,
+    visibleSections: List<SettingsSection>,
+    selectedSection: SettingsSection,
     onEvent: (SettingsEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -202,47 +211,18 @@ private fun SettingsNavigationPane(
                     .padding(top = 14.dp, bottom = 12.dp),
             )
 
-            SettingsNavTextItem(
-                text = stringResource(Res.string.onboarding_button_difficulty),
-                isSelected = uiState.selectedSettingsSection == SettingsSection.DIFFICULTY,
-                onClick = { onEvent(SettingsEvent.SettingsSectionSelected(SettingsSection.DIFFICULTY)) },
-            )
-            SettingsSectionDivider()
-
-            SettingsNavTextItem(
-                text = stringResource(Res.string.onboarding_button_category),
-                isSelected = uiState.selectedSettingsSection == SettingsSection.CATEGORY,
-                onClick = {
-                    onEvent(SettingsEvent.SettingsSectionSelected(SettingsSection.CATEGORY))
-                },
-            )
-            SettingsSectionDivider()
-
-            SettingsNavTextItem(
-                text = stringResource(Res.string.onboarding_button_language),
-                isSelected = uiState.selectedSettingsSection == SettingsSection.LANGUAGE,
-                onClick = {
-                    onEvent(SettingsEvent.SettingsSectionSelected(SettingsSection.LANGUAGE))
-                },
-            )
-            SettingsSectionDivider()
-
-            SettingsNavTextItem(
-                text = stringResource(Res.string.settings_button_theme_palette),
-                isSelected = uiState.selectedSettingsSection == SettingsSection.THEME,
-                onClick = {
-                    onEvent(SettingsEvent.SettingsSectionSelected(SettingsSection.THEME))
-                },
-            )
-            SettingsSectionDivider()
-
-            SettingsNavTextItem(
-                text = stringResource(Res.string.settings_button_audio),
-                isSelected = uiState.selectedSettingsSection == SettingsSection.AUDIO,
-                onClick = {
-                    onEvent(SettingsEvent.SettingsSectionSelected(SettingsSection.AUDIO))
-                },
-            )
+            visibleSections.forEachIndexed { index, section ->
+                SettingsNavTextItem(
+                    text = stringResource(section.labelRes),
+                    isSelected = selectedSection == section,
+                    onClick = {
+                        onEvent(SettingsEvent.SettingsSectionSelected(section))
+                    },
+                )
+                if (index != visibleSections.lastIndex) {
+                    SettingsSectionDivider()
+                }
+            }
         }
     }
 }
@@ -250,6 +230,7 @@ private fun SettingsNavigationPane(
 @Composable
 private fun SettingsDetailPane(
     uiState: SettingsUiState,
+    selectedSection: SettingsSection,
     onEvent: (SettingsEvent) -> Unit,
     centerContent: Boolean,
     contentWidth: Dp,
@@ -262,12 +243,12 @@ private fun SettingsDetailPane(
         contentAlignment = if (centerContent) Alignment.Center else Alignment.TopStart,
     ) {
         AnimatedContent(
-            targetState = uiState.selectedSettingsSection,
+            targetState = selectedSection,
             transitionSpec = { fadeIn() togetherWith fadeOut() },
             label = "settings_detail_content",
         ) { section ->
             when (section) {
-                SettingsSection.DIFFICULTY -> {
+                SettingsSection.Difficulty -> {
                     SettingsInlineDifficultySection(
                         pendingDifficultySliderPosition = uiState.pendingDifficultySliderPosition,
                         pendingDifficultyLabelRes = uiState.pendingDifficulty.labelRes(),
@@ -281,7 +262,7 @@ private fun SettingsDetailPane(
                     )
                 }
 
-                SettingsSection.CATEGORY -> {
+                SettingsSection.Category -> {
                     SettingsInlineCategorySection(
                         categories = uiState.availableCategories,
                         selectedCategory = uiState.gameCategory,
@@ -290,7 +271,7 @@ private fun SettingsDetailPane(
                     )
                 }
 
-                SettingsSection.LANGUAGE -> {
+                SettingsSection.Language -> {
                     SettingsInlineLanguageSection(
                         languages = uiState.availableLanguages,
                         selectedLanguage = uiState.selectedLanguage,
@@ -299,7 +280,7 @@ private fun SettingsDetailPane(
                     )
                 }
 
-                SettingsSection.THEME -> {
+                SettingsSection.Theme -> {
                     SettingsInlineThemeSection(
                         selectedPaletteId = uiState.themePaletteId,
                         onPaletteChanged = { onEvent(SettingsEvent.ThemePaletteChanged(it)) },
@@ -307,7 +288,7 @@ private fun SettingsDetailPane(
                     )
                 }
 
-                SettingsSection.AUDIO -> {
+                SettingsSection.Audio -> {
                     SettingsInlineAudioSection(
                         isBackgroundMusicEnabled = uiState.isBackgroundMusicEnabled,
                         isSoundEffectsEnabled = uiState.isSoundEffectsEnabled,
@@ -316,6 +297,17 @@ private fun SettingsDetailPane(
                         },
                         onSoundEffectsChanged = {
                             onEvent(SettingsEvent.SoundEffectsToggled(it))
+                        },
+                        modifier = Modifier.width(contentWidth),
+                    )
+                }
+
+                SettingsSection.Cursor -> {
+                    SettingsInlineCursorSection(
+                        availableCursorStyles = uiState.availableCursorStyles,
+                        selectedCursorStyle = uiState.selectedCursorStyle,
+                        onCursorStyleChanged = {
+                            onEvent(SettingsEvent.CursorStyleChanged(it))
                         },
                         modifier = Modifier.width(contentWidth),
                     )

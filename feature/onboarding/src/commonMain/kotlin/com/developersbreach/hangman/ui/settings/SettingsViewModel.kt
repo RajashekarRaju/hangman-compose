@@ -6,6 +6,7 @@ import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.repository.AppLanguage
+import com.developersbreach.hangman.repository.CursorStyle
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,7 +23,15 @@ class SettingsViewModel(
     private val backgroundAudioController: BackgroundAudioController,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(SettingsUiState())
+    private val visibleSettingsSections = SettingsSection.all.filter { section ->
+        section.isVisible(supportsCursorSettings())
+    }
+    private val _uiState = MutableStateFlow(
+        SettingsUiState(
+            visibleSettingsSections = visibleSettingsSections,
+            selectedSettingsSection = visibleSettingsSections.first(),
+        )
+    )
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
 
     private val _effects = MutableSharedFlow<SettingsEffect>()
@@ -32,13 +41,17 @@ class SettingsViewModel(
         hydrateFromPreferences()
         observeThemePalette()
         observeAppLanguage()
+        observeCursorStyle()
     }
 
     fun onEvent(event: SettingsEvent) {
         when (event) {
             SettingsEvent.NavigateUpClicked -> emitEffect(SettingsEffect.NavigateUp)
             is SettingsEvent.SettingsSectionSelected -> {
-                _uiState.update { current -> current.copy(selectedSettingsSection = event.section) }
+                val targetSection = event.section.takeIf { section ->
+                    section in visibleSettingsSections
+                } ?: visibleSettingsSections.first()
+                _uiState.update { current -> current.copy(selectedSettingsSection = targetSection) }
             }
 
             is SettingsEvent.DifficultySliderPositionChanged -> {
@@ -57,6 +70,7 @@ class SettingsViewModel(
             is SettingsEvent.ThemePaletteChanged -> updateThemePalette(event.paletteId)
             is SettingsEvent.BackgroundMusicToggled -> updateBackgroundMusic(event.isEnabled)
             is SettingsEvent.SoundEffectsToggled -> updateSoundEffects(event.isEnabled)
+            is SettingsEvent.CursorStyleChanged -> updateCursorStyle(event.cursorStyle)
         }
     }
 
@@ -74,6 +88,7 @@ class SettingsViewModel(
             val appLanguage = settingsRepository.getAppLanguage()
             val isBackgroundMusicEnabled = settingsRepository.isBackgroundMusicEnabled()
             val isSoundEffectsEnabled = settingsRepository.isSoundEffectsEnabled()
+            val cursorStyle = settingsRepository.getCursorStyle()
             _uiState.update { current ->
                 current.copy(
                     gameDifficulty = difficulty,
@@ -83,6 +98,7 @@ class SettingsViewModel(
                     themePaletteId = themePaletteId,
                     isBackgroundMusicEnabled = isBackgroundMusicEnabled,
                     isSoundEffectsEnabled = isSoundEffectsEnabled,
+                    selectedCursorStyle = cursorStyle,
                     pendingDifficulty = difficulty,
                     pendingDifficultySliderPosition = difficulty.toSliderPosition(),
                 )
@@ -142,6 +158,13 @@ class SettingsViewModel(
         }
     }
 
+    private fun updateCursorStyle(cursorStyle: CursorStyle) {
+        _uiState.update { current -> current.copy(selectedCursorStyle = cursorStyle) }
+        viewModelScope.launch {
+            settingsRepository.setCursorStyle(cursorStyle)
+        }
+    }
+
     private fun observeThemePalette() {
         viewModelScope.launch {
             settingsRepository.observeThemePaletteId().collect { themePaletteId ->
@@ -154,6 +177,14 @@ class SettingsViewModel(
         viewModelScope.launch {
             settingsRepository.observeAppLanguage().collect { language ->
                 _uiState.update { current -> current.copy(selectedLanguage = language) }
+            }
+        }
+    }
+
+    private fun observeCursorStyle() {
+        viewModelScope.launch {
+            settingsRepository.observeCursorStyle().collect { cursorStyle ->
+                _uiState.update { current -> current.copy(selectedCursorStyle = cursorStyle) }
             }
         }
     }

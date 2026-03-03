@@ -16,10 +16,17 @@
     <string name="settings_title">Settings</string>
     <string name="settings_button_theme_palette">Theme Palette</string>
     <string name="settings_button_audio">Audio</string>
+    <string name="settings_button_cursor">Cursor</string>
     <string name="settings_audio_background_music">Background Music</string>
     <string name="settings_audio_sound_effects">Sound Effects</string>
     <string name="settings_audio_on">On</string>
     <string name="settings_audio_off">Off</string>
+    <string name="settings_cursor_default">Default</string>
+    <string name="settings_cursor_skull">Skull</string>
+    <string name="settings_cursor_demon">Devil</string>
+    <string name="settings_cursor_hand">Hand</string>
+    <string name="settings_cursor_hand_bones">Hand Bones</string>
+    <string name="settings_cursor_bone">Bone</string>
 
     <string name="onboarding_game_tagline">Be Aware. Letters Can Demise You</string>
     <string name="onboarding_highest_score_header">Highest Score - %1$d</string>

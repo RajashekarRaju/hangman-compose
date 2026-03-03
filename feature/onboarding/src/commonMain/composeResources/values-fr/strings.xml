@@ -16,10 +16,17 @@
     <string name="settings_title">Paramètres</string>
     <string name="settings_button_theme_palette">Palette de thème</string>
     <string name="settings_button_audio">Audio</string>
+    <string name="settings_button_cursor">Curseur</string>
     <string name="settings_audio_background_music">Musique de fond</string>
     <string name="settings_audio_sound_effects">Effets sonores</string>
     <string name="settings_audio_on">Activé</string>
     <string name="settings_audio_off">Désactivé</string>
+    <string name="settings_cursor_default">Par défaut</string>
+    <string name="settings_cursor_skull">Crâne</string>
+    <string name="settings_cursor_demon">Diable</string>
+    <string name="settings_cursor_hand">Main</string>
+    <string name="settings_cursor_hand_bones">Main Os</string>
+    <string name="settings_cursor_bone">Os</string>
 
     <string name="onboarding_game_tagline">Soyez prudent. Les lettres peuvent vous faire chuter</string>
     <string name="onboarding_highest_score_header">Meilleur score - %1$d</string>

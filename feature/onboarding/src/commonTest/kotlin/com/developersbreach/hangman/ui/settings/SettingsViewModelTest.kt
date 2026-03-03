@@ -2,7 +2,9 @@ package com.developersbreach.hangman.ui.settings
 
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
+import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.repository.AppLanguage
+import com.developersbreach.hangman.repository.CursorStyle
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +28,7 @@ import kotlin.test.assertEquals
 class SettingsViewModelTest {
 
     private val dispatcher = StandardTestDispatcher()
+    private val backgroundAudioController = FakeBackgroundAudioController()
 
     @BeforeTest
     fun setup() {
@@ -46,8 +49,9 @@ class SettingsViewModelTest {
             appLanguage = AppLanguage.HINDI,
             isBackgroundMusicEnabled = false,
             isSoundEffectsEnabled = false,
+            cursorStyle = CursorStyle.DEMON,
         )
-        val viewModel = SettingsViewModel(settingsRepo)
+        val viewModel = SettingsViewModel(settingsRepo, backgroundAudioController)
         advanceUntilIdle()
 
         with(viewModel.uiState.value) {
@@ -57,15 +61,16 @@ class SettingsViewModelTest {
             assertEquals(AppLanguage.HINDI, selectedLanguage)
             assertEquals(false, isBackgroundMusicEnabled)
             assertEquals(false, isSoundEffectsEnabled)
+            assertEquals(CursorStyle.DEMON, selectedCursorStyle)
             assertEquals(4f, pendingDifficultySliderPosition)
-            assertEquals(SettingsSection.DIFFICULTY, selectedSettingsSection)
+            assertEquals(SettingsSection.Difficulty, selectedSettingsSection)
         }
     }
 
     @Test
     fun `settings updates persist as expected`() = runTest(dispatcher) {
         val settingsRepo = FakeSettingsRepository()
-        val viewModel = SettingsViewModel(settingsRepo)
+        val viewModel = SettingsViewModel(settingsRepo, backgroundAudioController)
         advanceUntilIdle()
 
         viewModel.onEvent(SettingsEvent.DifficultySliderPositionChanged(4f))
@@ -78,6 +83,7 @@ class SettingsViewModelTest {
         viewModel.onEvent(SettingsEvent.ThemePaletteChanged(ThemePaletteId.EMERALD))
         viewModel.onEvent(SettingsEvent.BackgroundMusicToggled(false))
         viewModel.onEvent(SettingsEvent.SoundEffectsToggled(false))
+        viewModel.onEvent(SettingsEvent.CursorStyleChanged(CursorStyle.SKULL))
 
         advanceUntilIdle()
 
@@ -91,11 +97,12 @@ class SettingsViewModelTest {
         assertEquals(ThemePaletteId.EMERALD, settingsRepo.lastSetPalette)
         assertEquals(false, settingsRepo.lastSetBackgroundMusicEnabled)
         assertEquals(false, settingsRepo.lastSetSoundEffectsEnabled)
+        assertEquals(CursorStyle.SKULL, settingsRepo.lastSetCursorStyle)
     }
 
     @Test
     fun `navigate up emits effect`() = runTest(dispatcher) {
-        val viewModel = SettingsViewModel(FakeSettingsRepository())
+        val viewModel = SettingsViewModel(FakeSettingsRepository(), backgroundAudioController)
         advanceUntilIdle()
 
         val effect = async { viewModel.effects.first() }
@@ -107,12 +114,12 @@ class SettingsViewModelTest {
 
     @Test
     fun `section selected updates ui state`() = runTest(dispatcher) {
-        val viewModel = SettingsViewModel(FakeSettingsRepository())
+        val viewModel = SettingsViewModel(FakeSettingsRepository(), backgroundAudioController)
         advanceUntilIdle()
 
-        viewModel.onEvent(SettingsEvent.SettingsSectionSelected(SettingsSection.LANGUAGE))
+        viewModel.onEvent(SettingsEvent.SettingsSectionSelected(SettingsSection.Language))
 
-        assertEquals(SettingsSection.LANGUAGE, viewModel.uiState.value.selectedSettingsSection)
+        assertEquals(SettingsSection.Language, viewModel.uiState.value.selectedSettingsSection)
     }
 }
 
@@ -123,10 +130,12 @@ private class FakeSettingsRepository(
     private var appLanguage: AppLanguage = AppLanguage.default,
     private var isBackgroundMusicEnabled: Boolean = true,
     private var isSoundEffectsEnabled: Boolean = true,
+    private var cursorStyle: CursorStyle = CursorStyle.default,
 ) : GameSettingsRepository {
 
     private val themeState = MutableStateFlow(themePaletteId)
     private val languageState = MutableStateFlow(appLanguage)
+    private val cursorStyleState = MutableStateFlow(cursorStyle)
 
     var lastSetDifficulty: GameDifficulty? = null
     var lastSetCategory: GameCategory? = null
@@ -134,6 +143,7 @@ private class FakeSettingsRepository(
     var lastSetPalette: ThemePaletteId? = null
     var lastSetBackgroundMusicEnabled: Boolean? = null
     var lastSetSoundEffectsEnabled: Boolean? = null
+    var lastSetCursorStyle: CursorStyle? = null
 
     override suspend fun getGameDifficulty(): GameDifficulty = difficulty
 
@@ -147,9 +157,13 @@ private class FakeSettingsRepository(
 
     override suspend fun isSoundEffectsEnabled(): Boolean = isSoundEffectsEnabled
 
+    override suspend fun getCursorStyle(): CursorStyle = cursorStyle
+
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themeState
 
     override fun observeAppLanguage(): StateFlow<AppLanguage> = languageState
+
+    override fun observeCursorStyle(): StateFlow<CursorStyle> = cursorStyleState
 
     override suspend fun setGameDifficulty(gameDifficulty: GameDifficulty) {
         difficulty = gameDifficulty
@@ -182,4 +196,24 @@ private class FakeSettingsRepository(
         isSoundEffectsEnabled = isEnabled
         lastSetSoundEffectsEnabled = isEnabled
     }
+
+    override suspend fun setCursorStyle(cursorStyle: CursorStyle) {
+        this.cursorStyle = cursorStyle
+        cursorStyleState.value = cursorStyle
+        lastSetCursorStyle = cursorStyle
+    }
+}
+
+private class FakeBackgroundAudioController : BackgroundAudioController {
+    private var playing = false
+
+    override fun playLoop() {
+        playing = true
+    }
+
+    override fun stop() {
+        playing = false
+    }
+
+    override fun isPlaying(): Boolean = playing
 }
