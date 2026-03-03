@@ -69,7 +69,7 @@ internal fun AchievementItemUiState.AchievementItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             TitleMediumText(
-                text = title,
+                text = stringResource(titleRes),
                 color = HangmanTheme.colorScheme.onBackground,
                 modifier = Modifier.weight(1f),
             )
@@ -97,7 +97,7 @@ internal fun AchievementItemUiState.AchievementItem(
         }
 
         BodyMediumText(
-            text = description,
+            text = stringResource(descriptionRes),
             color = HangmanTheme.colorScheme.onSurface,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,

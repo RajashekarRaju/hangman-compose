@@ -61,12 +61,12 @@ internal fun AchievementDetailsDialog(
             Spacer(modifier = Modifier.height(16.dp))
 
             TitleMediumText(
-                text = details.title,
+                text = stringResource(details.titleRes),
                 color = HangmanTheme.colorScheme.primary,
             )
 
             BodyLargeText(
-                text = details.description,
+                text = stringResource(details.descriptionRes),
                 color = HangmanTheme.colorScheme.onSurface,
             )
 

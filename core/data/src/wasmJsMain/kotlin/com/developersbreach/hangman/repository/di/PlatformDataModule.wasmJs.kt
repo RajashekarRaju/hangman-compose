@@ -8,6 +8,7 @@ import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer
 import com.developersbreach.hangman.repository.AchievementsRepository
+import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
@@ -18,6 +19,7 @@ import com.developersbreach.hangman.repository.storage.StoredHistoryRecord
 import com.developersbreach.hangman.repository.storage.StoredAchievementProgress
 import com.developersbreach.hangman.repository.storage.StoredAchievementStatCounters
 import com.developersbreach.hangman.repository.storage.StoredSettings
+import com.developersbreach.hangman.repository.storage.toAppLanguage
 import com.developersbreach.hangman.repository.storage.toDomain
 import com.developersbreach.hangman.repository.storage.toStored
 import com.developersbreach.hangman.repository.storage.toGameCategory
@@ -105,6 +107,7 @@ private class WasmLocalStorageGameRepository : HistoryRepository, GameSessionRep
 private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
     private var settings: StoredSettings = loadSettings()
     private val themePaletteIdState = MutableStateFlow(settings.themePaletteId.toThemePaletteId())
+    private val appLanguageState = MutableStateFlow(settings.appLanguageCode.toAppLanguage())
 
     private fun loadSettings(): StoredSettings {
         val raw = window.localStorage.getItem(SETTINGS_KEY) ?: return StoredSettings()
@@ -123,7 +126,13 @@ private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
         return settings.themePaletteId.toThemePaletteId().also { themePaletteIdState.value = it }
     }
 
+    override suspend fun getAppLanguage(): AppLanguage {
+        return settings.appLanguageCode.toAppLanguage().also { appLanguageState.value = it }
+    }
+
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themePaletteIdState.asStateFlow()
+
+    override fun observeAppLanguage(): StateFlow<AppLanguage> = appLanguageState.asStateFlow()
 
     override suspend fun setGameDifficulty(gameDifficulty: GameDifficulty) {
         settings = settings.copy(gameDifficulty = gameDifficulty.name)
@@ -139,6 +148,12 @@ private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
         settings = settings.copy(themePaletteId = themePaletteId.name)
         persist()
         themePaletteIdState.value = themePaletteId
+    }
+
+    override suspend fun setAppLanguage(appLanguage: AppLanguage) {
+        settings = settings.copy(appLanguageCode = appLanguage.languageTag)
+        persist()
+        appLanguageState.value = appLanguage
     }
 }
 

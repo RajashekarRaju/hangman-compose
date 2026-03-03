@@ -1,0 +1,37 @@
+<resources>
+    <string name="game_cd_close_game">Cerrar juego</string>
+    <string name="game_cd_open_instructions">Abrir diálogo de instrucciones del juego</string>
+    <string name="game_cd_open_hints">Abrir diálogo de pistas</string>
+
+    <string name="game_current_level">Nivel %1$d/%2$d</string>
+    <string name="game_current_points">Puntos %1$d</string>
+    <string name="game_hint_counter">Quedan %1$d</string>
+    <string name="game_hint_cooldown">Recarga de pista</string>
+
+    <string name="game_exit_title">¿Salir del juego?</string>
+    <string name="game_exit_confirm">Salir</string>
+    <string name="game_exit_dismiss">Seguir jugando</string>
+
+    <string name="game_won_title">¡Has ganado!</string>
+    <string name="game_won_points">Puntos obtenidos: %1$d</string>
+    <string name="game_won_difficulty">Dificultad: %1$s</string>
+    <string name="game_lost_title">Has perdido</string>
+    <string name="game_lost_word">La palabra era: %1$s</string>
+    <string name="game_dialog_done">Listo</string>
+    <string name="game_hint_title">Elige una pista</string>
+    <string name="game_hint_status_value">: %1$s</string>
+    <string name="game_hint_reveal_letter">Revelar</string>
+    <string name="game_hint_eliminate_letters">Eliminar</string>
+    <string name="game_hint_unavailable_title">Pista no disponible</string>
+    <string name="game_hint_unavailable_no_hints">No quedan pistas para este nivel.</string>
+    <string name="game_hint_unavailable_no_letters">No quedan letras ocultas por revelar.</string>
+    <string name="game_hint_unavailable_no_elimination">No hay letras incorrectas para eliminar.</string>
+    <string name="game_hint_unavailable_game_over">Las pistas están desactivadas porque la partida terminó.</string>
+    <string name="game_achievement_banner_subtitle">Logro desbloqueado</string>
+    <string name="game_category_hint_single_word">Adivina %2$s de %1$d letras</string>
+    <string name="game_category_hint_multi_word">Adivina %2$s de %1$d letras (%3$d palabras)</string>
+    <string name="game_category_singular_country">país</string>
+    <string name="game_category_singular_language">idioma</string>
+    <string name="game_category_singular_company">empresa</string>
+    <string name="game_category_singular_animal">animal</string>
+</resources>

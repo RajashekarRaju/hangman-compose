@@ -39,6 +39,7 @@ import com.developersbreach.hangman.feature.onboarding.generated.resources.onboa
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_exit
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_achievements
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_history
+import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_language
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_play
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_report_issue
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_exit_game
@@ -110,6 +111,15 @@ fun OnBoardingUiState.OnBoardingScreenUI(
             )
         }
 
+        if (isLanguageDialogOpen) {
+            ChooseLanguageDialog(
+                languages = availableLanguages,
+                selectedLanguage = selectedLanguage,
+                onLanguageChanged = { onEvent(OnBoardingEvent.LanguageChanged(it)) },
+                onDismissRequest = { onEvent(OnBoardingEvent.DismissLanguageDialog) },
+            )
+        }
+
         if (isInstructionsDialogOpen) {
             HangmanInstructionsDialog(
                 difficultyValue = stringResource(gameDifficultyLabelRes),
@@ -165,6 +175,8 @@ private fun OnBoardingScreenContent(
         item { GameDifficultyButton(onEvent = onEvent) }
 
         item { GameCategoryButton(onEvent = onEvent) }
+
+        item { GameLanguageButton(onEvent = onEvent) }
 
         item {
             Spacer(modifier = Modifier.height(16.dp))
@@ -354,6 +366,16 @@ fun GameCategoryButton(
     OnBoardingActionButton(
         text = stringResource(Res.string.onboarding_button_category),
         onClick = { onEvent(OnBoardingEvent.OpenCategoryDialog) }
+    )
+}
+
+@Composable
+fun GameLanguageButton(
+    onEvent: (OnBoardingEvent) -> Unit,
+) {
+    OnBoardingActionButton(
+        text = stringResource(Res.string.onboarding_button_language),
+        onClick = { onEvent(OnBoardingEvent.OpenLanguageDialog) },
     )
 }
 

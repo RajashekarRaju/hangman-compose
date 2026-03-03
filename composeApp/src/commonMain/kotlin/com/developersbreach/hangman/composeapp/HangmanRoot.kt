@@ -3,6 +3,7 @@ package com.developersbreach.hangman.composeapp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -30,23 +31,25 @@ fun initKoinIfNeeded() {
 @Composable
 fun HangmanRoot(closeApplication: () -> Unit) {
     val viewModel = koinViewModel<AppInitializerViewModel>()
-    val uiState by viewModel.uiState.collectAsState()
+    val appState by viewModel.appState.collectAsState()
     val skullCursorEnabled = isCustomSkullCursorSupported()
 
     HangmanTheme(
-        palette = ThemePalettes.byId(uiState.themePaletteId)
+        palette = ThemePalettes.byId(appState.themePaletteId)
     ) {
-        ThemedSkullCursorContainer(
-            enabled = skullCursorEnabled
-        ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                AppNavigation(closeApplication = closeApplication)
-                AchievementUnlockBanner(
-                    state = uiState.achievementBannerState,
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(top = 12.dp),
-                )
+        key(appState.appLanguage) {
+            ThemedSkullCursorContainer(
+                enabled = skullCursorEnabled
+            ) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    AppNavigation(closeApplication = closeApplication)
+                    AchievementUnlockBanner(
+                        state = appState.achievementBannerState,
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = 12.dp),
+                    )
+                }
             }
         }
     }

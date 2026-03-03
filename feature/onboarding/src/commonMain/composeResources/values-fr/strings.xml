@@ -1,0 +1,25 @@
+<resources>
+    <string name="onboarding_button_play">Jouer</string>
+    <string name="onboarding_button_exit">Quitter</string>
+    <string name="onboarding_button_history">Historique</string>
+    <string name="onboarding_button_achievements">Succès</string>
+    <string name="onboarding_button_difficulty">Difficulté</string>
+    <string name="onboarding_button_category">Catégorie</string>
+    <string name="onboarding_button_language">Langue</string>
+    <string name="onboarding_button_report_issue">Signaler un problème</string>
+
+    <string name="onboarding_difficulty_dialog_title">Difficulté</string>
+    <string name="onboarding_category_dialog_title">Catégorie</string>
+    <string name="onboarding_language_dialog_title">Langue</string>
+
+    <string name="onboarding_game_tagline">Soyez prudent. Les lettres peuvent vous faire chuter</string>
+    <string name="onboarding_highest_score_header">Meilleur score - %1$d</string>
+
+    <string name="onboarding_cd_game_banner">Bannière du jeu Hangman</string>
+    <string name="onboarding_cd_play_game_button">Jouer</string>
+    <string name="onboarding_cd_exit_game">Quitter le jeu</string>
+    <string name="onboarding_cd_game_sound_play_pause">Lire ou mettre en pause le son de fond du jeu.</string>
+    <string name="onboarding_cd_image_screen_bg">Image d'arrière-plan de l'écran.</string>
+    <string name="onboarding_cd_open_instructions_dialog">Ouvrir la fenêtre d'instructions du jeu.</string>
+    <string name="onboarding_cd_report_issue">Ouvrir la page des issues du dépôt.</string>
+</resources>

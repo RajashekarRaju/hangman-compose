@@ -1,0 +1,116 @@
+<resources>
+    <string name="difficulty_easy">Fácil</string>
+    <string name="difficulty_medium">Media</string>
+    <string name="difficulty_hard">Difícil</string>
+    <string name="difficulty_very_hard">Muy difícil</string>
+
+    <string name="category_countries">Países</string>
+    <string name="category_languages">Idiomas</string>
+    <string name="category_companies">Empresas</string>
+    <string name="category_animals">Animales</string>
+    <string name="achievement_unlocked_subtitle">Logro desbloqueado</string>
+
+    <string name="instructions_dialog_title">Instrucciones</string>
+    <string name="instructions_dialog_subtitle">Adivina el nombre en la categoría %1$s.</string>
+    <string name="instructions_dialog_step_number">%1$d.</string>
+    <string name="instructions_label_difficulty">Dificultad: %1$s</string>
+    <string name="instructions_label_category">Categoría: %1$s</string>
+    <string name="instructions_dialog_body">
+        Una partida tiene 5 niveles. Solo ganas después de completar los 5 niveles.\n
+        Cada nivel tiene un temporizador de 60 segundos. Si se acaba el tiempo, la partida termina en derrota.\n
+        Comienzas cada nivel con 8 intentos. Los intentos se reinician al pasar al siguiente nivel.\n
+        Las letras incorrectas reducen los intentos en 1. Las letras correctas no los reducen.\n
+        Los puntos del nivel se basan en la longitud de la palabra y se suman a tu puntuación total.\n
+        Las pistas son opcionales y limitadas por nivel. En Fácil hay 2 pistas; en Media/Difícil/Muy difícil hay 1.\n
+        Los tipos de pista disponibles son Revelar letra y Eliminar letras.\n
+        Usar pistas no reduce puntos. Las pistas solo consumen tus créditos de pista del nivel.\n
+        Puedes jugar con 4 categorías: Países, Idiomas, Empresas y Animales.\n
+        Los resultados de tus partidas completadas se guardan en Historial.
+    </string>
+
+
+    <string name="achievement_title_first_blood">Primera Sangre</string>
+    <string name="achievement_description_first_blood">Juega tu primera partida.</string>
+    <string name="achievement_title_grave_walker">Caminante de Tumbas</string>
+    <string name="achievement_description_grave_walker">Juega 10 partidas.</string>
+    <string name="achievement_title_night_shift">Turno Nocturno</string>
+    <string name="achievement_description_night_shift">Juega 25 partidas.</string>
+    <string name="achievement_title_eternal_player">Jugador Eterno</string>
+    <string name="achievement_description_eternal_player">Juega 50 partidas.</string>
+    <string name="achievement_title_first_win">Primera Victoria</string>
+    <string name="achievement_description_first_win">Gana tu primera partida.</string>
+    <string name="achievement_title_win_collector">Coleccionista de Victorias</string>
+    <string name="achievement_description_win_collector">Gana 10 partidas.</string>
+    <string name="achievement_title_crown_of_ash">Corona de Ceniza</string>
+    <string name="achievement_description_crown_of_ash">Gana 25 partidas.</string>
+    <string name="achievement_title_unbroken">Inquebrantable</string>
+    <string name="achievement_description_unbroken">Alcanza una racha de 3 victorias.</string>
+    <string name="achievement_title_relentless">Implacable</string>
+    <string name="achievement_description_relentless">Alcanza una racha de 5 victorias.</string>
+    <string name="achievement_title_immortal_streak">Racha Inmortal</string>
+    <string name="achievement_description_immortal_streak">Alcanza una racha de 10 victorias.</string>
+    <string name="achievement_title_no_crutches">Sin Muletas</string>
+    <string name="achievement_description_no_crutches">Gana una partida sin pistas.</string>
+    <string name="achievement_title_mind_reader">Lector de Mentes</string>
+    <string name="achievement_description_mind_reader">Gana 5 partidas sin pistas.</string>
+    <string name="achievement_title_perfect_hunt">Caza Perfecta</string>
+    <string name="achievement_description_perfect_hunt">Gana una partida con todos los intentos restantes.</string>
+    <string name="achievement_title_surgeon">Cirujano</string>
+    <string name="achievement_description_surgeon">Gana 5 partidas perfectas.</string>
+    <string name="achievement_title_score_100">Puntaje 100</string>
+    <string name="achievement_description_score_100">Alcanza 100 puntos en cualquier partida.</string>
+    <string name="achievement_title_score_250">Puntaje 250</string>
+    <string name="achievement_description_score_250">Alcanza 250 puntos en cualquier partida.</string>
+    <string name="achievement_title_score_500">Puntaje 500</string>
+    <string name="achievement_description_score_500">Alcanza 500 puntos en cualquier partida.</string>
+    <string name="achievement_title_time_master">Maestro del Tiempo</string>
+    <string name="achievement_description_time_master">Termina un nivel con al menos 45 segundos restantes.</string>
+    <string name="achievement_title_country_slayer">Verdugo de Países</string>
+    <string name="achievement_description_country_slayer">Gana una vez en Países.</string>
+    <string name="achievement_title_tongue_tamer">Domador de Lenguas</string>
+    <string name="achievement_description_tongue_tamer">Gana una vez en Idiomas.</string>
+    <string name="achievement_title_corporate_curse">Maldición Corporativa</string>
+    <string name="achievement_description_corporate_curse">Gana una vez en Empresas.</string>
+    <string name="achievement_title_beast_binder">Domador de Bestias</string>
+    <string name="achievement_description_beast_binder">Gana una vez en Animales.</string>
+    <string name="achievement_title_world_completionist">Completista Mundial</string>
+    <string name="achievement_description_world_completionist">Gana al menos una vez en todas las categorías.</string>
+    <string name="achievement_title_easy_cleared">Fácil Superado</string>
+    <string name="achievement_description_easy_cleared">Gana una vez en Fácil.</string>
+    <string name="achievement_title_medium_cleared">Medio Superado</string>
+    <string name="achievement_description_medium_cleared">Gana una vez en Media.</string>
+    <string name="achievement_title_hard_cleared">Difícil Superado</string>
+    <string name="achievement_description_hard_cleared">Gana una vez en Difícil.</string>
+    <string name="achievement_title_very_hard_cleared">Muy Difícil Superado</string>
+    <string name="achievement_description_very_hard_cleared">Gana una vez en Muy difícil.</string>
+    <string name="achievement_title_difficulty_master">Maestro de Dificultad</string>
+    <string name="achievement_description_difficulty_master">Gana al menos una vez en todas las dificultades.</string>
+    <string name="achievement_title_iron_bones">Huesos de Hierro</string>
+    <string name="achievement_description_iron_bones">Juega 3 partidas en una sola sesión de la app.</string>
+    <string name="achievement_title_midnight_marathon">Maratón de Medianoche</string>
+    <string name="achievement_description_midnight_marathon">Juega 5 partidas en una sola sesión de la app.</string>
+    <string name="achievement_title_grindstone">Piedra de Afilar</string>
+    <string name="achievement_description_grindstone">Completa 10 niveles.</string>
+    <string name="achievement_title_bone_mill">Molino de Huesos</string>
+    <string name="achievement_description_bone_mill">Completa 25 niveles.</string>
+    <string name="achievement_title_night_reaper">Segador Nocturno</string>
+    <string name="achievement_description_night_reaper">Completa 50 niveles.</string>
+    <string name="achievement_title_reveal_restraint">Contención de Revelar</string>
+    <string name="achievement_description_reveal_restraint">Gana una partida completa usando Revelar como máximo una vez.</string>
+    <string name="achievement_title_eliminate_restraint">Contención de Eliminar</string>
+    <string name="achievement_description_eliminate_restraint">Gana una partida completa usando Eliminar como máximo una vez.</string>
+    <string name="achievement_title_hint_minimalist">Minimalista de Pistas</string>
+    <string name="achievement_description_hint_minimalist">Gana 3 partidas usando como máximo una pista por partida.</string>
+    <string name="achievement_title_cold_turkey">De Golpe</string>
+    <string name="achievement_description_cold_turkey">Gana 10 partidas sin pistas.</string>
+    <string name="achievement_title_time_keeper">Guardián del Tiempo</string>
+    <string name="achievement_description_time_keeper">Termina 3 niveles con al menos 30 segundos restantes.</string>
+    <string name="achievement_title_clock_breaker">Romperrelojes</string>
+    <string name="achievement_description_clock_breaker">Termina 10 niveles con al menos 30 segundos restantes.</string>
+    <string name="achievement_title_sandglass_lord">Señor del Reloj de Arena</string>
+    <string name="achievement_description_sandglass_lord">Termina 5 niveles con al menos 45 segundos restantes.</string>
+    <string name="achievement_title_archivist">Archivista</string>
+    <string name="achievement_description_archivist">Registra 20 entradas en el historial.</string>
+    <string name="achievement_title_curse_collector">Coleccionista de Maldiciones</string>
+    <string name="achievement_description_curse_collector">Desbloquea 10 logros.</string>
+</resources>

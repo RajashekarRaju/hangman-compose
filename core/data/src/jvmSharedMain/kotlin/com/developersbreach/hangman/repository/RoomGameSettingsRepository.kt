@@ -4,6 +4,7 @@ import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.repository.database.dao.GameSettingsDao
 import com.developersbreach.hangman.repository.database.entity.GameSettingsEntity
+import com.developersbreach.hangman.repository.storage.toAppLanguage
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import com.developersbreach.hangman.ui.theme.toThemePaletteId
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,7 @@ class RoomGameSettingsRepository(
 ) : GameSettingsRepository {
 
     private val themePaletteIdState = MutableStateFlow(ThemePaletteId.INSANE_RED)
+    private val appLanguageState = MutableStateFlow(AppLanguage.default)
 
     override suspend fun getGameDifficulty(): GameDifficulty {
         return getOrDefaultSettings().gameDifficulty
@@ -28,8 +30,16 @@ class RoomGameSettingsRepository(
         return getOrDefaultSettings().themePaletteId.also { themePaletteIdState.value = it }
     }
 
+    override suspend fun getAppLanguage(): AppLanguage {
+        return getOrDefaultSettings().appLanguage.also { appLanguageState.value = it }
+    }
+
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> {
         return themePaletteIdState.asStateFlow()
+    }
+
+    override fun observeAppLanguage(): StateFlow<AppLanguage> {
+        return appLanguageState.asStateFlow()
     }
 
     override suspend fun setGameDifficulty(gameDifficulty: GameDifficulty) {
@@ -39,6 +49,7 @@ class RoomGameSettingsRepository(
                 gameDifficulty = gameDifficulty.name,
                 gameCategoryOrdinal = current.gameCategory.ordinal,
                 themePaletteId = current.themePaletteId.name,
+                appLanguageCode = current.appLanguage.languageTag,
             ),
         )
     }
@@ -50,6 +61,7 @@ class RoomGameSettingsRepository(
                 gameDifficulty = current.gameDifficulty.name,
                 gameCategoryOrdinal = gameCategory.ordinal,
                 themePaletteId = current.themePaletteId.name,
+                appLanguageCode = current.appLanguage.languageTag,
             ),
         )
     }
@@ -61,9 +73,23 @@ class RoomGameSettingsRepository(
                 gameDifficulty = current.gameDifficulty.name,
                 gameCategoryOrdinal = current.gameCategory.ordinal,
                 themePaletteId = themePaletteId.name,
+                appLanguageCode = current.appLanguage.languageTag,
             ),
         )
         themePaletteIdState.value = themePaletteId
+    }
+
+    override suspend fun setAppLanguage(appLanguage: AppLanguage) {
+        val current = getOrDefaultSettings()
+        gameSettingsDao.upsertSettings(
+            GameSettingsEntity(
+                gameDifficulty = current.gameDifficulty.name,
+                gameCategoryOrdinal = current.gameCategory.ordinal,
+                themePaletteId = current.themePaletteId.name,
+                appLanguageCode = appLanguage.languageTag,
+            ),
+        )
+        appLanguageState.value = appLanguage
     }
 
     private suspend fun getOrDefaultSettings(): PersistedGameSettings {
@@ -72,6 +98,7 @@ class RoomGameSettingsRepository(
                 gameDifficulty = GameDifficulty.EASY,
                 gameCategory = GameCategory.COUNTRIES,
                 themePaletteId = ThemePaletteId.INSANE_RED,
+                appLanguage = AppLanguage.default,
             )
 
         val difficulty = runCatching { GameDifficulty.valueOf(settings.gameDifficulty) }
@@ -86,6 +113,7 @@ class RoomGameSettingsRepository(
             themePaletteId = settings.themePaletteId
                 .ifBlank { ThemePaletteId.INSANE_RED.name }
                 .toThemePaletteId(),
+            appLanguage = settings.appLanguageCode.toAppLanguage(),
         )
     }
 }

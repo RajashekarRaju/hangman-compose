@@ -1,0 +1,116 @@
+<resources>
+    <string name="difficulty_easy">Facile</string>
+    <string name="difficulty_medium">Moyen</string>
+    <string name="difficulty_hard">Difficile</string>
+    <string name="difficulty_very_hard">Très difficile</string>
+
+    <string name="category_countries">Pays</string>
+    <string name="category_languages">Langues</string>
+    <string name="category_companies">Entreprises</string>
+    <string name="category_animals">Animaux</string>
+    <string name="achievement_unlocked_subtitle">Succès débloqué</string>
+
+    <string name="instructions_dialog_title">Instructions</string>
+    <string name="instructions_dialog_subtitle">Devinez le nom dans la catégorie %1$s.</string>
+    <string name="instructions_dialog_step_number">%1$d.</string>
+    <string name="instructions_label_difficulty">Difficulté : %1$s</string>
+    <string name="instructions_label_category">Catégorie : %1$s</string>
+    <string name="instructions_dialog_body">
+        Une partie comporte 5 niveaux. Vous gagnez uniquement après avoir terminé les 5 niveaux.\n
+        Chaque niveau a un chronomètre de 60 secondes. Si le temps est écoulé, la partie se termine par une défaite.\n
+        Vous commencez chaque niveau avec 8 essais. Les essais sont réinitialisés quand vous passez au niveau suivant.\n
+        Les lettres incorrectes réduisent les essais de 1. Les lettres correctes ne réduisent pas les essais.\n
+        Les points du niveau dépendent de la longueur du mot et sont ajoutés à votre score total.\n
+        Les indices sont optionnels et limités par niveau. Facile donne 2 indices, Moyen/Difficile/Très difficile donnent 1 indice.\n
+        Les types d'indice disponibles sont Révéler une lettre et Éliminer des lettres.\n
+        Utiliser des indices ne réduit pas les points. Les indices consomment uniquement vos crédits d'indice du niveau.\n
+        Vous pouvez jouer avec 4 catégories : Pays, Langues, Entreprises et Animaux.\n
+        Les résultats de vos parties terminées sont enregistrés dans l'Historique.
+    </string>
+
+
+    <string name="achievement_title_first_blood">Premier Sang</string>
+    <string name="achievement_description_first_blood">Jouez votre première partie.</string>
+    <string name="achievement_title_grave_walker">Marcheur des Tombes</string>
+    <string name="achievement_description_grave_walker">Jouez 10 parties.</string>
+    <string name="achievement_title_night_shift">Service de Nuit</string>
+    <string name="achievement_description_night_shift">Jouez 25 parties.</string>
+    <string name="achievement_title_eternal_player">Joueur Éternel</string>
+    <string name="achievement_description_eternal_player">Jouez 50 parties.</string>
+    <string name="achievement_title_first_win">Première Victoire</string>
+    <string name="achievement_description_first_win">Gagnez votre première partie.</string>
+    <string name="achievement_title_win_collector">Collectionneur de Victoires</string>
+    <string name="achievement_description_win_collector">Gagnez 10 parties.</string>
+    <string name="achievement_title_crown_of_ash">Couronne de Cendres</string>
+    <string name="achievement_description_crown_of_ash">Gagnez 25 parties.</string>
+    <string name="achievement_title_unbroken">Inébranlable</string>
+    <string name="achievement_description_unbroken">Atteignez une série de 3 victoires.</string>
+    <string name="achievement_title_relentless">Implacable</string>
+    <string name="achievement_description_relentless">Atteignez une série de 5 victoires.</string>
+    <string name="achievement_title_immortal_streak">Série Immortelle</string>
+    <string name="achievement_description_immortal_streak">Atteignez une série de 10 victoires.</string>
+    <string name="achievement_title_no_crutches">Sans Béquilles</string>
+    <string name="achievement_description_no_crutches">Gagnez une partie sans indices.</string>
+    <string name="achievement_title_mind_reader">Lecteur d'Esprit</string>
+    <string name="achievement_description_mind_reader">Gagnez 5 parties sans indices.</string>
+    <string name="achievement_title_perfect_hunt">Chasse Parfaite</string>
+    <string name="achievement_description_perfect_hunt">Gagnez une partie avec toutes vos tentatives restantes.</string>
+    <string name="achievement_title_surgeon">Chirurgien</string>
+    <string name="achievement_description_surgeon">Gagnez 5 parties parfaites.</string>
+    <string name="achievement_title_score_100">Score 100</string>
+    <string name="achievement_description_score_100">Atteignez un score de 100 dans n'importe quelle partie.</string>
+    <string name="achievement_title_score_250">Score 250</string>
+    <string name="achievement_description_score_250">Atteignez un score de 250 dans n'importe quelle partie.</string>
+    <string name="achievement_title_score_500">Score 500</string>
+    <string name="achievement_description_score_500">Atteignez un score de 500 dans n'importe quelle partie.</string>
+    <string name="achievement_title_time_master">Maître du Temps</string>
+    <string name="achievement_description_time_master">Terminez un niveau avec au moins 45 secondes restantes.</string>
+    <string name="achievement_title_country_slayer">Fléau des Pays</string>
+    <string name="achievement_description_country_slayer">Gagnez une fois en Pays.</string>
+    <string name="achievement_title_tongue_tamer">Dompteur de Langues</string>
+    <string name="achievement_description_tongue_tamer">Gagnez une fois en Langues.</string>
+    <string name="achievement_title_corporate_curse">Malédiction d'Entreprise</string>
+    <string name="achievement_description_corporate_curse">Gagnez une fois en Entreprises.</string>
+    <string name="achievement_title_beast_binder">Dompteur de Bêtes</string>
+    <string name="achievement_description_beast_binder">Gagnez une fois en Animaux.</string>
+    <string name="achievement_title_world_completionist">Complétionniste du Monde</string>
+    <string name="achievement_description_world_completionist">Gagnez au moins une fois dans toutes les catégories.</string>
+    <string name="achievement_title_easy_cleared">Facile Terminé</string>
+    <string name="achievement_description_easy_cleared">Gagnez une fois en Facile.</string>
+    <string name="achievement_title_medium_cleared">Moyen Terminé</string>
+    <string name="achievement_description_medium_cleared">Gagnez une fois en Moyen.</string>
+    <string name="achievement_title_hard_cleared">Difficile Terminé</string>
+    <string name="achievement_description_hard_cleared">Gagnez une fois en Difficile.</string>
+    <string name="achievement_title_very_hard_cleared">Très Difficile Terminé</string>
+    <string name="achievement_description_very_hard_cleared">Gagnez une fois en Très difficile.</string>
+    <string name="achievement_title_difficulty_master">Maître des Difficultés</string>
+    <string name="achievement_description_difficulty_master">Gagnez au moins une fois dans toutes les difficultés.</string>
+    <string name="achievement_title_iron_bones">Os de Fer</string>
+    <string name="achievement_description_iron_bones">Jouez 3 parties dans une seule session de l'application.</string>
+    <string name="achievement_title_midnight_marathon">Marathon de Minuit</string>
+    <string name="achievement_description_midnight_marathon">Jouez 5 parties dans une seule session de l'application.</string>
+    <string name="achievement_title_grindstone">Meule</string>
+    <string name="achievement_description_grindstone">Terminez 10 niveaux.</string>
+    <string name="achievement_title_bone_mill">Moulin d'Os</string>
+    <string name="achievement_description_bone_mill">Terminez 25 niveaux.</string>
+    <string name="achievement_title_night_reaper">Faucheur Nocturne</string>
+    <string name="achievement_description_night_reaper">Terminez 50 niveaux.</string>
+    <string name="achievement_title_reveal_restraint">Retenue de Révélation</string>
+    <string name="achievement_description_reveal_restraint">Gagnez une partie complète en utilisant Révéler au maximum une fois.</string>
+    <string name="achievement_title_eliminate_restraint">Retenue d'Élimination</string>
+    <string name="achievement_description_eliminate_restraint">Gagnez une partie complète en utilisant Éliminer au maximum une fois.</string>
+    <string name="achievement_title_hint_minimalist">Minimaliste des Indices</string>
+    <string name="achievement_description_hint_minimalist">Gagnez 3 parties en utilisant au maximum un indice par partie.</string>
+    <string name="achievement_title_cold_turkey">Sevrage Total</string>
+    <string name="achievement_description_cold_turkey">Gagnez 10 parties sans indices.</string>
+    <string name="achievement_title_time_keeper">Gardien du Temps</string>
+    <string name="achievement_description_time_keeper">Terminez 3 niveaux avec au moins 30 secondes restantes.</string>
+    <string name="achievement_title_clock_breaker">Briseur d'Horloge</string>
+    <string name="achievement_description_clock_breaker">Terminez 10 niveaux avec au moins 30 secondes restantes.</string>
+    <string name="achievement_title_sandglass_lord">Seigneur du Sablier</string>
+    <string name="achievement_description_sandglass_lord">Terminez 5 niveaux avec au moins 45 secondes restantes.</string>
+    <string name="achievement_title_archivist">Archiviste</string>
+    <string name="achievement_description_archivist">Enregistrez 20 entrées dans l'historique.</string>
+    <string name="achievement_title_curse_collector">Collectionneur de Malédictions</string>
+    <string name="achievement_description_curse_collector">Débloquez 10 succès.</string>
+</resources>

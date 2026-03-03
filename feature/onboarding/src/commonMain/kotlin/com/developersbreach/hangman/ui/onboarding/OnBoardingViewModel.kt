@@ -6,6 +6,7 @@ import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.repository.AchievementsRepository
+import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
@@ -34,6 +35,7 @@ class OnBoardingViewModel(
     init {
         hydrateFromPreferences()
         observeThemePalette()
+        observeAppLanguage()
         observeHighestScore()
         observeUnreadAchievementsCount()
         playBackgroundMusic()
@@ -105,6 +107,16 @@ class OnBoardingViewModel(
                 updatePlayerChosenCategory(event.category)
             }
 
+            OnBoardingEvent.OpenLanguageDialog -> {
+                _uiState.update { current -> current.copy(isLanguageDialogOpen = true) }
+            }
+
+            OnBoardingEvent.DismissLanguageDialog -> {
+                _uiState.update { current -> current.copy(isLanguageDialogOpen = false) }
+            }
+
+            is OnBoardingEvent.LanguageChanged -> updateAppLanguage(event.language)
+
             OnBoardingEvent.OpenThemePaletteMenu -> {
                 _uiState.update { current -> current.copy(isPaletteMenuExpanded = true) }
             }
@@ -174,12 +186,14 @@ class OnBoardingViewModel(
             val difficulty = settingsRepository.getGameDifficulty()
             val category = settingsRepository.getGameCategory()
             val themePaletteId = settingsRepository.getThemePaletteId()
+            val appLanguage = settingsRepository.getAppLanguage()
             _uiState.update { current ->
                 current.copy(
                     gameDifficulty = difficulty,
                     gameDifficultyLabelRes = difficulty.labelRes(),
                     gameCategory = category,
                     gameCategoryLabelRes = category.labelRes(),
+                    selectedLanguage = appLanguage,
                     themePaletteId = themePaletteId,
                     isBackgroundMusicPlaying = audioController.isPlaying(),
                     pendingDifficulty = difficulty,
@@ -240,10 +254,30 @@ class OnBoardingViewModel(
         }
     }
 
+    private fun updateAppLanguage(language: AppLanguage) {
+        _uiState.update { current ->
+            current.copy(
+                selectedLanguage = language,
+                isLanguageDialogOpen = false,
+            )
+        }
+        viewModelScope.launch {
+            settingsRepository.setAppLanguage(language)
+        }
+    }
+
     private fun observeThemePalette() {
         viewModelScope.launch {
             settingsRepository.observeThemePaletteId().collect { themePaletteId ->
                 _uiState.update { current -> current.copy(themePaletteId = themePaletteId) }
+            }
+        }
+    }
+
+    private fun observeAppLanguage() {
+        viewModelScope.launch {
+            settingsRepository.observeAppLanguage().collect { language ->
+                _uiState.update { current -> current.copy(selectedLanguage = language) }
             }
         }
     }

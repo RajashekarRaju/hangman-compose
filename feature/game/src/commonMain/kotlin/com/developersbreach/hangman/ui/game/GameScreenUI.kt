@@ -28,6 +28,7 @@ import com.developersbreach.hangman.feature.game.generated.resources.game_hint_c
 import com.developersbreach.hangman.feature.game.generated.resources.game_hint_counter
 import com.developersbreach.hangman.feature.game.generated.resources.game_hint_eliminate_letters
 import com.developersbreach.hangman.feature.game.generated.resources.game_hint_reveal_letter
+import com.developersbreach.hangman.feature.game.generated.resources.game_hint_status_value
 import com.developersbreach.hangman.feature.game.generated.resources.game_hint_title
 import com.developersbreach.hangman.ui.components.AnimatedEnter
 import com.developersbreach.hangman.ui.components.BodyLargeText
@@ -248,7 +249,10 @@ private fun ColumnScope.HintBottomTray(
                 color = HangmanTheme.colorScheme.primary.copy(alpha = 0.60f),
             )
             BodyLargeText(
-                text = " : $hintStatusText",
+                text = stringResource(
+                    resource = Res.string.game_hint_status_value,
+                    hintStatusText,
+                ),
                 color = HangmanTheme.colorScheme.primary,
             )
         }

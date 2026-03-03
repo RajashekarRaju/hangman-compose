@@ -9,6 +9,7 @@ data class GameSettingsEntity(
     val gameDifficulty: String,
     val gameCategoryOrdinal: Int,
     val themePaletteId: String,
+    val appLanguageCode: String,
 ) {
     companion object {
         const val SETTINGS_SINGLETON_ID = 0

@@ -1,0 +1,37 @@
+<resources>
+    <string name="game_cd_close_game">Fermer le jeu</string>
+    <string name="game_cd_open_instructions">Ouvrir la fenêtre d'instructions du jeu</string>
+    <string name="game_cd_open_hints">Ouvrir la fenêtre des indices</string>
+
+    <string name="game_current_level">Niveau %1$d/%2$d</string>
+    <string name="game_current_points">Points %1$d</string>
+    <string name="game_hint_counter">%1$d restants</string>
+    <string name="game_hint_cooldown">Recharge d'indice</string>
+
+    <string name="game_exit_title">Quitter la partie ?</string>
+    <string name="game_exit_confirm">Quitter</string>
+    <string name="game_exit_dismiss">Continuer à jouer</string>
+
+    <string name="game_won_title">Vous avez gagné !</string>
+    <string name="game_won_points">Points marqués : %1$d</string>
+    <string name="game_won_difficulty">Difficulté : %1$s</string>
+    <string name="game_lost_title">Vous avez perdu</string>
+    <string name="game_lost_word">Le mot était : %1$s</string>
+    <string name="game_dialog_done">Terminé</string>
+    <string name="game_hint_title">Choisissez un indice</string>
+    <string name="game_hint_status_value">: %1$s</string>
+    <string name="game_hint_reveal_letter">Révéler</string>
+    <string name="game_hint_eliminate_letters">Éliminer</string>
+    <string name="game_hint_unavailable_title">Indice indisponible</string>
+    <string name="game_hint_unavailable_no_hints">Il ne reste plus d'indices pour ce niveau.</string>
+    <string name="game_hint_unavailable_no_letters">Il n'y a plus de lettres cachées à révéler.</string>
+    <string name="game_hint_unavailable_no_elimination">Aucune mauvaise lettre à éliminer.</string>
+    <string name="game_hint_unavailable_game_over">Les indices sont désactivés car la partie est terminée.</string>
+    <string name="game_achievement_banner_subtitle">Succès débloqué</string>
+    <string name="game_category_hint_single_word">Devinez un %2$s de %1$d lettres</string>
+    <string name="game_category_hint_multi_word">Devinez un %2$s de %1$d lettres (%3$d mots)</string>
+    <string name="game_category_singular_country">pays</string>
+    <string name="game_category_singular_language">langue</string>
+    <string name="game_category_singular_company">entreprise</string>
+    <string name="game_category_singular_animal">animal</string>
+</resources>

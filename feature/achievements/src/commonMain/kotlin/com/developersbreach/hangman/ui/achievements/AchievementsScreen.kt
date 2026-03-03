@@ -6,6 +6,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.developersbreach.game.core.achievements.AchievementCatalog
 import com.developersbreach.game.core.achievements.initialProgress
+import com.developersbreach.hangman.ui.common.achievement.descriptionRes
+import com.developersbreach.hangman.ui.common.achievement.titleRes
 import com.developersbreach.hangman.ui.preview.HangmanScreenPreviews
 import com.developersbreach.hangman.ui.theme.HangmanTheme
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
@@ -38,8 +40,8 @@ private fun AchievementsScreenPreview() {
         AchievementItemUiState(
             id = definition.id,
             group = definition.group,
-            title = definition.title,
-            description = definition.description,
+            titleRes = definition.id.titleRes(),
+            descriptionRes = definition.id.descriptionRes(),
             isUnlocked = progress.isUnlocked,
             isUnread = progress.isUnread,
             progressCurrent = progress.progressCurrent,

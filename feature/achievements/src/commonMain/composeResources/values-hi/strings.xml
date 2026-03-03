@@ -1,0 +1,29 @@
+<resources>
+    <string name="achievements_title">उपलब्धियाँ</string>
+    <string name="achievements_empty">कोई उपलब्धि उपलब्ध नहीं है।</string>
+    <string name="achievements_locked">लॉक्ड</string>
+    <string name="achievements_unlocked">अनलॉक्ड</string>
+    <string name="achievements_progress">प्रगति: %1$d/%2$d</string>
+    <string name="achievements_unlocked_at">अनलॉक्ड: %1$s</string>
+    <string name="achievements_cd_back">वापस</string>
+    <string name="achievements_cd_locked">लॉक्ड उपलब्धि</string>
+    <string name="achievements_cd_unlocked">अनलॉक्ड उपलब्धि</string>
+    <string name="achievements_cd_expand_group">%1$s विस्तृत करें</string>
+    <string name="achievements_cd_collapse_group">%1$s संक्षिप्त करें</string>
+    <string name="achievements_summary_progress">अनलॉक्ड %1$d/%2$d</string>
+    <string name="achievements_summary_locked">लॉक्ड: %1$d</string>
+    <string name="achievements_summary_coins">कॉइन्स: %1$d</string>
+    <string name="achievements_details_status">स्थिति: %1$s</string>
+    <string name="achievements_details_group">समूह: %1$s</string>
+    <string name="achievements_details_progress">प्रगति: %1$d/%2$d</string>
+    <string name="achievements_details_unlocked_at">अनलॉक समय: %1$s</string>
+    <string name="achievements_details_unlocked">अनलॉक्ड</string>
+    <string name="achievements_details_locked">लॉक्ड</string>
+    <string name="achievements_group_progress">प्रगति</string>
+    <string name="achievements_group_skill">कौशल</string>
+    <string name="achievements_group_collection">संग्रह</string>
+    <string name="achievements_group_endurance">सहनशक्ति</string>
+    <string name="achievements_group_hint_discipline">संकेत अनुशासन</string>
+    <string name="achievements_group_time_control">समय नियंत्रण</string>
+    <string name="achievements_group_meta">मेटा</string>
+</resources>
