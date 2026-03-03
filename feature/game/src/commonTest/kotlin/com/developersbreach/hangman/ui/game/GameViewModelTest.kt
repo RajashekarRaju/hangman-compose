@@ -13,6 +13,7 @@ import com.developersbreach.hangman.audio.GameSoundEffectPlayer
 import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
+import com.developersbreach.hangman.repository.GameProgressVisualPreference
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
@@ -89,6 +90,19 @@ class GameViewModelTest {
         assertTrue(viewModel.uiState.value.showGameGuideOverlay)
         viewModel.onEvent(GameEvent.ToggleGameGuideOverlay)
         assertFalse(viewModel.uiState.value.showGameGuideOverlay)
+    }
+
+    @Test
+    fun `hydration maps stored game visual preference into ui state`() = runTest(dispatcher) {
+        val viewModel = createViewModel(
+            gameProgressVisualPreference = GameProgressVisualPreference.LEVEL_POINTS_ATTEMPTS,
+        )
+        advanceUntilIdle()
+
+        assertEquals(
+            GameProgressVisualType.LevelPointsAttemptsInformation,
+            viewModel.uiState.value.progressVisualType,
+        )
     }
 
     @Test
@@ -368,6 +382,8 @@ class GameViewModelTest {
         difficulty: GameDifficulty = GameDifficulty.EASY,
         category: GameCategory = GameCategory.COUNTRIES,
         soundEffectsEnabled: Boolean = true,
+        gameProgressVisualPreference: GameProgressVisualPreference =
+            GameProgressVisualPreference.default,
         sessionRepository: FakeGameSessionRepository = FakeGameSessionRepository(),
         achievementsRepository: FakeAchievementsRepository = FakeAchievementsRepository(),
         soundPlayer: FakeSoundEffectPlayer = FakeSoundEffectPlayer(),
@@ -378,6 +394,7 @@ class GameViewModelTest {
                 difficulty = difficulty,
                 category = category,
                 soundEffectsEnabled = soundEffectsEnabled,
+                gameProgressVisualPreference = gameProgressVisualPreference,
             ),
             sessionRepository = sessionRepository,
             achievementsRepository = achievementsRepository,
@@ -391,6 +408,7 @@ private class FakeGameSettingsRepository(
     private var difficulty: GameDifficulty,
     private var category: GameCategory,
     private var soundEffectsEnabled: Boolean,
+    private var gameProgressVisualPreference: GameProgressVisualPreference,
 ) : GameSettingsRepository {
     private val themePaletteState = MutableStateFlow(ThemePaletteId.INSANE_RED)
     private val languageState = MutableStateFlow(AppLanguage.default)
@@ -409,6 +427,10 @@ private class FakeGameSettingsRepository(
     override suspend fun isSoundEffectsEnabled(): Boolean = soundEffectsEnabled
 
     override suspend fun getCursorStyle(): CursorStyle = cursorStyleState.value
+
+    override suspend fun getGameProgressVisualPreference(): GameProgressVisualPreference {
+        return gameProgressVisualPreference
+    }
 
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themePaletteState
 
@@ -440,6 +462,12 @@ private class FakeGameSettingsRepository(
 
     override suspend fun setCursorStyle(cursorStyle: CursorStyle) {
         cursorStyleState.value = cursorStyle
+    }
+
+    override suspend fun setGameProgressVisualPreference(
+        gameProgressVisualPreference: GameProgressVisualPreference,
+    ) {
+        this.gameProgressVisualPreference = gameProgressVisualPreference
     }
 }
 

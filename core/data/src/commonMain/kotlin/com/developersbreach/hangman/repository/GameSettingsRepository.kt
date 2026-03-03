@@ -21,6 +21,8 @@ interface GameSettingsRepository {
 
     suspend fun getCursorStyle(): CursorStyle
 
+    suspend fun getGameProgressVisualPreference(): GameProgressVisualPreference
+
     fun observeThemePaletteId(): StateFlow<ThemePaletteId>
 
     fun observeAppLanguage(): StateFlow<AppLanguage>
@@ -40,4 +42,8 @@ interface GameSettingsRepository {
     suspend fun setSoundEffectsEnabled(isEnabled: Boolean)
 
     suspend fun setCursorStyle(cursorStyle: CursorStyle)
+
+    suspend fun setGameProgressVisualPreference(
+        gameProgressVisualPreference: GameProgressVisualPreference,
+    )
 }

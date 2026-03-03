@@ -13,6 +13,7 @@ data class GameSettingsEntity(
     val isBackgroundMusicEnabled: Boolean,
     val isSoundEffectsEnabled: Boolean,
     val cursorStyle: String,
+    val gameProgressVisualPreference: String,
 ) {
     companion object {
         const val SETTINGS_SINGLETON_ID = 0

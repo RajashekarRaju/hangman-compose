@@ -45,6 +45,7 @@ import com.developersbreach.hangman.ui.components.creepyOutline
 import com.developersbreach.hangman.ui.settings.components.SettingsInlineCategorySection
 import com.developersbreach.hangman.ui.settings.components.SettingsInlineCursorSection
 import com.developersbreach.hangman.ui.settings.components.SettingsInlineDifficultySection
+import com.developersbreach.hangman.ui.settings.components.SettingsInlineGameVisualSection
 import com.developersbreach.hangman.ui.settings.components.SettingsInlineLanguageSection
 import com.developersbreach.hangman.ui.settings.components.SettingsInlineThemeSection
 import com.developersbreach.hangman.ui.theme.HangmanTheme
@@ -284,6 +285,16 @@ private fun SettingsDetailPane(
                     SettingsInlineThemeSection(
                         selectedPaletteId = uiState.themePaletteId,
                         onPaletteChanged = { onEvent(SettingsEvent.ThemePaletteChanged(it)) },
+                        modifier = Modifier.width(contentWidth),
+                    )
+                }
+
+                SettingsSection.GameVisual -> {
+                    SettingsInlineGameVisualSection(
+                        selectedGameProgressVisualPreference = uiState.selectedGameProgressVisualPreference,
+                        onGameProgressVisualPreferenceChanged = {
+                            onEvent(SettingsEvent.GameProgressVisualPreferenceChanged(it))
+                        },
                         modifier = Modifier.width(contentWidth),
                     )
                 }

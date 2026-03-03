@@ -47,6 +47,10 @@ class RoomGameSettingsRepository(
         return getOrDefaultSettings().cursorStyle.also { cursorStyleState.value = it }
     }
 
+    override suspend fun getGameProgressVisualPreference(): GameProgressVisualPreference {
+        return getOrDefaultSettings().gameProgressVisualPreference
+    }
+
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> {
         return themePaletteIdState.asStateFlow()
     }
@@ -70,6 +74,7 @@ class RoomGameSettingsRepository(
                 isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
                 isSoundEffectsEnabled = current.isSoundEffectsEnabled,
                 cursorStyle = current.cursorStyle.name,
+                gameProgressVisualPreference = current.gameProgressVisualPreference.name,
             ),
         )
     }
@@ -85,6 +90,7 @@ class RoomGameSettingsRepository(
                 isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
                 isSoundEffectsEnabled = current.isSoundEffectsEnabled,
                 cursorStyle = current.cursorStyle.name,
+                gameProgressVisualPreference = current.gameProgressVisualPreference.name,
             ),
         )
     }
@@ -100,6 +106,7 @@ class RoomGameSettingsRepository(
                 isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
                 isSoundEffectsEnabled = current.isSoundEffectsEnabled,
                 cursorStyle = current.cursorStyle.name,
+                gameProgressVisualPreference = current.gameProgressVisualPreference.name,
             ),
         )
         themePaletteIdState.value = themePaletteId
@@ -116,6 +123,7 @@ class RoomGameSettingsRepository(
                 isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
                 isSoundEffectsEnabled = current.isSoundEffectsEnabled,
                 cursorStyle = current.cursorStyle.name,
+                gameProgressVisualPreference = current.gameProgressVisualPreference.name,
             ),
         )
         appLanguageState.value = appLanguage
@@ -132,6 +140,7 @@ class RoomGameSettingsRepository(
                 isBackgroundMusicEnabled = isEnabled,
                 isSoundEffectsEnabled = current.isSoundEffectsEnabled,
                 cursorStyle = current.cursorStyle.name,
+                gameProgressVisualPreference = current.gameProgressVisualPreference.name,
             ),
         )
     }
@@ -147,6 +156,7 @@ class RoomGameSettingsRepository(
                 isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
                 isSoundEffectsEnabled = isEnabled,
                 cursorStyle = current.cursorStyle.name,
+                gameProgressVisualPreference = current.gameProgressVisualPreference.name,
             ),
         )
     }
@@ -162,9 +172,28 @@ class RoomGameSettingsRepository(
                 isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
                 isSoundEffectsEnabled = current.isSoundEffectsEnabled,
                 cursorStyle = cursorStyle.name,
+                gameProgressVisualPreference = current.gameProgressVisualPreference.name,
             ),
         )
         cursorStyleState.value = cursorStyle
+    }
+
+    override suspend fun setGameProgressVisualPreference(
+        gameProgressVisualPreference: GameProgressVisualPreference,
+    ) {
+        val current = getOrDefaultSettings()
+        gameSettingsDao.upsertSettings(
+            GameSettingsEntity(
+                gameDifficulty = current.gameDifficulty.name,
+                gameCategoryOrdinal = current.gameCategory.ordinal,
+                themePaletteId = current.themePaletteId.name,
+                appLanguageCode = current.appLanguage.languageTag,
+                isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
+                isSoundEffectsEnabled = current.isSoundEffectsEnabled,
+                cursorStyle = current.cursorStyle.name,
+                gameProgressVisualPreference = gameProgressVisualPreference.name,
+            ),
+        )
     }
 
     private suspend fun getOrDefaultSettings(): PersistedGameSettings {
@@ -177,6 +206,7 @@ class RoomGameSettingsRepository(
                 isBackgroundMusicEnabled = true,
                 isSoundEffectsEnabled = true,
                 cursorStyle = CursorStyle.default,
+                gameProgressVisualPreference = GameProgressVisualPreference.default,
             )
 
         val difficulty = runCatching { GameDifficulty.valueOf(settings.gameDifficulty) }
@@ -195,6 +225,9 @@ class RoomGameSettingsRepository(
             isBackgroundMusicEnabled = settings.isBackgroundMusicEnabled,
             isSoundEffectsEnabled = settings.isSoundEffectsEnabled,
             cursorStyle = CursorStyle.fromStorage(settings.cursorStyle),
+            gameProgressVisualPreference = GameProgressVisualPreference.fromStorage(
+                settings.gameProgressVisualPreference,
+            ),
         )
     }
 }

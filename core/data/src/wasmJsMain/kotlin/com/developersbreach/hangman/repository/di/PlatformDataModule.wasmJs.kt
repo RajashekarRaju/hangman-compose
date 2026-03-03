@@ -10,6 +10,7 @@ import com.developersbreach.hangman.audio.GameSoundEffectPlayer
 import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
+import com.developersbreach.hangman.repository.GameProgressVisualPreference
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
@@ -140,6 +141,10 @@ private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
         return CursorStyle.fromStorage(settings.cursorStyle).also { cursorStyleState.value = it }
     }
 
+    override suspend fun getGameProgressVisualPreference(): GameProgressVisualPreference {
+        return GameProgressVisualPreference.fromStorage(settings.gameProgressVisualPreference)
+    }
+
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themePaletteIdState.asStateFlow()
 
     override fun observeAppLanguage(): StateFlow<AppLanguage> = appLanguageState.asStateFlow()
@@ -182,6 +187,13 @@ private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
         settings = settings.copy(cursorStyle = cursorStyle.name)
         persist()
         cursorStyleState.value = cursorStyle
+    }
+
+    override suspend fun setGameProgressVisualPreference(
+        gameProgressVisualPreference: GameProgressVisualPreference,
+    ) {
+        settings = settings.copy(gameProgressVisualPreference = gameProgressVisualPreference.name)
+        persist()
     }
 }
 

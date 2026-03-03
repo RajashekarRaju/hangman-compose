@@ -4,6 +4,7 @@ import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
+import com.developersbreach.hangman.repository.GameProgressVisualPreference
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 
 sealed interface SettingsEvent {
@@ -17,4 +18,7 @@ sealed interface SettingsEvent {
     data class BackgroundMusicToggled(val isEnabled: Boolean) : SettingsEvent
     data class SoundEffectsToggled(val isEnabled: Boolean) : SettingsEvent
     data class CursorStyleChanged(val cursorStyle: CursorStyle) : SettingsEvent
+    data class GameProgressVisualPreferenceChanged(
+        val gameProgressVisualPreference: GameProgressVisualPreference,
+    ) : SettingsEvent
 }

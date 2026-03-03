@@ -11,6 +11,7 @@ import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
+import com.developersbreach.hangman.repository.GameProgressVisualPreference
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
 import com.developersbreach.hangman.repository.model.HistoryRecord
@@ -172,6 +173,8 @@ private class FakeSettingsRepository(
     private var appLanguage: AppLanguage = AppLanguage.default,
     private var isBackgroundMusicEnabled: Boolean = true,
     private var isSoundEffectsEnabled: Boolean = true,
+    private var gameProgressVisualPreference: GameProgressVisualPreference =
+        GameProgressVisualPreference.default,
 ) : GameSettingsRepository {
     private val themeState = MutableStateFlow(themePaletteId)
     private val languageState = MutableStateFlow(appLanguage)
@@ -194,6 +197,10 @@ private class FakeSettingsRepository(
     override suspend fun isSoundEffectsEnabled(): Boolean = isSoundEffectsEnabled
 
     override suspend fun getCursorStyle(): CursorStyle = cursorStyleState.value
+
+    override suspend fun getGameProgressVisualPreference(): GameProgressVisualPreference {
+        return gameProgressVisualPreference
+    }
 
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themeState
 
@@ -232,6 +239,12 @@ private class FakeSettingsRepository(
 
     override suspend fun setCursorStyle(cursorStyle: CursorStyle) {
         cursorStyleState.value = cursorStyle
+    }
+
+    override suspend fun setGameProgressVisualPreference(
+        gameProgressVisualPreference: GameProgressVisualPreference,
+    ) {
+        this.gameProgressVisualPreference = gameProgressVisualPreference
     }
 }
 

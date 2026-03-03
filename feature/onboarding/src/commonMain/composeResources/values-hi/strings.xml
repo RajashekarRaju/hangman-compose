@@ -15,8 +15,11 @@
     <string name="onboarding_language_dialog_title">भाषा</string>
     <string name="settings_title">सेटिंग्स</string>
     <string name="settings_button_theme_palette">थीम पैलेट</string>
+    <string name="settings_button_game_visual">गेम विज़ुअल</string>
     <string name="settings_button_audio">ऑडियो</string>
     <string name="settings_button_cursor">कर्सर</string>
+    <string name="settings_game_visual_traditional">पारंपरिक</string>
+    <string name="settings_game_visual_simple">सरल</string>
     <string name="settings_audio_background_music">बैकग्राउंड म्यूज़िक</string>
     <string name="settings_audio_sound_effects">साउंड इफेक्ट्स</string>
     <string name="settings_audio_on">चालू</string>

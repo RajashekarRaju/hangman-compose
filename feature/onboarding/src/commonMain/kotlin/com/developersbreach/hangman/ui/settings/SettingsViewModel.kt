@@ -7,6 +7,7 @@ import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
+import com.developersbreach.hangman.repository.GameProgressVisualPreference
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -71,6 +72,9 @@ class SettingsViewModel(
             is SettingsEvent.BackgroundMusicToggled -> updateBackgroundMusic(event.isEnabled)
             is SettingsEvent.SoundEffectsToggled -> updateSoundEffects(event.isEnabled)
             is SettingsEvent.CursorStyleChanged -> updateCursorStyle(event.cursorStyle)
+            is SettingsEvent.GameProgressVisualPreferenceChanged -> {
+                updateGameProgressVisualPreference(event.gameProgressVisualPreference)
+            }
         }
     }
 
@@ -89,6 +93,7 @@ class SettingsViewModel(
             val isBackgroundMusicEnabled = settingsRepository.isBackgroundMusicEnabled()
             val isSoundEffectsEnabled = settingsRepository.isSoundEffectsEnabled()
             val cursorStyle = settingsRepository.getCursorStyle()
+            val gameProgressVisualPreference = settingsRepository.getGameProgressVisualPreference()
             _uiState.update { current ->
                 current.copy(
                     gameDifficulty = difficulty,
@@ -99,6 +104,7 @@ class SettingsViewModel(
                     isBackgroundMusicEnabled = isBackgroundMusicEnabled,
                     isSoundEffectsEnabled = isSoundEffectsEnabled,
                     selectedCursorStyle = cursorStyle,
+                    selectedGameProgressVisualPreference = gameProgressVisualPreference,
                     pendingDifficulty = difficulty,
                     pendingDifficultySliderPosition = difficulty.toSliderPosition(),
                 )
@@ -162,6 +168,17 @@ class SettingsViewModel(
         _uiState.update { current -> current.copy(selectedCursorStyle = cursorStyle) }
         viewModelScope.launch {
             settingsRepository.setCursorStyle(cursorStyle)
+        }
+    }
+
+    private fun updateGameProgressVisualPreference(
+        gameProgressVisualPreference: GameProgressVisualPreference,
+    ) {
+        _uiState.update { current ->
+            current.copy(selectedGameProgressVisualPreference = gameProgressVisualPreference)
+        }
+        viewModelScope.launch {
+            settingsRepository.setGameProgressVisualPreference(gameProgressVisualPreference)
         }
     }
 

@@ -114,6 +114,7 @@ class GameViewModel(
 
             val gameDifficulty = settingsRepository.getGameDifficulty()
             val gameCategory = settingsRepository.getGameCategory()
+            val gameProgressVisualPreference = settingsRepository.getGameProgressVisualPreference()
             isSoundEffectsEnabled = settingsRepository.isSoundEffectsEnabled()
             val guessingWordsForCurrentGame =
                 getFilteredWordsByGameDifficulty(gameDifficulty, gameCategory)
@@ -129,6 +130,7 @@ class GameViewModel(
                 current.copy(
                     gameDifficulty = gameDifficulty,
                     gameCategory = gameCategory,
+                    progressVisualType = gameProgressVisualPreference.toGameProgressVisualType(),
                 )
             }
 

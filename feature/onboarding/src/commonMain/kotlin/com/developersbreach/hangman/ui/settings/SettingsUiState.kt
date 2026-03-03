@@ -4,12 +4,14 @@ import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
+import com.developersbreach.hangman.repository.GameProgressVisualPreference
 import com.developersbreach.hangman.feature.onboarding.generated.resources.Res
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_category
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_difficulty
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_language
 import com.developersbreach.hangman.feature.onboarding.generated.resources.settings_button_audio
 import com.developersbreach.hangman.feature.onboarding.generated.resources.settings_button_cursor
+import com.developersbreach.hangman.feature.onboarding.generated.resources.settings_button_game_visual
 import com.developersbreach.hangman.feature.onboarding.generated.resources.settings_button_theme_palette
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import kotlin.math.abs
@@ -27,6 +29,8 @@ data class SettingsUiState(
     val isSoundEffectsEnabled: Boolean = true,
     val selectedCursorStyle: CursorStyle = CursorStyle.default,
     val availableCursorStyles: List<CursorStyle> = CursorStyle.entries,
+    val selectedGameProgressVisualPreference: GameProgressVisualPreference =
+        GameProgressVisualPreference.default,
     val pendingDifficulty: GameDifficulty = GameDifficulty.EASY,
     val pendingDifficultySliderPosition: Float = 1f,
     val visibleSettingsSections: List<SettingsSection> = SettingsSection.all,
@@ -41,6 +45,7 @@ sealed class SettingsSection(
     data object Category : SettingsSection(Res.string.onboarding_button_category)
     data object Language : SettingsSection(Res.string.onboarding_button_language)
     data object Theme : SettingsSection(Res.string.settings_button_theme_palette)
+    data object GameVisual : SettingsSection(Res.string.settings_button_game_visual)
     data object Audio : SettingsSection(Res.string.settings_button_audio)
     data object Cursor : SettingsSection(
         labelRes = Res.string.settings_button_cursor,
@@ -57,6 +62,7 @@ sealed class SettingsSection(
             Category,
             Language,
             Theme,
+            GameVisual,
             Audio,
             Cursor,
         )
@@ -80,4 +86,9 @@ private val DIFFICULTY_TO_SLIDER_VALUE = mapOf(
     GameDifficulty.MEDIUM to 2f,
     GameDifficulty.HARD to 3f,
     GameDifficulty.VERY_HARD to 4f,
+)
+
+internal data class GameProgressVisualOption(
+    val gameProgressVisualPreference: GameProgressVisualPreference,
+    val labelRes: StringResource,
 )

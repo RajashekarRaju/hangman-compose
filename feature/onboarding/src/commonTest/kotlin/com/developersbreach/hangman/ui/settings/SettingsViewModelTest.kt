@@ -5,6 +5,7 @@ import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
+import com.developersbreach.hangman.repository.GameProgressVisualPreference
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +51,7 @@ class SettingsViewModelTest {
             isBackgroundMusicEnabled = false,
             isSoundEffectsEnabled = false,
             cursorStyle = CursorStyle.DEMON,
+            gameProgressVisualPreference = GameProgressVisualPreference.LEVEL_POINTS_ATTEMPTS,
         )
         val viewModel = SettingsViewModel(settingsRepo, backgroundAudioController)
         advanceUntilIdle()
@@ -62,6 +64,10 @@ class SettingsViewModelTest {
             assertEquals(false, isBackgroundMusicEnabled)
             assertEquals(false, isSoundEffectsEnabled)
             assertEquals(CursorStyle.DEMON, selectedCursorStyle)
+            assertEquals(
+                GameProgressVisualPreference.LEVEL_POINTS_ATTEMPTS,
+                selectedGameProgressVisualPreference,
+            )
             assertEquals(4f, pendingDifficultySliderPosition)
             assertEquals(SettingsSection.Difficulty, selectedSettingsSection)
         }
@@ -84,6 +90,11 @@ class SettingsViewModelTest {
         viewModel.onEvent(SettingsEvent.BackgroundMusicToggled(false))
         viewModel.onEvent(SettingsEvent.SoundEffectsToggled(false))
         viewModel.onEvent(SettingsEvent.CursorStyleChanged(CursorStyle.SKULL))
+        viewModel.onEvent(
+            SettingsEvent.GameProgressVisualPreferenceChanged(
+                GameProgressVisualPreference.LEVEL_POINTS_ATTEMPTS,
+            ),
+        )
 
         advanceUntilIdle()
 
@@ -98,6 +109,10 @@ class SettingsViewModelTest {
         assertEquals(false, settingsRepo.lastSetBackgroundMusicEnabled)
         assertEquals(false, settingsRepo.lastSetSoundEffectsEnabled)
         assertEquals(CursorStyle.SKULL, settingsRepo.lastSetCursorStyle)
+        assertEquals(
+            GameProgressVisualPreference.LEVEL_POINTS_ATTEMPTS,
+            settingsRepo.lastSetGameProgressVisualPreference,
+        )
     }
 
     @Test
@@ -131,6 +146,8 @@ private class FakeSettingsRepository(
     private var isBackgroundMusicEnabled: Boolean = true,
     private var isSoundEffectsEnabled: Boolean = true,
     private var cursorStyle: CursorStyle = CursorStyle.default,
+    private var gameProgressVisualPreference: GameProgressVisualPreference =
+        GameProgressVisualPreference.default,
 ) : GameSettingsRepository {
 
     private val themeState = MutableStateFlow(themePaletteId)
@@ -144,6 +161,7 @@ private class FakeSettingsRepository(
     var lastSetBackgroundMusicEnabled: Boolean? = null
     var lastSetSoundEffectsEnabled: Boolean? = null
     var lastSetCursorStyle: CursorStyle? = null
+    var lastSetGameProgressVisualPreference: GameProgressVisualPreference? = null
 
     override suspend fun getGameDifficulty(): GameDifficulty = difficulty
 
@@ -158,6 +176,10 @@ private class FakeSettingsRepository(
     override suspend fun isSoundEffectsEnabled(): Boolean = isSoundEffectsEnabled
 
     override suspend fun getCursorStyle(): CursorStyle = cursorStyle
+
+    override suspend fun getGameProgressVisualPreference(): GameProgressVisualPreference {
+        return gameProgressVisualPreference
+    }
 
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themeState
 
@@ -201,6 +223,13 @@ private class FakeSettingsRepository(
         this.cursorStyle = cursorStyle
         cursorStyleState.value = cursorStyle
         lastSetCursorStyle = cursorStyle
+    }
+
+    override suspend fun setGameProgressVisualPreference(
+        gameProgressVisualPreference: GameProgressVisualPreference,
+    ) {
+        this.gameProgressVisualPreference = gameProgressVisualPreference
+        lastSetGameProgressVisualPreference = gameProgressVisualPreference
     }
 }
 

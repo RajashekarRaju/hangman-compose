@@ -5,6 +5,7 @@ import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.game.core.HintType
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
+import com.developersbreach.hangman.repository.GameProgressVisualPreference
 import com.developersbreach.hangman.repository.model.HistoryRecord
 import kotlinx.serialization.Serializable
 
@@ -63,6 +64,7 @@ data class StoredSettings(
     val isBackgroundMusicEnabled: Boolean = true,
     val isSoundEffectsEnabled: Boolean = true,
     val cursorStyle: String = CursorStyle.default.name,
+    val gameProgressVisualPreference: String = GameProgressVisualPreference.default.name,
 )
 
 fun String.toGameDifficulty(): GameDifficulty {

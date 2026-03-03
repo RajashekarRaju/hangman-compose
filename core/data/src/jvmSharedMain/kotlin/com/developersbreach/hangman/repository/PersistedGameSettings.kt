@@ -12,4 +12,5 @@ data class PersistedGameSettings(
     val isBackgroundMusicEnabled: Boolean,
     val isSoundEffectsEnabled: Boolean,
     val cursorStyle: CursorStyle,
+    val gameProgressVisualPreference: GameProgressVisualPreference,
 )
