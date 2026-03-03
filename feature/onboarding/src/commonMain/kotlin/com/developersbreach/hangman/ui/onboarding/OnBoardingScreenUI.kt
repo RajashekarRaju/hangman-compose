@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,22 +28,20 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.developersbreach.hangman.feature.onboarding.generated.resources.Res
-import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_image_screen_bg
 import com.developersbreach.hangman.core.designsystem.generated.resources.Res as DesignRes
 import com.developersbreach.hangman.core.designsystem.generated.resources.game_background
+import com.developersbreach.hangman.feature.onboarding.generated.resources.Res
 import com.developersbreach.hangman.feature.onboarding.generated.resources.demon
-import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_category
-import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_difficulty
-import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_exit
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_achievements
+import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_exit
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_history
-import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_language
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_play
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_report_issue
+import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_button_settings
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_exit_game
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_game_banner
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_game_sound_play_pause
+import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_image_screen_bg
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_open_instructions_dialog
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_cd_play_game_button
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_game_tagline
@@ -56,17 +53,13 @@ import com.developersbreach.hangman.ui.components.AnimatedEnter
 import com.developersbreach.hangman.ui.components.BodySmallText
 import com.developersbreach.hangman.ui.components.HangmanIcon
 import com.developersbreach.hangman.ui.components.HangmanIconActionButton
-import com.developersbreach.hangman.ui.components.HangmanTextActionButton
 import com.developersbreach.hangman.ui.components.HangmanPrimaryButton
+import com.developersbreach.hangman.ui.components.HangmanTextActionButton
 import com.developersbreach.hangman.ui.components.LabelLargeText
 import com.developersbreach.hangman.ui.components.TitleMediumText
 import com.developersbreach.hangman.ui.components.creepyOutline
 import com.developersbreach.hangman.ui.components.rememberInfiniteRotation
 import com.developersbreach.hangman.ui.theme.HangmanTheme
-import com.developersbreach.hangman.ui.theme.ThemePaletteId
-import com.developersbreach.hangman.ui.theme.ThemePalettes
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.DropdownMenu
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -89,34 +82,6 @@ fun OnBoardingUiState.OnBoardingScreenUI(
             OnBoardingScreenContent(
                 uiState = this@OnBoardingScreenUI,
                 onEvent = onEvent
-            )
-        }
-
-        if (isDifficultyDialogOpen) {
-            AdjustGameDifficultyDialog(
-                selectedDifficulty = pendingDifficulty,
-                sliderDifficultyPosition = pendingDifficultySliderPosition,
-                onSliderPositionChanged = { onEvent(OnBoardingEvent.DifficultySliderPositionChanged(it)) },
-                onDifficultyConfirmed = { onEvent(OnBoardingEvent.DifficultyChanged(it)) },
-                onDismissRequest = { onEvent(OnBoardingEvent.DismissDifficultyDialog) }
-            )
-        }
-
-        if (isCategoryDialogOpen) {
-            ChooseGameCategoryDialog(
-                categories = availableCategories,
-                gameCategory = gameCategory,
-                updatePlayerChosenCategory = { onEvent(OnBoardingEvent.CategoryChanged(it)) },
-                onDismissRequest = { onEvent(OnBoardingEvent.DismissCategoryDialog) }
-            )
-        }
-
-        if (isLanguageDialogOpen) {
-            ChooseLanguageDialog(
-                languages = availableLanguages,
-                selectedLanguage = selectedLanguage,
-                onLanguageChanged = { onEvent(OnBoardingEvent.LanguageChanged(it)) },
-                onDismissRequest = { onEvent(OnBoardingEvent.DismissLanguageDialog) },
             )
         }
 
@@ -172,36 +137,16 @@ private fun OnBoardingScreenContent(
             )
         }
 
-        item { GameDifficultyButton(onEvent = onEvent) }
-
-        item { GameCategoryButton(onEvent = onEvent) }
-
-        item { GameLanguageButton(onEvent = onEvent) }
+        item { SettingsButton { onEvent(OnBoardingEvent.NavigateToSettingsClicked) } }
 
         item {
             Spacer(modifier = Modifier.height(16.dp))
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                GameInstructionIconButton(onEvent = onEvent)
-
-                BackgroundVolumeIconButton(
-                    isBackgroundMusicPlaying = uiState.isBackgroundMusicPlaying,
-                    onToggleBackgroundMusic = { onEvent(OnBoardingEvent.ToggleBackgroundMusic) }
-                )
-
-                ThemePaletteDropdown(
-                    selectedPaletteId = uiState.themePaletteId,
-                    expanded = uiState.isPaletteMenuExpanded,
-                    onExpandRequest = { onEvent(OnBoardingEvent.OpenThemePaletteMenu) },
-                    onDismissRequest = { onEvent(OnBoardingEvent.DismissThemePaletteMenu) },
-                    onPaletteChanged = {
-                        onEvent(OnBoardingEvent.ThemePaletteChanged(it))
-                        onEvent(OnBoardingEvent.DismissThemePaletteMenu)
-                    },
-                )
-            }
+            HangmanActionRow(
+                isBackgroundMusicPlaying = uiState.isBackgroundMusicPlaying,
+                onToggleBackgroundMusic = { onEvent(OnBoardingEvent.ToggleBackgroundMusic) },
+                onOpenInstructions = { onEvent(OnBoardingEvent.OpenInstructionsDialog) },
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
         }
@@ -218,7 +163,7 @@ private fun ReportIssueTextButton(
         modifier = modifier,
     ) {
         LabelLargeText(
-        text = stringResource(Res.string.onboarding_button_report_issue),
+            text = stringResource(Res.string.onboarding_button_report_issue),
             color = HangmanTheme.colorScheme.primary.copy(alpha = 0.82f),
             modifier = Modifier.padding(vertical = 4.dp),
         )
@@ -350,41 +295,37 @@ private fun AchievementsButton(
 }
 
 @Composable
-fun GameDifficultyButton(
-    onEvent: (OnBoardingEvent) -> Unit
-) {
+private fun SettingsButton(onClick: () -> Unit) {
     OnBoardingActionButton(
-        text = stringResource(Res.string.onboarding_button_difficulty),
-        onClick = { onEvent(OnBoardingEvent.OpenDifficultyDialog) }
+        text = stringResource(Res.string.onboarding_button_settings),
+        onClick = onClick,
     )
 }
 
 @Composable
-fun GameCategoryButton(
-    onEvent: (OnBoardingEvent) -> Unit
+private fun HangmanActionRow(
+    isBackgroundMusicPlaying: Boolean,
+    onToggleBackgroundMusic: () -> Unit,
+    onOpenInstructions: () -> Unit,
 ) {
-    OnBoardingActionButton(
-        text = stringResource(Res.string.onboarding_button_category),
-        onClick = { onEvent(OnBoardingEvent.OpenCategoryDialog) }
-    )
-}
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        GameInstructionIconButton(onClick = onOpenInstructions)
 
-@Composable
-fun GameLanguageButton(
-    onEvent: (OnBoardingEvent) -> Unit,
-) {
-    OnBoardingActionButton(
-        text = stringResource(Res.string.onboarding_button_language),
-        onClick = { onEvent(OnBoardingEvent.OpenLanguageDialog) },
-    )
+        BackgroundVolumeIconButton(
+            isBackgroundMusicPlaying = isBackgroundMusicPlaying,
+            onToggleBackgroundMusic = onToggleBackgroundMusic,
+        )
+    }
 }
 
 @Composable
 private fun GameInstructionIconButton(
-    onEvent: (OnBoardingEvent) -> Unit
+    onClick: () -> Unit
 ) {
     HangmanIconActionButton(
-        onClick = { onEvent(OnBoardingEvent.OpenInstructionsDialog) },
+        onClick = onClick,
         seed = 701,
         size = 42,
         threshold = 0.14f,
@@ -420,53 +361,6 @@ private fun BackgroundVolumeIconButton(
             contentDescription = stringResource(Res.string.onboarding_cd_game_sound_play_pause),
             tint = HangmanTheme.colorScheme.primary
         )
-    }
-}
-
-@Composable
-private fun ThemePaletteDropdown(
-    selectedPaletteId: ThemePaletteId,
-    expanded: Boolean,
-    onExpandRequest: () -> Unit,
-    onDismissRequest: () -> Unit,
-    onPaletteChanged: (ThemePaletteId) -> Unit,
-) {
-    val selectedPalette = ThemePalettes.byId(selectedPaletteId)
-
-    Box {
-        HangmanIconActionButton(
-            onClick = onExpandRequest,
-            seed = 703,
-            size = 42,
-            threshold = 0.14f,
-            backgroundColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.06f),
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(14.dp)
-                    .background(selectedPalette.previewColor, CircleShape)
-            )
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = onDismissRequest,
-            containerColor = HangmanTheme.colorScheme.surfaceContainer,
-        ) {
-            ThemePalettes.all.forEach { palette ->
-                DropdownMenuItem(
-                    text = {
-                        Box(
-                            modifier = Modifier
-                                .size(16.dp)
-                                .background(palette.previewColor, CircleShape)
-                        )
-                    },
-                    onClick = { onPaletteChanged(palette.id) },
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-                )
-            }
-        }
     }
 }
 

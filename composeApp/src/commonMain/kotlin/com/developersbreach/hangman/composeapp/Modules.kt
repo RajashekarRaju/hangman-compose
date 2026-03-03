@@ -4,6 +4,7 @@ import com.developersbreach.hangman.ui.achievements.AchievementsViewModel
 import com.developersbreach.hangman.ui.game.GameViewModel
 import com.developersbreach.hangman.ui.history.HistoryViewModel
 import com.developersbreach.hangman.ui.onboarding.OnBoardingViewModel
+import com.developersbreach.hangman.ui.settings.SettingsViewModel
 import com.developersbreach.hangman.repository.di.platformDataModule
 import com.developersbreach.hangman.ui.common.notification.AchievementNotificationCoordinator
 import com.developersbreach.hangman.ui.common.notification.DefaultAchievementNotificationCoordinator
@@ -27,6 +28,9 @@ private val viewModelModule = module {
     }
     viewModel {
         OnBoardingViewModel(get(), get(), get(), get())
+    }
+    viewModel {
+        SettingsViewModel(get())
     }
     viewModel {
         GameViewModel(get(), get(), get(), get(), get())

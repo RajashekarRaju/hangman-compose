@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun OnBoardingScreen(
     navigateToGameScreen: () -> Unit,
+    navigateToSettingsScreen: () -> Unit,
     navigateToHistoryScreen: () -> Unit,
     navigateToAchievementsScreen: () -> Unit,
     viewModel: OnBoardingViewModel,
@@ -26,6 +27,7 @@ fun OnBoardingScreen(
         viewModel.effects.collectLatest { effect ->
             when (effect) {
                 OnBoardingEffect.NavigateToGame -> navigateToGameScreen()
+                OnBoardingEffect.NavigateToSettings -> navigateToSettingsScreen()
                 OnBoardingEffect.NavigateToHistory -> navigateToHistoryScreen()
                 OnBoardingEffect.NavigateToAchievements -> navigateToAchievementsScreen()
                 OnBoardingEffect.FinishActivity -> finishActivity()

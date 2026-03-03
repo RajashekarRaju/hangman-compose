@@ -10,6 +10,9 @@ sealed interface Destination
 data object OnBoardingRoute : Destination
 
 @Serializable
+data object SettingsRoute : Destination
+
+@Serializable
 data object GameRoute : Destination
 
 @Serializable
@@ -24,6 +27,7 @@ internal enum class RouteSpec(
     val clearBackStack: Boolean = false,
 ) {
     ONBOARDING(hash = "#/", destination = OnBoardingRoute, clearBackStack = true),
+    SETTINGS(hash = "#/settings", destination = SettingsRoute),
     GAME(hash = "#/game", destination = GameRoute),
     HISTORY(hash = "#/history", destination = HistoryRoute),
     ACHIEVEMENTS(hash = "#/achievements", destination = AchievementsRoute);

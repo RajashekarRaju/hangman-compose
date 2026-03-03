@@ -1,4 +1,4 @@
-package com.developersbreach.hangman.ui.onboarding
+package com.developersbreach.hangman.ui.settings
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
@@ -16,9 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.developersbreach.game.core.GameCategory
 import com.developersbreach.hangman.feature.onboarding.generated.resources.Res
-import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_language_dialog_title
-import com.developersbreach.hangman.repository.AppLanguage
+import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_category_dialog_title
 import com.developersbreach.hangman.ui.components.BodyLargeText
 import com.developersbreach.hangman.ui.components.CreepyRadioButton
 import com.developersbreach.hangman.ui.components.HangmanDialog
@@ -27,35 +27,35 @@ import com.developersbreach.hangman.ui.theme.HangmanTheme
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun ChooseLanguageDialog(
-    languages: List<AppLanguage>,
-    selectedLanguage: AppLanguage,
-    onLanguageChanged: (AppLanguage) -> Unit,
+fun ChooseGameCategoryDialog(
+    categories: List<GameCategory>,
+    gameCategory: GameCategory,
+    updatePlayerChosenCategory: (GameCategory) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     HangmanDialog(
         onDismissRequest = onDismissRequest,
-        seed = 813,
+        seed = 811,
         threshold = 0.10f,
         modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(60.dp),
+        contentPadding = PaddingValues(60.dp)
     ) {
         TitleMediumText(
-            text = stringResource(Res.string.onboarding_language_dialog_title),
-            color = HangmanTheme.colorScheme.primary.copy(alpha = 0.75f),
+            text = stringResource(Res.string.onboarding_category_dialog_title),
+            color = HangmanTheme.colorScheme.primary.copy(alpha = 0.75f)
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Column(
             modifier = Modifier.selectableGroup(),
-            horizontalAlignment = Alignment.Start,
+            horizontalAlignment = Alignment.Start
         ) {
-            languages.forEach { language ->
-                LanguageRow(
-                    language = language,
-                    selectedLanguage = selectedLanguage,
-                    onLanguageChanged = onLanguageChanged,
+            categories.forEach { category ->
+                ItemCategoryRow(
+                    category = category,
+                    selectedGameCategory = gameCategory,
+                    updatePlayerChosenCategory = updatePlayerChosenCategory
                 )
             }
         }
@@ -63,10 +63,10 @@ fun ChooseLanguageDialog(
 }
 
 @Composable
-private fun LanguageRow(
-    language: AppLanguage,
-    selectedLanguage: AppLanguage,
-    onLanguageChanged: (AppLanguage) -> Unit,
+private fun ItemCategoryRow(
+    category: GameCategory,
+    selectedGameCategory: GameCategory,
+    updatePlayerChosenCategory: (GameCategory) -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
@@ -76,22 +76,22 @@ private fun LanguageRow(
             .fillMaxWidth()
             .height(56.dp)
             .selectable(
-                selected = language == selectedLanguage,
+                selected = category == selectedGameCategory,
                 role = Role.RadioButton,
                 indication = null,
                 interactionSource = interactionSource,
-                onClick = { onLanguageChanged(language) },
-            ),
+                onClick = { updatePlayerChosenCategory(category) }
+            )
     ) {
         CreepyRadioButton(
-            selected = language == selectedLanguage,
-            seed = language.ordinal * 53,
+            selected = category == selectedGameCategory,
+            seed = category.ordinal * 41
         )
 
         BodyLargeText(
-            text = language.nativeName,
+            text = stringResource(category.labelRes()),
             modifier = Modifier.padding(start = 20.dp),
-            color = HangmanTheme.colorScheme.onSurface,
+            color = HangmanTheme.colorScheme.onSurface
         )
     }
 }

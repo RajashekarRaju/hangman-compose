@@ -1,4 +1,4 @@
-package com.developersbreach.hangman.ui.onboarding
+package com.developersbreach.hangman.ui.settings
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer

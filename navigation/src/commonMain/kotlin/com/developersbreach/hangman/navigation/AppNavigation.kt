@@ -14,6 +14,8 @@ import com.developersbreach.hangman.ui.history.HistoryScreen
 import com.developersbreach.hangman.ui.history.HistoryViewModel
 import com.developersbreach.hangman.ui.onboarding.OnBoardingScreen
 import com.developersbreach.hangman.ui.onboarding.OnBoardingViewModel
+import com.developersbreach.hangman.ui.settings.SettingsScreen
+import com.developersbreach.hangman.ui.settings.SettingsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -41,10 +43,25 @@ fun AppNavigation(
             val viewModel = koinViewModel<OnBoardingViewModel>()
             OnBoardingScreen(
                 navigateToGameScreen = { navController.navigateToDestination(GameRoute) },
+                navigateToSettingsScreen = { navController.navigateToDestination(SettingsRoute) },
                 navigateToHistoryScreen = { navController.navigateToDestination(HistoryRoute) },
                 navigateToAchievementsScreen = { navController.navigateToDestination(AchievementsRoute) },
                 viewModel = viewModel,
                 finishActivity = closeApplication,
+            )
+        }
+
+        composable<SettingsRoute> {
+            val viewModel = koinViewModel<SettingsViewModel>()
+            SettingsScreen(
+                navigateUp = {
+                    if (navController.navigateUp()) {
+                        updateUrlForDestination(OnBoardingRoute)
+                    } else {
+                        navController.navigateToDestination(OnBoardingRoute)
+                    }
+                },
+                viewModel = viewModel,
             )
         }
 

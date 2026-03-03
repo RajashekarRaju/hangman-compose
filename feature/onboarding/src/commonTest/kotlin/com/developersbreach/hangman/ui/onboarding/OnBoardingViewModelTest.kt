@@ -68,12 +68,8 @@ class OnBoardingViewModelTest {
         advanceUntilIdle()
 
         with(viewModel.uiState.value) {
-            assertEquals(GameDifficulty.VERY_HARD, gameDifficulty)
-            assertEquals(GameCategory.ANIMALS, gameCategory)
             assertEquals(155, highScore)
             assertTrue(isBackgroundMusicPlaying)
-            assertEquals(GameDifficulty.VERY_HARD, pendingDifficulty)
-            assertEquals(4f, pendingDifficultySliderPosition)
         }
     }
 
@@ -96,6 +92,11 @@ class OnBoardingViewModelTest {
         viewModel.onEvent(OnBoardingEvent.NavigateToHistoryClicked)
         runCurrent()
         assertEquals(OnBoardingEffect.NavigateToHistory, historyEffect.await())
+
+        val settingsEffect = async { viewModel.effects.first() }
+        viewModel.onEvent(OnBoardingEvent.NavigateToSettingsClicked)
+        runCurrent()
+        assertEquals(OnBoardingEffect.NavigateToSettings, settingsEffect.await())
 
         val achievementsEffect = async { viewModel.effects.first() }
         viewModel.onEvent(OnBoardingEvent.NavigateToAchievementsClicked)
@@ -120,7 +121,7 @@ class OnBoardingViewModelTest {
     }
 
     @Test
-    fun `difficulty category and language changes update state and persist`() = runTest(dispatcher) {
+    fun `open and dismiss instructions dialog updates state`() = runTest(dispatcher) {
         val historyRepo = FakeHistoryRepository()
         val achievementsRepo = FakeAchievementsRepository()
         val settingsRepo = FakeSettingsRepository()
@@ -128,23 +129,11 @@ class OnBoardingViewModelTest {
         val viewModel = OnBoardingViewModel(historyRepo, achievementsRepo, settingsRepo, audio)
         advanceUntilIdle()
 
-        viewModel.onEvent(OnBoardingEvent.OpenDifficultyDialog)
-        viewModel.onEvent(OnBoardingEvent.DifficultySliderPositionChanged(4f))
-        viewModel.onEvent(OnBoardingEvent.DifficultyChanged(GameDifficulty.VERY_HARD))
-        viewModel.onEvent(OnBoardingEvent.CategoryChanged(GameCategory.ANIMALS))
-        viewModel.onEvent(OnBoardingEvent.LanguageChanged(AppLanguage.HINDI))
-        advanceUntilIdle()
+        viewModel.onEvent(OnBoardingEvent.OpenInstructionsDialog)
+        assertTrue(viewModel.uiState.value.isInstructionsDialogOpen)
 
-        with(viewModel.uiState.value) {
-            assertTrue(isDifficultyDialogOpen)
-            assertEquals(GameDifficulty.VERY_HARD, gameDifficulty)
-            assertEquals(4f, pendingDifficultySliderPosition)
-            assertEquals(GameCategory.ANIMALS, gameCategory)
-            assertEquals(AppLanguage.HINDI, selectedLanguage)
-        }
-        assertEquals(GameDifficulty.VERY_HARD, settingsRepo.lastSetDifficulty)
-        assertEquals(GameCategory.ANIMALS, settingsRepo.lastSetCategory)
-        assertEquals(AppLanguage.HINDI, settingsRepo.lastSetLanguage)
+        viewModel.onEvent(OnBoardingEvent.DismissInstructionsDialog)
+        assertFalse(viewModel.uiState.value.isInstructionsDialogOpen)
     }
 
     @Test

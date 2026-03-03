@@ -1,4 +1,4 @@
-package com.developersbreach.hangman.ui.onboarding
+package com.developersbreach.hangman.ui.settings
 
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty

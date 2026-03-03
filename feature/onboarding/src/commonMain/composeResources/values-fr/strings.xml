@@ -7,10 +7,13 @@
     <string name="onboarding_button_category">Catégorie</string>
     <string name="onboarding_button_language">Langue</string>
     <string name="onboarding_button_report_issue">Signaler un problème</string>
+    <string name="onboarding_button_settings">Paramètres</string>
 
     <string name="onboarding_difficulty_dialog_title">Difficulté</string>
     <string name="onboarding_category_dialog_title">Catégorie</string>
     <string name="onboarding_language_dialog_title">Langue</string>
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_button_theme_palette">Palette de thème</string>
 
     <string name="onboarding_game_tagline">Soyez prudent. Les lettres peuvent vous faire chuter</string>
     <string name="onboarding_highest_score_header">Meilleur score - %1$d</string>

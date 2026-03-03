@@ -2,14 +2,11 @@ package com.developersbreach.hangman.ui.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.developersbreach.game.core.GameCategory
-import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.repository.AchievementsRepository
-import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
-import com.developersbreach.hangman.ui.theme.ThemePaletteId
+import com.developersbreach.hangman.ui.settings.labelRes
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -34,8 +31,6 @@ class OnBoardingViewModel(
 
     init {
         hydrateFromPreferences()
-        observeThemePalette()
-        observeAppLanguage()
         observeHighestScore()
         observeUnreadAchievementsCount()
         playBackgroundMusic()
@@ -46,6 +41,10 @@ class OnBoardingViewModel(
             OnBoardingEvent.NavigateToGameClicked -> {
                 stopBackgroundMusic()
                 emitEffect(OnBoardingEffect.NavigateToGame)
+            }
+
+            OnBoardingEvent.NavigateToSettingsClicked -> {
+                emitEffect(OnBoardingEffect.NavigateToSettings)
             }
 
             OnBoardingEvent.NavigateToHistoryClicked -> {
@@ -59,74 +58,6 @@ class OnBoardingViewModel(
             OnBoardingEvent.ExitClicked -> {
                 stopBackgroundMusic()
                 emitEffect(OnBoardingEffect.FinishActivity)
-            }
-
-            OnBoardingEvent.OpenDifficultyDialog -> {
-                _uiState.update { current ->
-                    current.copy(
-                        isDifficultyDialogOpen = true,
-                        pendingDifficulty = current.gameDifficulty,
-                        pendingDifficultySliderPosition = current.gameDifficulty.toSliderPosition(),
-                    )
-                }
-            }
-
-            OnBoardingEvent.DismissDifficultyDialog -> {
-                _uiState.update { current ->
-                    current.copy(
-                        isDifficultyDialogOpen = false,
-                        pendingDifficulty = current.gameDifficulty,
-                        pendingDifficultySliderPosition = current.gameDifficulty.toSliderPosition(),
-                    )
-                }
-            }
-
-            is OnBoardingEvent.DifficultySliderPositionChanged -> {
-                val difficulty = event.sliderPosition.toGameDifficulty()
-                _uiState.update { current ->
-                    current.copy(
-                        pendingDifficulty = difficulty,
-                        pendingDifficultySliderPosition = event.sliderPosition,
-                    )
-                }
-            }
-
-            is OnBoardingEvent.DifficultyChanged -> {
-                updatePlayerChosenDifficulty(event.difficulty)
-            }
-
-            OnBoardingEvent.OpenCategoryDialog -> {
-                _uiState.update { current -> current.copy(isCategoryDialogOpen = true) }
-            }
-
-            OnBoardingEvent.DismissCategoryDialog -> {
-                _uiState.update { current -> current.copy(isCategoryDialogOpen = false) }
-            }
-
-            is OnBoardingEvent.CategoryChanged -> {
-                updatePlayerChosenCategory(event.category)
-            }
-
-            OnBoardingEvent.OpenLanguageDialog -> {
-                _uiState.update { current -> current.copy(isLanguageDialogOpen = true) }
-            }
-
-            OnBoardingEvent.DismissLanguageDialog -> {
-                _uiState.update { current -> current.copy(isLanguageDialogOpen = false) }
-            }
-
-            is OnBoardingEvent.LanguageChanged -> updateAppLanguage(event.language)
-
-            OnBoardingEvent.OpenThemePaletteMenu -> {
-                _uiState.update { current -> current.copy(isPaletteMenuExpanded = true) }
-            }
-
-            OnBoardingEvent.DismissThemePaletteMenu -> {
-                _uiState.update { current -> current.copy(isPaletteMenuExpanded = false) }
-            }
-
-            is OnBoardingEvent.ThemePaletteChanged -> {
-                updateThemePalette(event.paletteId)
             }
 
             OnBoardingEvent.OpenInstructionsDialog -> {
@@ -185,19 +116,11 @@ class OnBoardingViewModel(
         viewModelScope.launch {
             val difficulty = settingsRepository.getGameDifficulty()
             val category = settingsRepository.getGameCategory()
-            val themePaletteId = settingsRepository.getThemePaletteId()
-            val appLanguage = settingsRepository.getAppLanguage()
             _uiState.update { current ->
                 current.copy(
-                    gameDifficulty = difficulty,
                     gameDifficultyLabelRes = difficulty.labelRes(),
-                    gameCategory = category,
                     gameCategoryLabelRes = category.labelRes(),
-                    selectedLanguage = appLanguage,
-                    themePaletteId = themePaletteId,
                     isBackgroundMusicPlaying = audioController.isPlaying(),
-                    pendingDifficulty = difficulty,
-                    pendingDifficultySliderPosition = difficulty.toSliderPosition(),
                 )
             }
         }
@@ -214,71 +137,6 @@ class OnBoardingViewModel(
         audioController.stop()
         _uiState.update { current ->
             current.copy(isBackgroundMusicPlaying = false)
-        }
-    }
-
-    private fun updatePlayerChosenDifficulty(gameDifficulty: GameDifficulty) {
-        _uiState.update { current ->
-            current.copy(
-                gameDifficulty = gameDifficulty,
-                gameDifficultyLabelRes = gameDifficulty.labelRes(),
-                pendingDifficulty = gameDifficulty,
-                pendingDifficultySliderPosition = gameDifficulty.toSliderPosition(),
-            )
-        }
-        viewModelScope.launch {
-            settingsRepository.setGameDifficulty(gameDifficulty)
-        }
-    }
-
-    private fun updatePlayerChosenCategory(gameCategory: GameCategory) {
-        _uiState.update { current ->
-            current.copy(
-                gameCategory = gameCategory,
-                gameCategoryLabelRes = gameCategory.labelRes(),
-            )
-        }
-        viewModelScope.launch {
-            settingsRepository.setGameCategory(gameCategory)
-        }
-    }
-
-    private fun updateThemePalette(themePaletteId: ThemePaletteId) {
-        _uiState.update { current ->
-            current.copy(
-                isPaletteMenuExpanded = false,
-            )
-        }
-        viewModelScope.launch {
-            settingsRepository.setThemePaletteId(themePaletteId)
-        }
-    }
-
-    private fun updateAppLanguage(language: AppLanguage) {
-        _uiState.update { current ->
-            current.copy(
-                selectedLanguage = language,
-                isLanguageDialogOpen = false,
-            )
-        }
-        viewModelScope.launch {
-            settingsRepository.setAppLanguage(language)
-        }
-    }
-
-    private fun observeThemePalette() {
-        viewModelScope.launch {
-            settingsRepository.observeThemePaletteId().collect { themePaletteId ->
-                _uiState.update { current -> current.copy(themePaletteId = themePaletteId) }
-            }
-        }
-    }
-
-    private fun observeAppLanguage() {
-        viewModelScope.launch {
-            settingsRepository.observeAppLanguage().collect { language ->
-                _uiState.update { current -> current.copy(selectedLanguage = language) }
-            }
         }
     }
 
