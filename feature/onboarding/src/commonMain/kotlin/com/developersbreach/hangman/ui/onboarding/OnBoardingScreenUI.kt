@@ -43,7 +43,6 @@ import com.developersbreach.hangman.feature.onboarding.generated.resources.onboa
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_game_tagline
 import com.developersbreach.hangman.feature.onboarding.generated.resources.onboarding_highest_score_header
 import com.developersbreach.hangman.feature.onboarding.generated.resources.rope_with_title
-import com.developersbreach.hangman.ui.common.HangmanInstructionsDialog
 import com.developersbreach.hangman.ui.components.AnimatedEnter
 import com.developersbreach.hangman.ui.components.BodySmallText
 import com.developersbreach.hangman.ui.components.HangmanIcon
@@ -76,14 +75,6 @@ fun OnBoardingUiState.OnBoardingScreenUI(
             OnBoardingScreenContent(
                 uiState = this@OnBoardingScreenUI,
                 onEvent = onEvent
-            )
-        }
-
-        if (isInstructionsDialogOpen) {
-            HangmanInstructionsDialog(
-                difficultyValue = stringResource(gameDifficultyLabelRes),
-                categoryValue = stringResource(gameCategoryLabelRes),
-                onDismissRequest = { onEvent(OnBoardingEvent.DismissInstructionsDialog) },
             )
         }
 
@@ -136,7 +127,7 @@ private fun OnBoardingScreenContent(
         item {
             Spacer(modifier = Modifier.height(16.dp))
 
-            GameGuideButton(onClick = { onEvent(OnBoardingEvent.OpenInstructionsDialog) })
+            GameGuideButton(onClick = { onEvent(OnBoardingEvent.NavigateToGameGuideClicked) })
 
             Spacer(modifier = Modifier.height(24.dp))
         }

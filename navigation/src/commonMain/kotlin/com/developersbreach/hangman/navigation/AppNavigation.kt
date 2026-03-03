@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.developersbreach.hangman.ui.achievements.AchievementsScreen
 import com.developersbreach.hangman.ui.achievements.AchievementsViewModel
 import com.developersbreach.hangman.ui.game.GameScreen
+import com.developersbreach.hangman.ui.guide.GameGuideScreen
 import com.developersbreach.hangman.ui.game.GameViewModel
 import com.developersbreach.hangman.ui.history.HistoryScreen
 import com.developersbreach.hangman.ui.history.HistoryViewModel
@@ -46,6 +47,7 @@ fun AppNavigation(
                 navigateToSettingsScreen = { navController.navigateToDestination(SettingsRoute) },
                 navigateToHistoryScreen = { navController.navigateToDestination(HistoryRoute) },
                 navigateToAchievementsScreen = { navController.navigateToDestination(AchievementsRoute) },
+                navigateToGameGuideScreen = { navController.navigateToDestination(GameGuideRoute) },
                 viewModel = viewModel,
                 finishActivity = closeApplication,
             )
@@ -76,6 +78,18 @@ fun AppNavigation(
                     }
                 },
                 viewModel = viewModel
+            )
+        }
+
+        composable<GameGuideRoute> {
+            GameGuideScreen(
+                navigateUp = {
+                    if (navController.navigateUp()) {
+                        updateUrlForDestination(RouteSpec.root.destination)
+                    } else {
+                        navController.navigateToDestination(RouteSpec.root.destination)
+                    }
+                },
             )
         }
 

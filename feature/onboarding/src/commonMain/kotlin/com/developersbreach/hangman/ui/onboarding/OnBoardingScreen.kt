@@ -17,6 +17,7 @@ fun OnBoardingScreen(
     navigateToSettingsScreen: () -> Unit,
     navigateToHistoryScreen: () -> Unit,
     navigateToAchievementsScreen: () -> Unit,
+    navigateToGameGuideScreen: () -> Unit,
     viewModel: OnBoardingViewModel,
     finishActivity: () -> Unit,
 ) {
@@ -30,6 +31,7 @@ fun OnBoardingScreen(
                 OnBoardingEffect.NavigateToSettings -> navigateToSettingsScreen()
                 OnBoardingEffect.NavigateToHistory -> navigateToHistoryScreen()
                 OnBoardingEffect.NavigateToAchievements -> navigateToAchievementsScreen()
+                OnBoardingEffect.NavigateToGameGuide -> navigateToGameGuideScreen()
                 OnBoardingEffect.FinishActivity -> finishActivity()
                 is OnBoardingEffect.OpenIssueTracker -> uriHandler.openUri(effect.url)
             }

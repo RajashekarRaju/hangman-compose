@@ -84,11 +84,11 @@ class GameViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        assertFalse(viewModel.uiState.value.showInstructionsDialog)
-        viewModel.onEvent(GameEvent.ToggleInstructionsDialog)
-        assertTrue(viewModel.uiState.value.showInstructionsDialog)
-        viewModel.onEvent(GameEvent.ToggleInstructionsDialog)
-        assertFalse(viewModel.uiState.value.showInstructionsDialog)
+        assertFalse(viewModel.uiState.value.showGameGuideOverlay)
+        viewModel.onEvent(GameEvent.ToggleGameGuideOverlay)
+        assertTrue(viewModel.uiState.value.showGameGuideOverlay)
+        viewModel.onEvent(GameEvent.ToggleGameGuideOverlay)
+        assertFalse(viewModel.uiState.value.showGameGuideOverlay)
     }
 
     @Test

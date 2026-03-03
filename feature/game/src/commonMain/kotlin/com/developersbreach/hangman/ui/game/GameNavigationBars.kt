@@ -92,7 +92,7 @@ private fun DefaultNavigationBar(
         modifier = modifier,
     ) {
         BackNavigationButton(onEvent = onEvent)
-        InstructionsNavigationButton(onEvent = onEvent)
+        GameGuideNavigationButton(onEvent = onEvent)
     }
 }
 
@@ -120,7 +120,7 @@ private fun TraditionalWideNavigationBar(
             TopStatBadge(text = "Att $attemptsLeftToGuess", seed = 932)
             TopStatBadge(text = "Pts $pointsScoredOverall", seed = 933)
         }
-        InstructionsNavigationButton(onEvent = onEvent)
+        GameGuideNavigationButton(onEvent = onEvent)
     }
 }
 
@@ -142,7 +142,7 @@ private fun TraditionalCompactNavigationBar(
             modifier = Modifier.fillMaxWidth(),
         ) {
             BackNavigationButton(onEvent = onEvent)
-            InstructionsNavigationButton(onEvent = onEvent)
+            GameGuideNavigationButton(onEvent = onEvent)
         }
         Box(modifier = Modifier.fillMaxWidth()) {
             Row(
@@ -181,9 +181,9 @@ private fun BackNavigationButton(onEvent: (GameEvent) -> Unit) {
 }
 
 @Composable
-private fun InstructionsNavigationButton(onEvent: (GameEvent) -> Unit) {
+private fun GameGuideNavigationButton(onEvent: (GameEvent) -> Unit) {
     HangmanIconActionButton(
-        onClick = { onEvent(GameEvent.ToggleInstructionsDialog) },
+        onClick = { onEvent(GameEvent.ToggleGameGuideOverlay) },
         seed = 902,
         size = 42,
         threshold = 0.12f,

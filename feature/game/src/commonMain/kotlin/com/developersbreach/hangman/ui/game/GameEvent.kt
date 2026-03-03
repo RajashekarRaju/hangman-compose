@@ -6,7 +6,7 @@ sealed interface GameEvent {
     data object BackPressed : GameEvent
     data object ExitConfirmed : GameEvent
     data object ExitDismissed : GameEvent
-    data object ToggleInstructionsDialog : GameEvent
+    data object ToggleGameGuideOverlay : GameEvent
     data class HintSelected(val hintType: HintType) : GameEvent
     data object DismissHintFeedbackDialog : GameEvent
     data class AlphabetClicked(val alphabetId: Int) : GameEvent

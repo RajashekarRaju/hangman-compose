@@ -104,6 +104,11 @@ class OnBoardingViewModelTest {
         runCurrent()
         assertEquals(OnBoardingEffect.NavigateToAchievements, achievementsEffect.await())
 
+        val guideEffect = async { viewModel.effects.first() }
+        viewModel.onEvent(OnBoardingEvent.NavigateToGameGuideClicked)
+        runCurrent()
+        assertEquals(OnBoardingEffect.NavigateToGameGuide, guideEffect.await())
+
         val reportIssueEffect = async { viewModel.effects.first() }
         viewModel.onEvent(OnBoardingEvent.ReportIssueClicked)
         runCurrent()
@@ -119,22 +124,6 @@ class OnBoardingViewModelTest {
         runCurrent()
         assertEquals(OnBoardingEffect.FinishActivity, finishEffect.await())
         assertFalse(audio.isPlaying())
-    }
-
-    @Test
-    fun `open and dismiss instructions dialog updates state`() = runTest(dispatcher) {
-        val historyRepo = FakeHistoryRepository()
-        val achievementsRepo = FakeAchievementsRepository()
-        val settingsRepo = FakeSettingsRepository()
-        val audio = FakeBackgroundAudioController()
-        val viewModel = OnBoardingViewModel(historyRepo, achievementsRepo, settingsRepo, audio)
-        advanceUntilIdle()
-
-        viewModel.onEvent(OnBoardingEvent.OpenInstructionsDialog)
-        assertTrue(viewModel.uiState.value.isInstructionsDialogOpen)
-
-        viewModel.onEvent(OnBoardingEvent.DismissInstructionsDialog)
-        assertFalse(viewModel.uiState.value.isInstructionsDialogOpen)
     }
 
     @Test

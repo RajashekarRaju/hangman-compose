@@ -27,6 +27,7 @@ import com.developersbreach.hangman.ui.theme.HangmanTheme
 internal fun TraditionalHangmanVisual(
     attemptsLeftToGuess: Int,
     levelTimeProgress: Float,
+    playStageIntroAnimation: Boolean = true,
     modifier: Modifier = Modifier,
     style: TraditionalHangmanStyle? = null,
 ) {
@@ -48,7 +49,10 @@ internal fun TraditionalHangmanVisual(
         label = "TimerFillProgress",
     )
     val stageRevealProgress by animateFloatAsState(
-        targetValue = if (stageIntroStarted) 1f else 0f,
+        targetValue = when {
+            playStageIntroAnimation -> if (stageIntroStarted) 1f else 0f
+            else -> 1f
+        },
         animationSpec = tween(durationMillis = 2_000, easing = FastOutSlowInEasing),
         label = "StageRevealProgress",
     )

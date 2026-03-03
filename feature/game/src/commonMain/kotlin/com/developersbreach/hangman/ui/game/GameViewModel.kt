@@ -80,9 +80,9 @@ class GameViewModel(
                     current.copy(showExitDialog = false)
                 }
             }
-            GameEvent.ToggleInstructionsDialog -> {
+            GameEvent.ToggleGameGuideOverlay -> {
                 _uiState.update { current ->
-                    current.copy(showInstructionsDialog = !current.showInstructionsDialog)
+                    current.copy(showGameGuideOverlay = !current.showGameGuideOverlay)
                 }
             }
             is GameEvent.HintSelected -> applyHint(event.hintType)
@@ -244,9 +244,9 @@ class GameViewModel(
                     gameWon = state.gameOverByWinning,
                     gameLost = state.gameOverByNoAttemptsLeft,
                 ),
-                showInstructionsDialog = when {
+                showGameGuideOverlay = when {
                     state.gameOverByWinning || state.gameOverByNoAttemptsLeft -> false
-                    else -> current.showInstructionsDialog
+                    else -> current.showGameGuideOverlay
                 },
                 showExitDialog = when {
                     state.gameOverByWinning || state.gameOverByNoAttemptsLeft -> false
@@ -278,7 +278,7 @@ class GameViewModel(
                     word = current.wordToGuess,
                 ),
                 pointsScoredOverall = update.state.pointsScoredOverall,
-                showInstructionsDialog = false,
+                showGameGuideOverlay = false,
                 showExitDialog = false,
                 showHintFeedbackDialog = false,
                 hintFeedback = null,
@@ -324,7 +324,7 @@ class GameViewModel(
         pendingLevelState = null
         _uiState.update { current ->
             current.copy(
-                showInstructionsDialog = false,
+                showGameGuideOverlay = false,
                 showExitDialog = false,
                 showHintFeedbackDialog = false,
                 hintFeedback = null,
@@ -408,7 +408,7 @@ class GameViewModel(
         val stateAfterTimeout = _uiState.updateAndGet { current ->
             current.copy(
                 revealGuessingWord = true,
-                showInstructionsDialog = false,
+                showGameGuideOverlay = false,
                 showExitDialog = false,
                 attemptsLeftToGuess = 0,
                 uiPhase = GameUiPhase.LossHold,
@@ -433,7 +433,7 @@ class GameViewModel(
     private fun shouldPauseTimer(): Boolean {
         val state = _uiState.value
         return state.showExitDialog ||
-            state.showInstructionsDialog ||
+            state.showGameGuideOverlay ||
             state.gameOverByWinning ||
             state.revealGuessingWord ||
             state.isInteractionLocked

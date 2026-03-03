@@ -7,7 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import com.developersbreach.game.core.alphabetsList
-import com.developersbreach.hangman.ui.common.HangmanInstructionsDialog
+import com.developersbreach.hangman.ui.guide.GameGuideOverlay
 import com.developersbreach.hangman.ui.preview.HangmanScreenPreviews
 import com.developersbreach.hangman.ui.theme.HangmanTheme
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
@@ -48,14 +48,6 @@ fun GameScreen(
         )
     }
 
-    if (uiState.showInstructionsDialog) {
-        HangmanInstructionsDialog(
-            difficultyValue = difficultyLabel(uiState.gameDifficulty),
-            categoryValue = categoryLabel(uiState.gameCategory),
-            onDismissRequest = { viewModel.onEvent(GameEvent.ToggleInstructionsDialog) },
-        )
-    }
-
     if (uiState.showExitDialog) {
         ShowExitGameDialog(
             onConfirmExit = { viewModel.onEvent(GameEvent.ExitConfirmed) },
@@ -66,6 +58,12 @@ fun GameScreen(
     uiState.GameScreenUI(
         onEvent = viewModel::onEvent,
     )
+
+    if (uiState.showGameGuideOverlay) {
+        GameGuideOverlay(
+            onClose = { viewModel.onEvent(GameEvent.ToggleGameGuideOverlay) },
+        )
+    }
 }
 
 @HangmanScreenPreviews

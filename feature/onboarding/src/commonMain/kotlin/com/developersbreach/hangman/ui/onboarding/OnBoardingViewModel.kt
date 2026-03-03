@@ -6,7 +6,6 @@ import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
-import com.developersbreach.hangman.ui.settings.labelRes
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -54,17 +53,13 @@ class OnBoardingViewModel(
                 emitEffect(OnBoardingEffect.NavigateToAchievements)
             }
 
+            OnBoardingEvent.NavigateToGameGuideClicked -> {
+                emitEffect(OnBoardingEffect.NavigateToGameGuide)
+            }
+
             OnBoardingEvent.ExitClicked -> {
                 stopBackgroundMusic()
                 emitEffect(OnBoardingEffect.FinishActivity)
-            }
-
-            OnBoardingEvent.OpenInstructionsDialog -> {
-                _uiState.update { current -> current.copy(isInstructionsDialogOpen = true) }
-            }
-
-            OnBoardingEvent.DismissInstructionsDialog -> {
-                _uiState.update { current -> current.copy(isInstructionsDialogOpen = false) }
             }
 
             OnBoardingEvent.ReportIssueClicked -> {
@@ -105,18 +100,10 @@ class OnBoardingViewModel(
 
     private fun hydrateFromPreferences() {
         viewModelScope.launch {
-            val difficulty = settingsRepository.getGameDifficulty()
-            val category = settingsRepository.getGameCategory()
             val isBackgroundMusicEnabled = settingsRepository.isBackgroundMusicEnabled()
             when {
                 isBackgroundMusicEnabled -> audioController.playLoop()
                 else -> audioController.stop()
-            }
-            _uiState.update { current ->
-                current.copy(
-                    gameDifficultyLabelRes = difficulty.labelRes(),
-                    gameCategoryLabelRes = category.labelRes(),
-                )
             }
         }
     }

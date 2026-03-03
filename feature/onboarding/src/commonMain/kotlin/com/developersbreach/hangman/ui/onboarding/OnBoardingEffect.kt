@@ -5,6 +5,7 @@ sealed interface OnBoardingEffect {
     data object NavigateToSettings : OnBoardingEffect
     data object NavigateToHistory : OnBoardingEffect
     data object NavigateToAchievements : OnBoardingEffect
+    data object NavigateToGameGuide : OnBoardingEffect
     data object FinishActivity : OnBoardingEffect
     data class OpenIssueTracker(val url: String) : OnBoardingEffect
 }

@@ -16,6 +16,9 @@ data object SettingsRoute : Destination
 data object GameRoute : Destination
 
 @Serializable
+data object GameGuideRoute : Destination
+
+@Serializable
 data object HistoryRoute : Destination
 
 @Serializable
@@ -29,6 +32,7 @@ internal enum class RouteSpec(
     ONBOARDING(hash = "#/", destination = OnBoardingRoute, clearBackStack = true),
     SETTINGS(hash = "#/settings", destination = SettingsRoute),
     GAME(hash = "#/game", destination = GameRoute),
+    GAME_GUIDE(hash = "#/guide", destination = GameGuideRoute),
     HISTORY(hash = "#/history", destination = HistoryRoute),
     ACHIEVEMENTS(hash = "#/achievements", destination = AchievementsRoute);
 

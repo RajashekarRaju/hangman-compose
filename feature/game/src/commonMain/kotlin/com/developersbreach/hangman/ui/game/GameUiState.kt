@@ -34,7 +34,7 @@ data class GameUiState(
     val maxLevelReached: Int = LEVELS_PER_GAME,
     val gameDifficulty: GameDifficulty = GameDifficulty.EASY,
     val gameCategory: GameCategory = GameCategory.COUNTRIES,
-    val showInstructionsDialog: Boolean = false,
+    val showGameGuideOverlay: Boolean = false,
     val showExitDialog: Boolean = false,
     val showHintFeedbackDialog: Boolean = false,
     val hintFeedback: HintFeedback? = null,
