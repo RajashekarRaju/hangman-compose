@@ -15,8 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
+import com.developersbreach.game.core.LEVELS_PER_GAME
 import com.developersbreach.hangman.feature.game.generated.resources.Res
 import com.developersbreach.hangman.feature.game.generated.resources.game_cd_close_game
+import com.developersbreach.hangman.feature.game.generated.resources.game_current_level
+import com.developersbreach.hangman.feature.game.generated.resources.game_current_points
 import com.developersbreach.hangman.feature.game.generated.resources.game_cd_open_instructions
 import com.developersbreach.hangman.ui.components.BodyLargeText
 import com.developersbreach.hangman.ui.components.HangmanIcon
@@ -116,9 +119,20 @@ private fun TraditionalWideNavigationBar(
                 .weight(1f)
                 .padding(horizontal = 12.dp),
         ) {
-            TopStatBadge(text = "L $displayedLevel", seed = 931)
-            TopStatBadge(text = "Att $attemptsLeftToGuess", seed = 932)
-            TopStatBadge(text = "Pts $pointsScoredOverall", seed = 933)
+            TopStatBadge(
+                text = stringResource(Res.string.game_current_level, displayedLevel, LEVELS_PER_GAME),
+                seed = 931,
+                showOutline = false,
+            )
+            TopStatBadge(
+                text = "Attempts Left $attemptsLeftToGuess",
+                seed = 932
+            )
+            TopStatBadge(
+                text = stringResource(Res.string.game_current_points, pointsScoredOverall),
+                seed = 933,
+                showOutline = false,
+            )
         }
         GameGuideNavigationButton(onEvent = onEvent)
     }
@@ -150,8 +164,16 @@ private fun TraditionalCompactNavigationBar(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                TopStatBadge(text = "L $displayedLevel", seed = 941)
-                TopStatBadge(text = "Pts $pointsScoredOverall", seed = 943)
+                TopStatBadge(
+                    text = "L $displayedLevel",
+                    seed = 941,
+                    showOutline = false,
+                )
+                TopStatBadge(
+                    text = "Pts $pointsScoredOverall",
+                    seed = 943,
+                    showOutline = false,
+                )
             }
             TopStatBadge(
                 text = "Att $attemptsLeftToGuess",
@@ -202,17 +224,23 @@ private fun GameGuideNavigationButton(onEvent: (GameEvent) -> Unit) {
 private fun TopStatBadge(
     text: String,
     seed: Int,
+    showOutline: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
+    val decoratedModifier = if (showOutline) {
+        modifier.creepyOutline(
+            seed = seed,
+            threshold = 0.08f,
+            fillColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.10f),
+            outlineColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.52f),
+        )
+    } else {
+        modifier
+    }
+
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
-            .creepyOutline(
-                seed = seed,
-                threshold = 0.08f,
-                fillColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.10f),
-                outlineColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.52f),
-            )
+        modifier = decoratedModifier
             .padding(horizontal = 10.dp, vertical = 4.dp),
     ) {
         BodyLargeText(
@@ -221,4 +249,3 @@ private fun TopStatBadge(
         )
     }
 }
-

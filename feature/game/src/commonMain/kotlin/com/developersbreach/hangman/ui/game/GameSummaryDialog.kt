@@ -23,8 +23,7 @@ import com.developersbreach.hangman.feature.game.generated.resources.game_won_ti
 import com.developersbreach.hangman.ui.components.AnimatedEnter
 import com.developersbreach.hangman.ui.components.BodyLargeText
 import com.developersbreach.hangman.ui.components.HangmanDialog
-import com.developersbreach.hangman.ui.components.HangmanTextActionButton
-import com.developersbreach.hangman.ui.components.TitleLargeText
+import com.developersbreach.hangman.ui.components.HangmanDialogFooterButton
 import com.developersbreach.hangman.ui.theme.HangmanTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -38,18 +37,20 @@ fun ShowDialogWhenGameWon(
     HangmanDialog(
         onDismissRequest = onDismiss,
         seed = 972,
+        headerTitle = stringResource(Res.string.game_won_title),
         threshold = 0.10f,
+        footerButtons = listOf(
+            HangmanDialogFooterButton(
+                text = stringResource(Res.string.game_dialog_done),
+                onClick = onDismiss,
+                color = HangmanTheme.colorScheme.primary,
+            ),
+        ),
     ) {
-        TitleLargeText(
-            text = stringResource(Res.string.game_won_title),
-            color = HangmanTheme.colorScheme.primary,
-        )
-
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
             BodyLargeText(
                 text = stringResource(Res.string.game_won_points, pointsScoredOverall),
                 color = HangmanTheme.colorScheme.onSurface,
@@ -62,14 +63,7 @@ fun ShowDialogWhenGameWon(
                 ),
                 color = HangmanTheme.colorScheme.onSurface,
             )
-            Spacer(modifier = Modifier.height(16.dp))
         }
-
-        HangmanTextActionButton(
-            onClick = onDismiss,
-            text = stringResource(Res.string.game_dialog_done),
-            color = HangmanTheme.colorScheme.primary,
-        )
     }
 }
 
@@ -81,13 +75,17 @@ fun ShowPopupWhenGameLost(
     HangmanDialog(
         onDismissRequest = onDismiss,
         seed = 974,
+        headerTitle = stringResource(Res.string.game_lost_title),
+        headerTitleColor = HangmanTheme.colorScheme.error,
         threshold = 0.10f,
+        footerButtons = listOf(
+            HangmanDialogFooterButton(
+                text = stringResource(Res.string.game_dialog_done),
+                onClick = onDismiss,
+                color = HangmanTheme.colorScheme.primary,
+            ),
+        ),
     ) {
-        TitleLargeText(
-            text = stringResource(Res.string.game_lost_title),
-            color = HangmanTheme.colorScheme.error,
-        )
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -110,11 +108,5 @@ fun ShowPopupWhenGameLost(
                 color = HangmanTheme.colorScheme.onSurface,
             )
         }
-
-        HangmanTextActionButton(
-            onClick = onDismiss,
-            text = stringResource(Res.string.game_dialog_done),
-            color = HangmanTheme.colorScheme.primary,
-        )
     }
 }

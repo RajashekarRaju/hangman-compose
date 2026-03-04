@@ -112,7 +112,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 ## Credits
 
 - Game sounds: [Pixabay](https://pixabay.com/)
-- Font: [Creepster](https://fonts.google.com/specimen/Creepster#about)
+- Fonts: [Creepster](https://fonts.google.com/specimen/Creepster#about), [Bubblegum Sans](https://fonts.google.com/specimen/Bubblegum+Sans) (SIL Open Font License 1.1)
 - Icons/background assets: modified assets from [unDraw](https://undraw.co/) and [iconscout](https://iconscout.com/)
 - Sound license documents: [pixabay-license](https://github.com/RajashekarRaju/hangman-compose/tree/master/pixabay-license)
 

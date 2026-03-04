@@ -19,6 +19,10 @@ kotlin {
     }
 }
 
+dependencies {
+    add("debugImplementation", libs.compose.ui.tooling)
+}
+
 android {
     namespace = "com.developersbreach.hangman.core.designsystem"
 }
