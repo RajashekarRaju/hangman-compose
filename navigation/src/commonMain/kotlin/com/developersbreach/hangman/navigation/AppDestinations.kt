@@ -7,10 +7,16 @@ import kotlinx.serialization.Serializable
 sealed interface Destination
 
 @Serializable
-data object OnBoardingRoute : Destination
+data object MainMenuRoute : Destination
+
+@Serializable
+data object SettingsRoute : Destination
 
 @Serializable
 data object GameRoute : Destination
+
+@Serializable
+data object GameGuideRoute : Destination
 
 @Serializable
 data object HistoryRoute : Destination
@@ -23,13 +29,15 @@ internal enum class RouteSpec(
     val destination: Destination,
     val clearBackStack: Boolean = false,
 ) {
-    ONBOARDING(hash = "#/", destination = OnBoardingRoute, clearBackStack = true),
+    MAIN_MENU(hash = "#/", destination = MainMenuRoute, clearBackStack = true),
+    SETTINGS(hash = "#/settings", destination = SettingsRoute),
     GAME(hash = "#/game", destination = GameRoute),
+    GAME_GUIDE(hash = "#/guide", destination = GameGuideRoute),
     HISTORY(hash = "#/history", destination = HistoryRoute),
     ACHIEVEMENTS(hash = "#/achievements", destination = AchievementsRoute);
 
     companion object {
-        val root: RouteSpec = ONBOARDING
+        val root: RouteSpec = MAIN_MENU
 
         private val byHash: Map<String, RouteSpec> = entries.associateBy { it.hash }
         private val byDestination: Map<Destination, RouteSpec> = entries.associateBy { it.destination }

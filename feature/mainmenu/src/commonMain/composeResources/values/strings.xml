@@ -1,0 +1,43 @@
+<resources>
+    <string name="mainmenu_button_play">Play</string>
+    <string name="mainmenu_button_exit">Exit</string>
+    <string name="mainmenu_button_history">History</string>
+    <string name="mainmenu_button_achievements">Achievements</string>
+    <string name="mainmenu_button_difficulty">Difficulty</string>
+    <string name="mainmenu_button_category">Category</string>
+    <string name="mainmenu_button_language">Language</string>
+    <string name="mainmenu_button_report_issue">Report Issue</string>
+    <string name="mainmenu_button_settings">Settings</string>
+    <string name="mainmenu_button_game_guide">Game Guide</string>
+
+    <string name="mainmenu_difficulty_dialog_title">Difficulty</string>
+    <string name="mainmenu_category_dialog_title">Category</string>
+    <string name="mainmenu_language_dialog_title">Language</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_button_theme_palette">Theme Palette</string>
+    <string name="settings_button_game_visual">Game Visual</string>
+    <string name="settings_button_audio">Audio</string>
+    <string name="settings_button_cursor">Cursor</string>
+    <string name="settings_game_visual_traditional">Traditional</string>
+    <string name="settings_game_visual_simple">Simple</string>
+    <string name="settings_audio_background_music">Background Music</string>
+    <string name="settings_audio_sound_effects">Sound Effects</string>
+    <string name="settings_audio_on">On</string>
+    <string name="settings_audio_off">Off</string>
+    <string name="settings_cursor_default">Default</string>
+    <string name="settings_cursor_skull">Skull</string>
+    <string name="settings_cursor_demon">Devil</string>
+    <string name="settings_cursor_hand">Hand</string>
+    <string name="settings_cursor_hand_bones">Hand Bones</string>
+    <string name="settings_cursor_bone">Bone</string>
+
+    <string name="mainmenu_game_tagline">Be Aware. Letters Can Demise You</string>
+    <string name="mainmenu_highest_score_header">Highest Score - %1$d</string>
+
+    <string name="mainmenu_cd_game_banner">Hangman game banner</string>
+    <string name="mainmenu_cd_play_game_button">Play game</string>
+    <string name="mainmenu_cd_exit_game">Exit game</string>
+    <string name="mainmenu_cd_image_screen_bg">Background image of the screen.</string>
+    <string name="mainmenu_cd_open_instructions_dialog">Open game instructions dialog.</string>
+    <string name="mainmenu_cd_report_issue">Open repository issues page.</string>
+</resources>

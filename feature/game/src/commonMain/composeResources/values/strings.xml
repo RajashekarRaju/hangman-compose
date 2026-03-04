@@ -1,6 +1,6 @@
 <resources>
     <string name="game_cd_close_game">Close game</string>
-    <string name="game_cd_open_instructions">Open game instructions dialog</string>
+    <string name="game_cd_open_instructions">Open game guide</string>
     <string name="game_cd_open_hints">Open hints dialog</string>
 
     <string name="game_current_level">Level %1$d/%2$d</string>
@@ -34,4 +34,19 @@
     <string name="game_category_singular_language">language</string>
     <string name="game_category_singular_company">company</string>
     <string name="game_category_singular_animal">animal</string>
+
+    <string name="game_guide_title">Game Guide</string>
+    <string name="game_guide_intro_title">How this mode works</string>
+    <string name="game_guide_intro_body">Guess letters to reveal the hidden word. Every wrong guess progresses the hanging sequence. Use hints wisely and finish before time runs out.</string>
+    <string name="game_guide_timer_title">Timer behavior</string>
+    <string name="game_guide_timer_body">The stage fill climbs as time decreases. If the timer reaches zero, the level is treated as a final loss state.</string>
+    <string name="game_guide_snapshot_title">Stage %1$d/%2$d</string>
+    <string name="game_guide_snapshot_a_desc">No wrong guesses yet. Start revealing letters from the keyboard.</string>
+    <string name="game_guide_snapshot_b_desc">First wrong guess adds the first body progression.</string>
+    <string name="game_guide_snapshot_c_desc">More wrong guesses continue the hanging sequence.</string>
+    <string name="game_guide_snapshot_d_desc">Midway point. Correct guesses become more important.</string>
+    <string name="game_guide_snapshot_e_desc">The risk is high now. Consider using a hint.</string>
+    <string name="game_guide_snapshot_f_desc">Only a few attempts remain before execution stages.</string>
+    <string name="game_guide_snapshot_g_desc">Execution phase begins. One mistake away from loss.</string>
+    <string name="game_guide_snapshot_h_desc">Final execution state. The round is lost.</string>
 </resources>

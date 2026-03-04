@@ -9,16 +9,19 @@ import androidx.navigation.compose.rememberNavController
 import com.developersbreach.hangman.ui.achievements.AchievementsScreen
 import com.developersbreach.hangman.ui.achievements.AchievementsViewModel
 import com.developersbreach.hangman.ui.game.GameScreen
+import com.developersbreach.hangman.ui.guide.GameGuideScreen
 import com.developersbreach.hangman.ui.game.GameViewModel
 import com.developersbreach.hangman.ui.history.HistoryScreen
 import com.developersbreach.hangman.ui.history.HistoryViewModel
-import com.developersbreach.hangman.ui.onboarding.OnBoardingScreen
-import com.developersbreach.hangman.ui.onboarding.OnBoardingViewModel
+import com.developersbreach.hangman.ui.mainmenu.MainMenuScreen
+import com.developersbreach.hangman.ui.mainmenu.MainMenuViewModel
+import com.developersbreach.hangman.ui.settings.SettingsScreen
+import com.developersbreach.hangman.ui.settings.SettingsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun AppNavigation(
-    startDestination: Destination = OnBoardingRoute,
+    startDestination: Destination = MainMenuRoute,
     closeApplication: () -> Unit,
 ) {
     val navController = rememberNavController()
@@ -37,14 +40,30 @@ fun AppNavigation(
         navController = navController,
         startDestination = resolvedStartDestination
     ) {
-        composable<OnBoardingRoute> {
-            val viewModel = koinViewModel<OnBoardingViewModel>()
-            OnBoardingScreen(
+        composable<MainMenuRoute> {
+            val viewModel = koinViewModel<MainMenuViewModel>()
+            MainMenuScreen(
                 navigateToGameScreen = { navController.navigateToDestination(GameRoute) },
+                navigateToSettingsScreen = { navController.navigateToDestination(SettingsRoute) },
                 navigateToHistoryScreen = { navController.navigateToDestination(HistoryRoute) },
                 navigateToAchievementsScreen = { navController.navigateToDestination(AchievementsRoute) },
+                navigateToGameGuideScreen = { navController.navigateToDestination(GameGuideRoute) },
                 viewModel = viewModel,
                 finishActivity = closeApplication,
+            )
+        }
+
+        composable<SettingsRoute> {
+            val viewModel = koinViewModel<SettingsViewModel>()
+            SettingsScreen(
+                navigateUp = {
+                    if (navController.navigateUp()) {
+                        updateUrlForDestination(MainMenuRoute)
+                    } else {
+                        navController.navigateToDestination(MainMenuRoute)
+                    }
+                },
+                viewModel = viewModel,
             )
         }
 
@@ -59,6 +78,18 @@ fun AppNavigation(
                     }
                 },
                 viewModel = viewModel
+            )
+        }
+
+        composable<GameGuideRoute> {
+            GameGuideScreen(
+                navigateUp = {
+                    if (navController.navigateUp()) {
+                        updateUrlForDestination(RouteSpec.root.destination)
+                    } else {
+                        navController.navigateToDestination(RouteSpec.root.destination)
+                    }
+                },
             )
         }
 

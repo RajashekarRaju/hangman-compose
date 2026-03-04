@@ -3,6 +3,7 @@ package com.developersbreach.hangman.composeapp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.developersbreach.hangman.repository.AppLanguage
+import com.developersbreach.hangman.repository.CursorStyle
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.ui.common.notification.AchievementBannerUiState
 import com.developersbreach.hangman.ui.common.notification.AchievementNotificationCoordinator
@@ -16,6 +17,7 @@ import kotlinx.coroutines.launch
 data class AppInitializerState(
     val appLanguage: AppLanguage = AppLanguage.default,
     val themePaletteId: ThemePaletteId = ThemePaletteId.INSANE_RED,
+    val cursorStyle: CursorStyle = CursorStyle.default,
     val achievementBannerState: AchievementBannerUiState = AchievementBannerUiState(),
 )
 
@@ -30,6 +32,7 @@ class AppInitializerViewModel(
     init {
         observeAppLanguage()
         observeThemePalette()
+        observeCursorStyle()
         observeAchievementBanner()
     }
 
@@ -67,6 +70,19 @@ class AppInitializerViewModel(
             achievementNotificationCoordinator.bannerState.collect { bannerState ->
                 _appState.update { current ->
                     current.copy(achievementBannerState = bannerState)
+                }
+            }
+        }
+    }
+
+    private fun observeCursorStyle() {
+        viewModelScope.launch {
+            _appState.update { current ->
+                current.copy(cursorStyle = settingsRepository.getCursorStyle())
+            }
+            settingsRepository.observeCursorStyle().collect { cursorStyle ->
+                _appState.update { current ->
+                    current.copy(cursorStyle = cursorStyle)
                 }
             }
         }
