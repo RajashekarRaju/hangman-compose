@@ -8,6 +8,7 @@ import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer
 import com.developersbreach.hangman.logging.Log
+import com.developersbreach.hangman.logging.runCatchingLogged
 import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
@@ -66,7 +67,10 @@ private class IosUserDefaultsGameRepository : HistoryRepository, GameSessionRepo
 
     private fun loadHistory(): List<HistoryRecord> {
         val raw = defaults.stringForKey(HISTORY_KEY) ?: return emptyList()
-        val stored = runCatching {
+        val stored = runCatchingLogged(
+            tag = LOG_TAG,
+            message = { "Failed to decode history from user defaults." },
+        ) {
             json.decodeFromString<List<StoredHistoryRecord>>(raw)
         }.getOrDefault(emptyList())
         return stored.map { it.toDomain() }
@@ -118,7 +122,12 @@ private class IosUserDefaultsGameSettingsRepository : GameSettingsRepository {
 
     private fun loadSettings(): StoredSettings {
         val raw = defaults.stringForKey(SETTINGS_KEY) ?: return StoredSettings()
-        return runCatching { json.decodeFromString<StoredSettings>(raw) }.getOrDefault(StoredSettings())
+        return runCatchingLogged(
+            tag = LOG_TAG,
+            message = { "Failed to decode game settings from user defaults." },
+        ) {
+            json.decodeFromString<StoredSettings>(raw)
+        }.getOrDefault(StoredSettings())
     }
 
     private fun persist() {
@@ -208,7 +217,10 @@ private class IosUserDefaultsAchievementsRepository : AchievementsRepository {
 
     private fun loadAchievementProgress(): List<AchievementProgress> {
         val raw = defaults.stringForKey(ACHIEVEMENTS_KEY) ?: return emptyList()
-        val stored = runCatching {
+        val stored = runCatchingLogged(
+            tag = LOG_TAG,
+            message = { "Failed to decode achievement progress from user defaults." },
+        ) {
             json.decodeFromString<List<StoredAchievementProgress>>(raw)
         }.getOrDefault(emptyList())
         return stored.mapNotNull { value -> value.toDomain() }
@@ -216,7 +228,10 @@ private class IosUserDefaultsAchievementsRepository : AchievementsRepository {
 
     private fun loadAchievementStats(): AchievementStatCounters {
         val raw = defaults.stringForKey(ACHIEVEMENT_STATS_KEY) ?: return AchievementStatCounters()
-        val stored = runCatching {
+        val stored = runCatchingLogged(
+            tag = LOG_TAG,
+            message = { "Failed to decode achievement stats from user defaults." },
+        ) {
             json.decodeFromString<StoredAchievementStatCounters>(raw)
         }.getOrDefault(StoredAchievementStatCounters())
         return stored.toDomain()

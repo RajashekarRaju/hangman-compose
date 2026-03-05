@@ -7,6 +7,7 @@ import com.developersbreach.game.core.achievements.AchievementProgress
 import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer
+import com.developersbreach.hangman.logging.runCatchingLogged
 import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
@@ -54,6 +55,7 @@ private const val HISTORY_KEY = "hangman.history.v1"
 private const val SETTINGS_KEY = "hangman.settings.v1"
 private const val ACHIEVEMENTS_KEY = "hangman.achievements.v1"
 private const val ACHIEVEMENT_STATS_KEY = "hangman.achievement.stats.v1"
+private const val LOG_TAG = "PlatformDataWasm"
 
 private val json = Json { ignoreUnknownKeys = true }
 
@@ -62,7 +64,10 @@ private class WasmLocalStorageGameRepository : HistoryRepository, GameSessionRep
 
     private fun loadHistory(): List<HistoryRecord> {
         val raw = window.localStorage.getItem(HISTORY_KEY) ?: return emptyList()
-        val stored = runCatching {
+        val stored = runCatchingLogged(
+            tag = LOG_TAG,
+            message = { "Failed to decode history from localStorage." },
+        ) {
             json.decodeFromString<List<StoredHistoryRecord>>(raw)
         }.getOrDefault(emptyList())
         return stored.map { it.toDomain() }
@@ -114,7 +119,12 @@ private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
 
     private fun loadSettings(): StoredSettings {
         val raw = window.localStorage.getItem(SETTINGS_KEY) ?: return StoredSettings()
-        return runCatching { json.decodeFromString<StoredSettings>(raw) }.getOrDefault(StoredSettings())
+        return runCatchingLogged(
+            tag = LOG_TAG,
+            message = { "Failed to decode game settings from localStorage." },
+        ) {
+            json.decodeFromString<StoredSettings>(raw)
+        }.getOrDefault(StoredSettings())
     }
 
     private fun persist() {
@@ -204,7 +214,10 @@ private class WasmLocalStorageAchievementsRepository : AchievementsRepository {
 
     private fun loadAchievementProgress(): List<AchievementProgress> {
         val raw = window.localStorage.getItem(ACHIEVEMENTS_KEY) ?: return emptyList()
-        val stored = runCatching {
+        val stored = runCatchingLogged(
+            tag = LOG_TAG,
+            message = { "Failed to decode achievement progress from localStorage." },
+        ) {
             json.decodeFromString<List<StoredAchievementProgress>>(raw)
         }.getOrDefault(emptyList())
         return stored.mapNotNull { value -> value.toDomain() }
@@ -212,7 +225,10 @@ private class WasmLocalStorageAchievementsRepository : AchievementsRepository {
 
     private fun loadAchievementStats(): AchievementStatCounters {
         val raw = window.localStorage.getItem(ACHIEVEMENT_STATS_KEY) ?: return AchievementStatCounters()
-        val stored = runCatching {
+        val stored = runCatchingLogged(
+            tag = LOG_TAG,
+            message = { "Failed to decode achievement stats from localStorage." },
+        ) {
             json.decodeFromString<StoredAchievementStatCounters>(raw)
         }.getOrDefault(StoredAchievementStatCounters())
         return stored.toDomain()

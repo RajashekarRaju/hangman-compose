@@ -2,6 +2,7 @@ package com.developersbreach.hangman.repository
 
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
+import com.developersbreach.hangman.logging.runCatchingLogged
 import com.developersbreach.hangman.repository.database.dao.GameSettingsDao
 import com.developersbreach.hangman.repository.database.entity.GameSettingsEntity
 import com.developersbreach.hangman.repository.storage.toAppLanguage
@@ -209,8 +210,12 @@ class RoomGameSettingsRepository(
                 gameProgressVisualPreference = GameProgressVisualPreference.default,
             )
 
-        val difficulty = runCatching { GameDifficulty.valueOf(settings.gameDifficulty) }
-            .getOrDefault(GameDifficulty.EASY)
+        val difficulty = runCatchingLogged(
+            tag = LOG_TAG,
+            message = { "Failed to parse stored difficulty '${settings.gameDifficulty}'." },
+        ) {
+            GameDifficulty.valueOf(settings.gameDifficulty)
+        }.getOrDefault(GameDifficulty.EASY)
         val category = GameCategory.entries
             .getOrNull(settings.gameCategoryOrdinal)
             ?: GameCategory.COUNTRIES
@@ -231,3 +236,5 @@ class RoomGameSettingsRepository(
         )
     }
 }
+
+private const val LOG_TAG = "RoomGameSettingsRepo"

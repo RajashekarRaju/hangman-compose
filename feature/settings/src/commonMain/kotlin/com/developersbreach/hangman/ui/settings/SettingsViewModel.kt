@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.audio.BackgroundAudioController
+import com.developersbreach.hangman.logging.Log
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
 import com.developersbreach.hangman.repository.GameProgressVisualPreference
@@ -46,6 +47,7 @@ class SettingsViewModel(
     }
 
     fun onEvent(event: SettingsEvent) {
+        event.auditSpec(_uiState.value)?.let(Log::audit)
         when (event) {
             SettingsEvent.NavigateUpClicked -> emitEffect(SettingsEffect.NavigateUp)
             is SettingsEvent.SettingsSectionSelected -> {

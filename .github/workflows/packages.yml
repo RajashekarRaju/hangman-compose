@@ -16,6 +16,8 @@ jobs:
   build-desktop:
     name: Build Desktop ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    env:
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
     strategy:
       fail-fast: false
       matrix:
@@ -85,6 +87,8 @@ jobs:
   build-android:
     name: Build Android
     runs-on: ubuntu-latest
+    env:
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

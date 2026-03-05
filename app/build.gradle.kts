@@ -1,3 +1,5 @@
+import org.gradle.api.provider.Provider
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +7,11 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.kotlin.compose)
 }
+
+apply(from = rootProject.file("gradle/sentry-dsn.gradle.kts"))
+
+@Suppress("UNCHECKED_CAST")
+val sentryDsnProvider = extra["hangmanSentryDsnProvider"] as Provider<String>
 
 android {
     namespace = "com.developersbreach.hangman"
@@ -23,6 +30,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["clearPackageData"] = "true"
+
+        val sentryDsnValue = sentryDsnProvider.get().replace("\"", "\\\"")
+        buildConfigField("String", "SENTRY_DSN", "\"$sentryDsnValue\"")
     }
 
     signingConfigs {

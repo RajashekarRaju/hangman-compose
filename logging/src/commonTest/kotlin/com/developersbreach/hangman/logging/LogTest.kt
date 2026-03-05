@@ -75,4 +75,91 @@ class LogTest {
 
         assertTrue(events.isEmpty())
     }
+
+    @Test
+    fun audit_doesNotWriteToPlatformSink() {
+        val events = mutableListOf<LogEvent>()
+        LogConfig.minLevel = LogLevel.DEBUG
+        LogConfig.sentryEnabled = true
+        LogConfig.sink = LogSink { event -> events += event }
+
+        Log.audit(
+            AuditSpec(
+                eventType = "mainmenu.play_clicked",
+                parameters = mapOf("screen" to "main_menu"),
+            ),
+        )
+
+        assertTrue(events.isEmpty())
+    }
+
+    @Test
+    fun sanitizeAuditAttributes_includesDefaultsAndSanitizesInput() {
+        val attributes = sanitizeAuditAttributes(
+            eventType = "mainmenu.play_clicked",
+            parameters = mapOf(
+                "screen" to " main_menu ",
+                " " to "ignored",
+                "event_type" to "should_not_override",
+                "source" to "should_not_override",
+            ),
+        )
+
+        assertEquals("mainmenu.play_clicked", attributes["event_type"])
+        assertEquals("audit", attributes["source"])
+        assertEquals("main_menu", attributes["screen"])
+        assertFalse(attributes.containsKey(" "))
+    }
+
+    @Test
+    fun runCatchingLogged_logsFailureThrowable() {
+        val events = mutableListOf<LogEvent>()
+        LogConfig.minLevel = LogLevel.DEBUG
+        LogConfig.sink = LogSink { event -> events += event }
+
+        val expected = IllegalArgumentException("Bad input")
+        val result = runCatchingLogged(tag = "GameEngine", message = { "Computation failed" }) {
+            throw expected
+        }
+
+        assertTrue(result.isFailure)
+        assertEquals(1, events.size)
+        val event = events.single()
+        assertEquals(LogLevel.ERROR, event.level)
+        assertEquals("GameEngine", event.tag)
+        assertEquals("Computation failed", event.message)
+        assertEquals(expected, event.throwable)
+    }
+
+    @Test
+    fun runCatchingLogged_doesNotLogOnSuccess() {
+        val events = mutableListOf<LogEvent>()
+        LogConfig.minLevel = LogLevel.DEBUG
+        LogConfig.sink = LogSink { event -> events += event }
+
+        val result = runCatchingLogged(tag = "GameEngine") { 42 }
+
+        assertTrue(result.isSuccess)
+        assertEquals(42, result.getOrNull())
+        assertTrue(events.isEmpty())
+    }
+
+    @Test
+    fun logCaughtException_logsErrorEvent() {
+        val events = mutableListOf<LogEvent>()
+        LogConfig.minLevel = LogLevel.DEBUG
+        LogConfig.sink = LogSink { event -> events += event }
+
+        val expected = IllegalStateException("Cannot proceed")
+        logCaughtException(tag = "GameSession", throwable = expected) {
+            "Caught and reported"
+        }
+
+        assertEquals(1, events.size)
+        val event = events.single()
+        assertEquals(LogLevel.ERROR, event.level)
+        assertEquals("GameSession", event.tag)
+        assertEquals("Caught and reported", event.message)
+        assertEquals(expected, event.throwable)
+    }
 }

@@ -4,6 +4,9 @@ plugins {
 
 kotlin {
     sourceSets {
+        commonMain.dependencies {
+            implementation(libs.sentry.kmp)
+        }
         commonTest.dependencies {
             implementation(kotlin("test"))
         }

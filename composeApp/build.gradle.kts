@@ -4,6 +4,27 @@ plugins {
     id("hangman.kmp.compose-library")
 }
 
+apply(from = rootProject.file("gradle/sentry-dsn.gradle.kts"))
+
+val sentryDsn = extra["hangmanSentryDsn"] as String
+
+val generateWasmSentryConfig by tasks.registering {
+    val outputDir = layout.buildDirectory.dir("generated/wasmSentryConfig")
+    outputs.dir(outputDir)
+    doLast {
+        val file = outputDir.get().file("hangman-sentry-config.js").asFile
+        file.parentFile.mkdirs()
+        val escapedDsn = sentryDsn
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+        file.writeText(
+            """
+                window.HANGMAN_SENTRY_DSN = "$escapedDsn";
+            """.trimIndent(),
+        )
+    }
+}
+
 compose.resources {
     publicResClass = true
     packageOfResClass = "com.developersbreach.hangman.composeapp.generated.resources"
@@ -51,6 +72,7 @@ kotlin {
         }
 
         val wasmJsMain by getting
+        wasmJsMain.resources.srcDir(layout.buildDirectory.dir("generated/wasmSentryConfig"))
         wasmJsMain.resources.srcDir(project(":core:data").projectDir.resolve(
             "src/androidMain/res/raw")
         )
@@ -60,6 +82,12 @@ kotlin {
     }
 }
 
+tasks.matching { task ->
+    task.name.contains("WasmJs", ignoreCase = true) && task.name.contains("Resources", ignoreCase = true)
+}.configureEach {
+    dependsOn(generateWasmSentryConfig)
+}
+
 android {
     namespace = "com.developersbreach.hangman.composeapp"
 }
@@ -67,6 +95,9 @@ android {
 compose.desktop {
     application {
         mainClass = "com.developersbreach.hangman.composeapp.DesktopMainKt"
+        if (sentryDsn.isNotBlank()) {
+            jvmArgs("-Dhangman.sentry.dsn=$sentryDsn")
+        }
 
         buildTypes {
             release {

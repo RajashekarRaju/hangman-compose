@@ -2,6 +2,7 @@ package com.developersbreach.hangman.ui.settings
 
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
+import com.developersbreach.hangman.logging.AuditSpec
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
 import com.developersbreach.hangman.repository.GameProgressVisualPreference
@@ -21,4 +22,54 @@ sealed interface SettingsEvent {
     data class GameProgressVisualPreferenceChanged(
         val gameProgressVisualPreference: GameProgressVisualPreference,
     ) : SettingsEvent
+}
+
+internal fun SettingsEvent.auditSpec(current: SettingsUiState): AuditSpec? = when (this) {
+    is SettingsEvent.DifficultyChanged -> AuditSpec(
+        eventType = "$this",
+        parameters = mapOf(
+            "screen" to "settings",
+            "difficulty" to difficulty.name,
+        ),
+    )
+    is SettingsEvent.CategoryChanged -> AuditSpec(
+        eventType = "$this",
+        parameters = mapOf(
+            "screen" to "settings",
+            "category" to category.name,
+        ),
+    )
+    is SettingsEvent.LanguageChanged -> AuditSpec(
+        eventType = "$this",
+        parameters = mapOf(
+            "screen" to "settings",
+            "language" to language.name,
+        ),
+    )
+    is SettingsEvent.ThemePaletteChanged -> AuditSpec(
+        eventType = "$this",
+        parameters = mapOf(
+            "screen" to "settings",
+            "theme" to paletteId.name,
+        ),
+    )
+    is SettingsEvent.CursorStyleChanged -> AuditSpec(
+        eventType = "$this",
+        parameters = mapOf(
+            "screen" to "settings",
+            "cursor_style" to cursorStyle.name,
+        ),
+    )
+    is SettingsEvent.GameProgressVisualPreferenceChanged -> AuditSpec(
+        eventType = "$this",
+        parameters = mapOf(
+            "screen" to "settings",
+            "visual" to gameProgressVisualPreference.name,
+        ),
+    )
+    is SettingsEvent.DifficultySliderPositionChanged,
+    is SettingsEvent.BackgroundMusicToggled,
+    SettingsEvent.NavigateUpClicked,
+    is SettingsEvent.SettingsSectionSelected,
+    is SettingsEvent.SoundEffectsToggled -> null
 }
