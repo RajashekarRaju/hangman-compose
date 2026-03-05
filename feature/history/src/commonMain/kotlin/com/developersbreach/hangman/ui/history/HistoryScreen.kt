@@ -46,7 +46,7 @@ private fun HistoryScreenUIPreview() {
     )
     HangmanTheme(
         darkTheme = true,
-        palette = ThemePalettes.byId(ThemePaletteId.ORIGINAL)
+        palette = ThemePalettes.byId(ThemePaletteId.INSANE_RED)
     ) {
         HistoryUiState(
             gameHistoryList = listOf(

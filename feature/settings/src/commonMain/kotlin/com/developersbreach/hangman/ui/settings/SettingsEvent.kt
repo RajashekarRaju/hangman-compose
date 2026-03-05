@@ -6,6 +6,7 @@ import com.developersbreach.hangman.logging.AuditSpec
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
 import com.developersbreach.hangman.repository.GameProgressVisualPreference
+import com.developersbreach.hangman.repository.ThemeMode
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 
 sealed interface SettingsEvent {
@@ -16,6 +17,7 @@ sealed interface SettingsEvent {
     data class CategoryChanged(val category: GameCategory) : SettingsEvent
     data class LanguageChanged(val language: AppLanguage) : SettingsEvent
     data class ThemePaletteChanged(val paletteId: ThemePaletteId) : SettingsEvent
+    data class ThemeModeChanged(val mode: ThemeMode) : SettingsEvent
     data class BackgroundMusicToggled(val isEnabled: Boolean) : SettingsEvent
     data class SoundEffectsToggled(val isEnabled: Boolean) : SettingsEvent
     data class CursorStyleChanged(val cursorStyle: CursorStyle) : SettingsEvent
@@ -71,5 +73,6 @@ internal fun SettingsEvent.auditSpec(current: SettingsUiState): AuditSpec? = whe
     is SettingsEvent.BackgroundMusicToggled,
     SettingsEvent.NavigateUpClicked,
     is SettingsEvent.SettingsSectionSelected,
+    is SettingsEvent.ThemeModeChanged,
     is SettingsEvent.SoundEffectsToggled -> null
 }

@@ -5,6 +5,7 @@ import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
 import com.developersbreach.hangman.repository.GameProgressVisualPreference
+import com.developersbreach.hangman.repository.ThemeMode
 import com.developersbreach.hangman.feature.mainmenu.generated.resources.Res
 import com.developersbreach.hangman.feature.mainmenu.generated.resources.mainmenu_button_category
 import com.developersbreach.hangman.feature.mainmenu.generated.resources.mainmenu_button_difficulty
@@ -25,6 +26,7 @@ data class SettingsUiState(
     val selectedLanguage: AppLanguage = AppLanguage.default,
     val availableLanguages: List<AppLanguage> = AppLanguage.entries,
     val themePaletteId: ThemePaletteId = ThemePaletteId.INSANE_RED,
+    val themeMode: ThemeMode = ThemeMode.default,
     val isBackgroundMusicEnabled: Boolean = true,
     val isSoundEffectsEnabled: Boolean = true,
     val selectedCursorStyle: CursorStyle = CursorStyle.default,

@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
@@ -77,6 +78,10 @@ internal fun HintBottomTray(
         Box(
             modifier = Modifier.fillMaxWidth()
         ) {
+            val backgroundImageAlpha = when {
+                HangmanTheme.colorScheme.background.luminance() > 0.6f -> 0.75f
+                else -> 0.1f
+            }
             Image(
                 painter = painterResource(DesignRes.drawable.game_background),
                 contentDescription = null,
@@ -84,7 +89,7 @@ internal fun HintBottomTray(
                     .fillMaxWidth()
                     .height(with(density) { trayContentHeightPx.toDp() }),
                 contentScale = ContentScale.Crop,
-                alpha = 0.1f,
+                alpha = backgroundImageAlpha,
             )
 
             BottomTrayContent(

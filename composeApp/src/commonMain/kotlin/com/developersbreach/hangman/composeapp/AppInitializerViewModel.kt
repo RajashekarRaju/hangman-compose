@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
 import com.developersbreach.hangman.repository.GameSettingsRepository
+import com.developersbreach.hangman.repository.ThemeMode
 import com.developersbreach.hangman.ui.common.notification.AchievementBannerUiState
 import com.developersbreach.hangman.ui.common.notification.AchievementNotificationCoordinator
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
@@ -17,6 +18,7 @@ import kotlinx.coroutines.launch
 data class AppInitializerState(
     val appLanguage: AppLanguage = AppLanguage.default,
     val themePaletteId: ThemePaletteId = ThemePaletteId.INSANE_RED,
+    val themeMode: ThemeMode = ThemeMode.default,
     val cursorStyle: CursorStyle = CursorStyle.default,
     val achievementBannerState: AchievementBannerUiState = AchievementBannerUiState(),
 )
@@ -32,6 +34,7 @@ class AppInitializerViewModel(
     init {
         observeAppLanguage()
         observeThemePalette()
+        observeThemeMode()
         observeCursorStyle()
         observeAchievementBanner()
     }
@@ -60,6 +63,19 @@ class AppInitializerViewModel(
             settingsRepository.observeThemePaletteId().collect { paletteId ->
                 _appState.update { current ->
                     current.copy(themePaletteId = paletteId)
+                }
+            }
+        }
+    }
+
+    private fun observeThemeMode() {
+        viewModelScope.launch {
+            _appState.update { current ->
+                current.copy(themeMode = settingsRepository.getThemeMode())
+            }
+            settingsRepository.observeThemeMode().collect { themeMode ->
+                _appState.update { current ->
+                    current.copy(themeMode = themeMode)
                 }
             }
         }

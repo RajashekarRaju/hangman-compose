@@ -15,6 +15,7 @@ import com.developersbreach.hangman.repository.GameProgressVisualPreference
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
+import com.developersbreach.hangman.repository.ThemeMode
 import com.developersbreach.hangman.repository.metadata.generateHistoryMetadata
 import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
 import com.developersbreach.hangman.repository.model.HistoryRecord
@@ -114,6 +115,7 @@ private class WasmLocalStorageGameRepository : HistoryRepository, GameSessionRep
 private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
     private var settings: StoredSettings = loadSettings()
     private val themePaletteIdState = MutableStateFlow(settings.themePaletteId.toThemePaletteId())
+    private val themeModeState = MutableStateFlow(ThemeMode.fromStorage(settings.themeMode))
     private val appLanguageState = MutableStateFlow(settings.appLanguageCode.toAppLanguage())
     private val cursorStyleState = MutableStateFlow(CursorStyle.fromStorage(settings.cursorStyle))
 
@@ -139,6 +141,10 @@ private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
         return settings.themePaletteId.toThemePaletteId().also { themePaletteIdState.value = it }
     }
 
+    override suspend fun getThemeMode(): ThemeMode {
+        return ThemeMode.fromStorage(settings.themeMode).also { themeModeState.value = it }
+    }
+
     override suspend fun getAppLanguage(): AppLanguage {
         return settings.appLanguageCode.toAppLanguage().also { appLanguageState.value = it }
     }
@@ -156,6 +162,8 @@ private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
     }
 
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themePaletteIdState.asStateFlow()
+
+    override fun observeThemeMode(): StateFlow<ThemeMode> = themeModeState.asStateFlow()
 
     override fun observeAppLanguage(): StateFlow<AppLanguage> = appLanguageState.asStateFlow()
 
@@ -175,6 +183,12 @@ private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
         settings = settings.copy(themePaletteId = themePaletteId.name)
         persist()
         themePaletteIdState.value = themePaletteId
+    }
+
+    override suspend fun setThemeMode(themeMode: ThemeMode) {
+        settings = settings.copy(themeMode = themeMode.name)
+        persist()
+        themeModeState.value = themeMode
     }
 
     override suspend fun setAppLanguage(appLanguage: AppLanguage) {
