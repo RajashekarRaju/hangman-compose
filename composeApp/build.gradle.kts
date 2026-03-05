@@ -109,13 +109,13 @@ compose.desktop {
 
         nativeDistributions {
             packageName = "Hangman"
-            packageVersion = "1.0.2"
+            packageVersion = "1.0.3"
             description = "Hangman"
             vendor = "Developers Breach"
 
             macOS {
-                packageVersion = "1.0.2"
-                dmgPackageVersion = "1.0.2"
+                packageVersion = "1.0.3"
+                dmgPackageVersion = "1.0.3"
             }
 
             modules("java.naming")

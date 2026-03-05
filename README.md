@@ -4,7 +4,7 @@
 [![Build Packages](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/packages.yml/badge.svg)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/packages.yml)
 [![Tests](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/tests.yaml/badge.svg)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/tests.yaml)
 
-<img src="/assets/banner_hangman.png" alt="Game Banner" style="border-radius: 20px;" />
+<img src="/assets/banner_hangman_v_three.png" alt="Game Banner" style="border-radius: 20px;" />
 
 ## Play / Download
 
@@ -18,6 +18,73 @@
 | 📱 iOS        | Run locally on macOS + Xcode: `bash scripts/run-ios-sim.sh` |
 
 ### Thanks to [Cicero Hellmann](https://github.com/cicerohellmann) For giving this cool idea to build Hangman game with Compose for Android.
+
+## :sparkler: What's New: v0.3.0
+
+- [x] Traditional Hangman visual mode added alongside simple progress mode (user-selectable).
+- [x] New in-app settings: difficulty, category, app language, theme palette, theme mode override,
+  game visual mode.
+- [x] Cursor customization in Settings with multiple cursor styles and previews.
+- [x] Full achievements feature rollout with grouped UI, summary, details, unread state and
+  notifications.
+- [x] Typography/readability refresh with Bubblegum Sans + updated text scales.
+- [x] New Game Guide experience with progression visuals and quick instructions.
+- [x] Settings extracted into a dedicated feature module (`feature/settings`).
+- [x] Existing game configuration moved from menu flows into Settings.
+- [x] Audio controls moved to Settings: background music on/off and sound effects on/off.
+- [x] Localization improvements with multi-language support and runtime language switching.
+- [x] Sentry integration expanded for release builds (events/logs + exception capture across
+  supported platforms).
+- [x] Many bug fixes related to gameplay.
+- [x] Reworked many ui elements to fit properly for platform device types.
+
+### Screenshots (v0.3.0)
+
+#### Foldable
+
+| Main Menu | History | Achievements |
+| --- | --- | --- |
+| ![Fold Main Menu](/assets/screenshots/fold/main_menu.png) | ![Fold History](/assets/screenshots/fold/history.png) | ![Fold Achievements](/assets/screenshots/fold/achievements.png) |
+
+| Settings | Game | Game Loss |
+| --- | --- | --- |
+| ![Fold Settings](/assets/screenshots/fold/settings.png) | ![Fold Game](/assets/screenshots/fold/gameplay.png) | ![Fold Game Loss](/assets/screenshots/fold/gameplay_loss.png) |
+
+| Game Over Dialog |
+| --- |
+| ![Fold Game Over Dialog](/assets/screenshots/fold/game_over_dialog.png) |
+
+#### Pixel Mobile
+
+| Main Menu | History | Achievements |
+| --- | --- | --- |
+| ![Pixel Mobile Main Menu](/assets/screenshots/pixel-mobile/main_menu.png) | ![Pixel Mobile History](/assets/screenshots/pixel-mobile/history.png) | ![Pixel Mobile Achievements](/assets/screenshots/pixel-mobile/achievements.png) |
+
+| Settings Difficulty | Settings Category | Settings Language |
+| --- | --- | --- |
+| ![Pixel Mobile Settings Difficulty](/assets/screenshots/pixel-mobile/settings_difficulty.png) | ![Pixel Mobile Settings Category](/assets/screenshots/pixel-mobile/settings_category.png) | ![Pixel Mobile Settings Language](/assets/screenshots/pixel-mobile/settings_language.png) |
+
+| Settings Theme Palette | Settings Game Visual | Settings Audio |
+| --- | --- | --- |
+| ![Pixel Mobile Settings Theme Palette](/assets/screenshots/pixel-mobile/settings_theme_palette.png) | ![Pixel Mobile Settings Game Visual](/assets/screenshots/pixel-mobile/settings_game_visual.png) | ![Pixel Mobile Settings Audio](/assets/screenshots/pixel-mobile/settings_audio.png) |
+
+| Game | Game Loss | Game Over Dialog |
+| --- | --- | --- |
+| ![Pixel Mobile Game](/assets/screenshots/pixel-mobile/gameplay.png) | ![Pixel Mobile Game Loss](/assets/screenshots/pixel-mobile/gameplay_loss.png) | ![Pixel Mobile Game Over Dialog](/assets/screenshots/pixel-mobile/game_over_dialog.png) |
+
+#### Desktop
+
+| Main Menu | History | Achievements |
+| --- | --- | --- |
+| ![Desktop Main Menu](/assets/screenshots/desktop/main_menu.png) | ![Desktop History](/assets/screenshots/desktop/history.png) | ![Desktop Achievements](/assets/screenshots/desktop/achievements.png) |
+
+| Settings | Game | Game Loss |
+| --- | --- | --- |
+| ![Desktop Settings](/assets/screenshots/desktop/settings.png) | ![Desktop Game](/assets/screenshots/desktop/gameplay.png) | ![Desktop Game Loss](/assets/screenshots/desktop/gameplay_loss.png) |
+
+| Game Over Dialog |
+| --- |
+| ![Desktop Game Over Dialog](/assets/screenshots/desktop/game_over_dialog.png) |
 
 ## :sparkler: What's New: v0.2.0
 
@@ -35,24 +102,6 @@
 - [x] Responsive game layout (mobile/desktop/web) with previews and shared creepy design system.
 - [x] Cross-platform sound support (Android/Web/Desktop/iOS)
 - [x] Navigation3 update
-
-### Screenshots (v0.2.0)
-
-#### Foldable
-
-| Onboarding | Game | History |
-| --- | --- | --- |
-| ![Foldable Onboarding](/assets/fold_onboarding.png) | ![Foldable Game Screen](/assets/fold_game_screen.png) | ![Foldable History](/assets/fold_game_history.png) |
-
-#### Mobile
-
-| Onboarding | Game | Summary |
-| --- | --- | --- |
-| ![Mobile Onboarding](/assets/mobile_onboarding.png) | ![Mobile Game Screen](/assets/mobile_game_screen.png) | ![Mobile Game Summary](/assets/mobile_game_screen_summary.png) |
-
-| History | Select Category | Select Difficulty |
-| --- | --- | --- |
-| ![Mobile History](/assets/mobile_game_history.png) | ![Mobile Select Category](/assets/mobile_select_category.png) | ![Mobile Select Difficulty](/assets/mobile_select_difficulty.png) |
 
 ## Initial Version (v0.1.0)
 
@@ -83,9 +132,9 @@
 ### Tests
 
 - CI-equivalent local test run:
-  - `./gradlew :app:testDebugUnitTest :game-core:desktopTest :feature:onboarding:desktopTest :feature:game:desktopTest :feature:history:desktopTest`
+  - `./gradlew :app:testDebugUnitTest :game-core:desktopTest :feature:mainmenu:desktopTest :feature:game:desktopTest :feature:history:desktopTest`
 - Broader KMP module tests:
-  - `./gradlew :composeApp:allTests :core:data:allTests :core:designsystem:allTests :feature:common-ui:allTests :feature:game:allTests :feature:history:allTests :feature:onboarding:allTests :game-core:allTests :navigation:allTests`
+  - `./gradlew :composeApp:allTests :core:data:allTests :core:designsystem:allTests :feature:common-ui:allTests :feature:game:allTests :feature:history:allTests :feature:mainmenu:allTests :game-core:allTests :navigation:allTests`
 
 ## CI / Releases
 
