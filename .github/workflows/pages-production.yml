@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -35,6 +34,8 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build WASM distribution
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: ./gradlew :composeApp:wasmJsBrowserDistribution
 
       - name: Upload Pages artifact

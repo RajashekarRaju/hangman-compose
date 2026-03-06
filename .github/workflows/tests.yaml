@@ -1,9 +1,9 @@
 name: Tests
 on:
   pull_request:
-    branches: [ '*' ]
-  push:
     branches: [ master, development ]
+  push:
+    branches: [ master ]
   workflow_dispatch:
 
 jobs:
@@ -31,7 +31,7 @@ jobs:
           ./gradlew \
             :app:testDebugUnitTest \
             :game-core:desktopTest \
-            :feature:onboarding:desktopTest \
+            :feature:mainmenu:desktopTest \
             :feature:game:desktopTest \
             :feature:history:desktopTest \
             --stacktrace

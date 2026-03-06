@@ -1,0 +1,46 @@
+<resources>
+    <string name="mainmenu_button_play">Jouer</string>
+    <string name="mainmenu_button_exit">Quitter</string>
+    <string name="mainmenu_button_history">Historique</string>
+    <string name="mainmenu_button_achievements">Succès</string>
+    <string name="mainmenu_button_difficulty">Difficulté</string>
+    <string name="mainmenu_button_category">Catégorie</string>
+    <string name="mainmenu_button_language">Langue</string>
+    <string name="mainmenu_button_report_issue">Signaler un problème</string>
+    <string name="mainmenu_button_settings">Paramètres</string>
+    <string name="mainmenu_button_game_guide">Guide du jeu</string>
+
+    <string name="mainmenu_difficulty_dialog_title">Difficulté</string>
+    <string name="mainmenu_category_dialog_title">Catégorie</string>
+    <string name="mainmenu_language_dialog_title">Langue</string>
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_button_theme_palette">Palette de thème</string>
+    <string name="settings_theme_mode_title">Mode de thème</string>
+    <string name="settings_theme_mode_dark">Sombre</string>
+    <string name="settings_theme_mode_light">Clair</string>
+    <string name="settings_button_game_visual">Visuel du jeu</string>
+    <string name="settings_button_audio">Audio</string>
+    <string name="settings_button_cursor">Curseur</string>
+    <string name="settings_game_visual_traditional">Traditionnel</string>
+    <string name="settings_game_visual_simple">Simple</string>
+    <string name="settings_audio_background_music">Musique de fond</string>
+    <string name="settings_audio_sound_effects">Effets sonores</string>
+    <string name="settings_audio_on">Activé</string>
+    <string name="settings_audio_off">Désactivé</string>
+    <string name="settings_cursor_default">Par défaut</string>
+    <string name="settings_cursor_skull">Crâne</string>
+    <string name="settings_cursor_demon">Diable</string>
+    <string name="settings_cursor_hand">Main</string>
+    <string name="settings_cursor_hand_bones">Main Os</string>
+    <string name="settings_cursor_bone">Os</string>
+
+    <string name="mainmenu_game_tagline">Soyez prudent. Les lettres peuvent vous faire chuter</string>
+    <string name="mainmenu_highest_score_header">Meilleur score - %1$d</string>
+
+    <string name="mainmenu_cd_game_banner">Bannière du jeu Hangman</string>
+    <string name="mainmenu_cd_play_game_button">Jouer</string>
+    <string name="mainmenu_cd_exit_game">Quitter le jeu</string>
+    <string name="mainmenu_cd_image_screen_bg">Image d'arrière-plan de l'écran.</string>
+    <string name="mainmenu_cd_open_instructions_dialog">Ouvrir la fenêtre d'instructions du jeu.</string>
+    <string name="mainmenu_cd_report_issue">Ouvrir la page des issues du dépôt.</string>
+</resources>

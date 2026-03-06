@@ -1,0 +1,13 @@
+<resources>
+    <string name="history_app_bar_title">गेम इतिहास</string>
+    <string name="history_cd_navigate_up">ऊपर जाएँ</string>
+    <string name="history_cd_delete_all">इतिहास हटाएँ</string>
+    <string name="history_cd_delete_item">इतिहास आइटम हटाएँ</string>
+    <string name="history_summary_won">जीत</string>
+    <string name="history_summary_lost">हार</string>
+    <string name="history_empty_state">अभी तक कोई गेम नहीं खेला गया</string>
+    <string name="history_hints_used">उपयोग किए गए संकेत: %1$d</string>
+    <string name="history_hint_types_used">संकेत प्रकार: %1$s</string>
+    <string name="history_hint_type_reveal_letter">प्रकट करें</string>
+    <string name="history_hint_type_eliminate_letters">हटाएँ</string>
+</resources>

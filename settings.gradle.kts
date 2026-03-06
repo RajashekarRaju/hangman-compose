@@ -17,12 +17,15 @@ dependencyResolutionManagement {
 
 rootProject.name = "Hangman"
 include(":app")
+include(":logging")
 include(":game-core")
 include(":composeApp")
 include(":navigation")
 include(":core:designsystem")
 include(":core:data")
-include(":feature:onboarding")
+include(":feature:mainmenu")
+include(":feature:settings")
 include(":feature:game")
 include(":feature:history")
 include(":feature:common-ui")
+include(":feature:achievements")

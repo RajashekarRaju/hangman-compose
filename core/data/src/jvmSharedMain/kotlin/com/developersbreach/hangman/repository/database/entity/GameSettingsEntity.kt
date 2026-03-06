@@ -9,6 +9,12 @@ data class GameSettingsEntity(
     val gameDifficulty: String,
     val gameCategoryOrdinal: Int,
     val themePaletteId: String,
+    val themeMode: String,
+    val appLanguageCode: String,
+    val isBackgroundMusicEnabled: Boolean,
+    val isSoundEffectsEnabled: Boolean,
+    val cursorStyle: String,
+    val gameProgressVisualPreference: String,
 ) {
     companion object {
         const val SETTINGS_SINGLETON_ID = 0

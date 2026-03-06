@@ -2,21 +2,32 @@ package com.developersbreach.hangman.repository.di
 
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
+import com.developersbreach.game.core.achievements.AchievementStatCounters
+import com.developersbreach.game.core.achievements.AchievementProgress
 import com.developersbreach.hangman.audio.BackgroundAudioController
 import com.developersbreach.hangman.audio.GameSoundEffect
 import com.developersbreach.hangman.audio.GameSoundEffectPlayer
+import com.developersbreach.hangman.logging.runCatchingLogged
+import com.developersbreach.hangman.repository.AchievementsRepository
+import com.developersbreach.hangman.repository.AppLanguage
+import com.developersbreach.hangman.repository.CursorStyle
+import com.developersbreach.hangman.repository.GameProgressVisualPreference
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
+import com.developersbreach.hangman.repository.ThemeMode
 import com.developersbreach.hangman.repository.metadata.generateHistoryMetadata
 import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
 import com.developersbreach.hangman.repository.model.HistoryRecord
 import com.developersbreach.hangman.repository.storage.StoredHistoryRecord
+import com.developersbreach.hangman.repository.storage.StoredAchievementProgress
+import com.developersbreach.hangman.repository.storage.StoredAchievementStatCounters
 import com.developersbreach.hangman.repository.storage.StoredSettings
+import com.developersbreach.hangman.repository.storage.toAppLanguage
 import com.developersbreach.hangman.repository.storage.toDomain
+import com.developersbreach.hangman.repository.storage.toStored
 import com.developersbreach.hangman.repository.storage.toGameCategory
 import com.developersbreach.hangman.repository.storage.toGameDifficulty
-import com.developersbreach.hangman.repository.storage.toStored
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import com.developersbreach.hangman.ui.theme.toThemePaletteId
 import kotlinx.browser.document
@@ -35,6 +46,7 @@ actual fun platformDataModule(): Module = module {
     single { WasmLocalStorageGameRepository() }
     single<HistoryRepository> { get<WasmLocalStorageGameRepository>() }
     single<GameSessionRepository> { get<WasmLocalStorageGameRepository>() }
+    single<AchievementsRepository> { WasmLocalStorageAchievementsRepository() }
     single<GameSettingsRepository> { WasmLocalStorageGameSettingsRepository() }
     single<BackgroundAudioController> { WasmBackgroundAudioController() }
     single<GameSoundEffectPlayer> { WasmGameSoundEffectPlayer() }
@@ -42,6 +54,9 @@ actual fun platformDataModule(): Module = module {
 
 private const val HISTORY_KEY = "hangman.history.v1"
 private const val SETTINGS_KEY = "hangman.settings.v1"
+private const val ACHIEVEMENTS_KEY = "hangman.achievements.v1"
+private const val ACHIEVEMENT_STATS_KEY = "hangman.achievement.stats.v1"
+private const val LOG_TAG = "PlatformDataWasm"
 
 private val json = Json { ignoreUnknownKeys = true }
 
@@ -50,7 +65,10 @@ private class WasmLocalStorageGameRepository : HistoryRepository, GameSessionRep
 
     private fun loadHistory(): List<HistoryRecord> {
         val raw = window.localStorage.getItem(HISTORY_KEY) ?: return emptyList()
-        val stored = runCatching {
+        val stored = runCatchingLogged(
+            tag = LOG_TAG,
+            message = { "Failed to decode history from localStorage." },
+        ) {
             json.decodeFromString<List<StoredHistoryRecord>>(raw)
         }.getOrDefault(emptyList())
         return stored.map { it.toDomain() }
@@ -97,10 +115,18 @@ private class WasmLocalStorageGameRepository : HistoryRepository, GameSessionRep
 private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
     private var settings: StoredSettings = loadSettings()
     private val themePaletteIdState = MutableStateFlow(settings.themePaletteId.toThemePaletteId())
+    private val themeModeState = MutableStateFlow(ThemeMode.fromStorage(settings.themeMode))
+    private val appLanguageState = MutableStateFlow(settings.appLanguageCode.toAppLanguage())
+    private val cursorStyleState = MutableStateFlow(CursorStyle.fromStorage(settings.cursorStyle))
 
     private fun loadSettings(): StoredSettings {
         val raw = window.localStorage.getItem(SETTINGS_KEY) ?: return StoredSettings()
-        return runCatching { json.decodeFromString<StoredSettings>(raw) }.getOrDefault(StoredSettings())
+        return runCatchingLogged(
+            tag = LOG_TAG,
+            message = { "Failed to decode game settings from localStorage." },
+        ) {
+            json.decodeFromString<StoredSettings>(raw)
+        }.getOrDefault(StoredSettings())
     }
 
     private fun persist() {
@@ -115,7 +141,33 @@ private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
         return settings.themePaletteId.toThemePaletteId().also { themePaletteIdState.value = it }
     }
 
+    override suspend fun getThemeMode(): ThemeMode {
+        return ThemeMode.fromStorage(settings.themeMode).also { themeModeState.value = it }
+    }
+
+    override suspend fun getAppLanguage(): AppLanguage {
+        return settings.appLanguageCode.toAppLanguage().also { appLanguageState.value = it }
+    }
+
+    override suspend fun isBackgroundMusicEnabled(): Boolean = settings.isBackgroundMusicEnabled
+
+    override suspend fun isSoundEffectsEnabled(): Boolean = settings.isSoundEffectsEnabled
+
+    override suspend fun getCursorStyle(): CursorStyle {
+        return CursorStyle.fromStorage(settings.cursorStyle).also { cursorStyleState.value = it }
+    }
+
+    override suspend fun getGameProgressVisualPreference(): GameProgressVisualPreference {
+        return GameProgressVisualPreference.fromStorage(settings.gameProgressVisualPreference)
+    }
+
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themePaletteIdState.asStateFlow()
+
+    override fun observeThemeMode(): StateFlow<ThemeMode> = themeModeState.asStateFlow()
+
+    override fun observeAppLanguage(): StateFlow<AppLanguage> = appLanguageState.asStateFlow()
+
+    override fun observeCursorStyle(): StateFlow<CursorStyle> = cursorStyleState.asStateFlow()
 
     override suspend fun setGameDifficulty(gameDifficulty: GameDifficulty) {
         settings = settings.copy(gameDifficulty = gameDifficulty.name)
@@ -131,6 +183,97 @@ private class WasmLocalStorageGameSettingsRepository : GameSettingsRepository {
         settings = settings.copy(themePaletteId = themePaletteId.name)
         persist()
         themePaletteIdState.value = themePaletteId
+    }
+
+    override suspend fun setThemeMode(themeMode: ThemeMode) {
+        settings = settings.copy(themeMode = themeMode.name)
+        persist()
+        themeModeState.value = themeMode
+    }
+
+    override suspend fun setAppLanguage(appLanguage: AppLanguage) {
+        settings = settings.copy(appLanguageCode = appLanguage.languageTag)
+        persist()
+        appLanguageState.value = appLanguage
+    }
+
+    override suspend fun setBackgroundMusicEnabled(isEnabled: Boolean) {
+        settings = settings.copy(isBackgroundMusicEnabled = isEnabled)
+        persist()
+    }
+
+    override suspend fun setSoundEffectsEnabled(isEnabled: Boolean) {
+        settings = settings.copy(isSoundEffectsEnabled = isEnabled)
+        persist()
+    }
+
+    override suspend fun setCursorStyle(cursorStyle: CursorStyle) {
+        settings = settings.copy(cursorStyle = cursorStyle.name)
+        persist()
+        cursorStyleState.value = cursorStyle
+    }
+
+    override suspend fun setGameProgressVisualPreference(
+        gameProgressVisualPreference: GameProgressVisualPreference,
+    ) {
+        settings = settings.copy(gameProgressVisualPreference = gameProgressVisualPreference.name)
+        persist()
+    }
+}
+
+private class WasmLocalStorageAchievementsRepository : AchievementsRepository {
+
+    private val achievementProgressState = MutableStateFlow(loadAchievementProgress())
+    private val achievementStatsState = MutableStateFlow(loadAchievementStats())
+
+    private fun loadAchievementProgress(): List<AchievementProgress> {
+        val raw = window.localStorage.getItem(ACHIEVEMENTS_KEY) ?: return emptyList()
+        val stored = runCatchingLogged(
+            tag = LOG_TAG,
+            message = { "Failed to decode achievement progress from localStorage." },
+        ) {
+            json.decodeFromString<List<StoredAchievementProgress>>(raw)
+        }.getOrDefault(emptyList())
+        return stored.mapNotNull { value -> value.toDomain() }
+    }
+
+    private fun loadAchievementStats(): AchievementStatCounters {
+        val raw = window.localStorage.getItem(ACHIEVEMENT_STATS_KEY) ?: return AchievementStatCounters()
+        val stored = runCatchingLogged(
+            tag = LOG_TAG,
+            message = { "Failed to decode achievement stats from localStorage." },
+        ) {
+            json.decodeFromString<StoredAchievementStatCounters>(raw)
+        }.getOrDefault(StoredAchievementStatCounters())
+        return stored.toDomain()
+    }
+
+    private fun persistProgress(progress: List<AchievementProgress>) {
+        window.localStorage.setItem(
+            ACHIEVEMENTS_KEY,
+            json.encodeToString(progress.map { value -> value.toStored() }),
+        )
+    }
+
+    private fun persistStats(counters: AchievementStatCounters) {
+        window.localStorage.setItem(
+            ACHIEVEMENT_STATS_KEY,
+            json.encodeToString(counters.toStored()),
+        )
+    }
+
+    override fun observeAchievementProgress(): Flow<List<AchievementProgress>> = achievementProgressState
+
+    override suspend fun replaceAchievementProgress(progress: List<AchievementProgress>) {
+        achievementProgressState.value = progress
+        persistProgress(progress)
+    }
+
+    override fun observeAchievementStatCounters(): Flow<AchievementStatCounters> = achievementStatsState
+
+    override suspend fun saveAchievementStatCounters(counters: AchievementStatCounters) {
+        achievementStatsState.value = counters
+        persistStats(counters)
     }
 }
 

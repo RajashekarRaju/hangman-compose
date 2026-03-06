@@ -46,21 +46,24 @@ private fun HistoryScreenUIPreview() {
     )
     HangmanTheme(
         darkTheme = true,
-        palette = ThemePalettes.byId(ThemePaletteId.ORIGINAL)
+        palette = ThemePalettes.byId(ThemePaletteId.INSANE_RED)
     ) {
         HistoryUiState(
             gameHistoryList = listOf(
                 HistoryListItemUiState(
                     history = record,
                     levelProgress = 0.8f,
+                    hintTypeLabelRes = emptyList(),
                 ),
                 HistoryListItemUiState(
                     history = record.copy(gameId = "2"),
                     levelProgress = 0.8f,
+                    hintTypeLabelRes = emptyList(),
                 ),
                 HistoryListItemUiState(
                     history = record.copy(gameId = "3"),
                     levelProgress = 0.8f,
+                    hintTypeLabelRes = emptyList(),
                 ),
             )
         ).HistoryScreenUI {}

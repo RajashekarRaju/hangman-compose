@@ -10,12 +10,17 @@ compose.resources {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":logging"))
             implementation(libs.compose.material3)
             implementation(libs.jetbrains.compose.material.icons.extended)
             implementation(libs.compose.components.resources)
             implementation(libs.compose.ui.tooling.preview)
         }
     }
+}
+
+dependencies {
+    add("debugImplementation", libs.compose.ui.tooling)
 }
 
 android {

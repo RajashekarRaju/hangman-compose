@@ -1,0 +1,29 @@
+<resources>
+    <string name="achievements_title">Logros</string>
+    <string name="achievements_empty">No hay logros disponibles.</string>
+    <string name="achievements_locked">Bloqueado</string>
+    <string name="achievements_unlocked">Desbloqueado</string>
+    <string name="achievements_progress">Progreso: %1$d/%2$d</string>
+    <string name="achievements_unlocked_at">Desbloqueado: %1$s</string>
+    <string name="achievements_cd_back">Atrás</string>
+    <string name="achievements_cd_locked">Logro bloqueado</string>
+    <string name="achievements_cd_unlocked">Logro desbloqueado</string>
+    <string name="achievements_cd_expand_group">Expandir %1$s</string>
+    <string name="achievements_cd_collapse_group">Contraer %1$s</string>
+    <string name="achievements_summary_progress">Desbloqueados %1$d/%2$d</string>
+    <string name="achievements_summary_locked">Bloqueados: %1$d</string>
+    <string name="achievements_summary_coins">Monedas: %1$d</string>
+    <string name="achievements_details_status">Estado: %1$s</string>
+    <string name="achievements_details_group">Grupo: %1$s</string>
+    <string name="achievements_details_progress">Progreso: %1$d/%2$d</string>
+    <string name="achievements_details_unlocked_at">Desbloqueado el: %1$s</string>
+    <string name="achievements_details_unlocked">Desbloqueado</string>
+    <string name="achievements_details_locked">Bloqueado</string>
+    <string name="achievements_group_progress">Progreso</string>
+    <string name="achievements_group_skill">Habilidad</string>
+    <string name="achievements_group_collection">Colección</string>
+    <string name="achievements_group_endurance">Resistencia</string>
+    <string name="achievements_group_hint_discipline">Disciplina de pistas</string>
+    <string name="achievements_group_time_control">Control del tiempo</string>
+    <string name="achievements_group_meta">Meta</string>
+</resources>

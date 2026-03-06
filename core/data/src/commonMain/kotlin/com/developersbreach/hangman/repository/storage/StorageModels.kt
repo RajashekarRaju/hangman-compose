@@ -3,6 +3,10 @@ package com.developersbreach.hangman.repository.storage
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.game.core.HintType
+import com.developersbreach.hangman.repository.AppLanguage
+import com.developersbreach.hangman.repository.CursorStyle
+import com.developersbreach.hangman.repository.GameProgressVisualPreference
+import com.developersbreach.hangman.repository.ThemeMode
 import com.developersbreach.hangman.repository.model.HistoryRecord
 import kotlinx.serialization.Serializable
 
@@ -57,6 +61,12 @@ data class StoredSettings(
     val gameDifficulty: String = GameDifficulty.EASY.name,
     val gameCategory: String = GameCategory.COUNTRIES.name,
     val themePaletteId: String = "INSANE_RED",
+    val themeMode: String = ThemeMode.default.name,
+    val appLanguageCode: String = AppLanguage.ENGLISH.languageTag,
+    val isBackgroundMusicEnabled: Boolean = true,
+    val isSoundEffectsEnabled: Boolean = true,
+    val cursorStyle: String = CursorStyle.default.name,
+    val gameProgressVisualPreference: String = GameProgressVisualPreference.default.name,
 )
 
 fun String.toGameDifficulty(): GameDifficulty {
@@ -65,4 +75,8 @@ fun String.toGameDifficulty(): GameDifficulty {
 
 fun String.toGameCategory(): GameCategory {
     return runCatching { GameCategory.valueOf(this) }.getOrDefault(GameCategory.COUNTRIES)
+}
+
+fun String.toAppLanguage(): AppLanguage {
+    return AppLanguage.fromLanguageTag(this)
 }

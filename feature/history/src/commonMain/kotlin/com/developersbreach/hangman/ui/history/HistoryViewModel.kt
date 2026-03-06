@@ -2,6 +2,7 @@ package com.developersbreach.hangman.ui.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.developersbreach.hangman.logging.Log
 import com.developersbreach.hangman.repository.HistoryRepository
 import com.developersbreach.hangman.repository.model.HistoryRecord
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -42,6 +43,7 @@ class HistoryViewModel(
     }
 
     fun onEvent(event: HistoryEvent) {
+        event.auditSpec(_uiState.value)?.let(Log::audit)
         when (event) {
             HistoryEvent.NavigateUpClicked -> {
                 viewModelScope.launch {

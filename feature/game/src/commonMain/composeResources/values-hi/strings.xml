@@ -1,0 +1,37 @@
+<resources>
+    <string name="game_cd_close_game">गेम बंद करें</string>
+    <string name="game_cd_open_instructions">गेम निर्देश डायलॉग खोलें</string>
+    <string name="game_cd_open_hints">संकेत डायलॉग खोलें</string>
+
+    <string name="game_current_level">स्तर %1$d/%2$d</string>
+    <string name="game_current_points">अंक %1$d</string>
+    <string name="game_hint_counter">%1$d शेष</string>
+    <string name="game_hint_cooldown">संकेत कूलडाउन</string>
+
+    <string name="game_exit_title">गेम से बाहर निकलें?</string>
+    <string name="game_exit_confirm">बाहर निकलें</string>
+    <string name="game_exit_dismiss">खेल जारी रखें</string>
+
+    <string name="game_won_title">आप जीत गए!</string>
+    <string name="game_won_points">प्राप्त अंक: %1$d</string>
+    <string name="game_won_difficulty">कठिनाई: %1$s</string>
+    <string name="game_lost_title">आप हार गए</string>
+    <string name="game_lost_word">शब्द था: %1$s</string>
+    <string name="game_dialog_done">पूर्ण</string>
+    <string name="game_hint_title">एक संकेत चुनें</string>
+    <string name="game_hint_status_value">: %1$s</string>
+    <string name="game_hint_reveal_letter">प्रकट करें</string>
+    <string name="game_hint_eliminate_letters">हटाएँ</string>
+    <string name="game_hint_unavailable_title">संकेत उपलब्ध नहीं</string>
+    <string name="game_hint_unavailable_no_hints">इस स्तर के लिए कोई संकेत शेष नहीं है।</string>
+    <string name="game_hint_unavailable_no_letters">प्रकट करने के लिए कोई छिपा अक्षर नहीं बचा।</string>
+    <string name="game_hint_unavailable_no_elimination">हटाने के लिए कोई गलत अक्षर उपलब्ध नहीं है।</string>
+    <string name="game_hint_unavailable_game_over">गेम समाप्त होने के कारण संकेत निष्क्रिय हैं।</string>
+    <string name="game_achievement_banner_subtitle">उपलब्धि अनलॉक हुई</string>
+    <string name="game_category_hint_single_word">%1$d-अक्षरों वाला %2$s पहचानें</string>
+    <string name="game_category_hint_multi_word">%1$d-अक्षरों वाला %2$s पहचानें (%3$d शब्द)</string>
+    <string name="game_category_singular_country">देश</string>
+    <string name="game_category_singular_language">भाषा</string>
+    <string name="game_category_singular_company">कंपनी</string>
+    <string name="game_category_singular_animal">जानवर</string>
+</resources>

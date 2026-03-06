@@ -1,0 +1,46 @@
+<resources>
+    <string name="mainmenu_button_play">खेलें</string>
+    <string name="mainmenu_button_exit">बाहर निकलें</string>
+    <string name="mainmenu_button_history">इतिहास</string>
+    <string name="mainmenu_button_achievements">उपलब्धियाँ</string>
+    <string name="mainmenu_button_difficulty">कठिनाई</string>
+    <string name="mainmenu_button_category">श्रेणी</string>
+    <string name="mainmenu_button_language">भाषा</string>
+    <string name="mainmenu_button_report_issue">समस्या रिपोर्ट करें</string>
+    <string name="mainmenu_button_settings">सेटिंग्स</string>
+    <string name="mainmenu_button_game_guide">गेम गाइड</string>
+
+    <string name="mainmenu_difficulty_dialog_title">कठिनाई</string>
+    <string name="mainmenu_category_dialog_title">श्रेणी</string>
+    <string name="mainmenu_language_dialog_title">भाषा</string>
+    <string name="settings_title">सेटिंग्स</string>
+    <string name="settings_button_theme_palette">थीम पैलेट</string>
+    <string name="settings_theme_mode_title">थीम मोड</string>
+    <string name="settings_theme_mode_dark">डार्क</string>
+    <string name="settings_theme_mode_light">लाइट</string>
+    <string name="settings_button_game_visual">गेम विज़ुअल</string>
+    <string name="settings_button_audio">ऑडियो</string>
+    <string name="settings_button_cursor">कर्सर</string>
+    <string name="settings_game_visual_traditional">पारंपरिक</string>
+    <string name="settings_game_visual_simple">सरल</string>
+    <string name="settings_audio_background_music">बैकग्राउंड म्यूज़िक</string>
+    <string name="settings_audio_sound_effects">साउंड इफेक्ट्स</string>
+    <string name="settings_audio_on">चालू</string>
+    <string name="settings_audio_off">बंद</string>
+    <string name="settings_cursor_default">डिफ़ॉल्ट</string>
+    <string name="settings_cursor_skull">स्कल</string>
+    <string name="settings_cursor_demon">डेविल</string>
+    <string name="settings_cursor_hand">हाथ</string>
+    <string name="settings_cursor_hand_bones">हाथ हड्डियां</string>
+    <string name="settings_cursor_bone">हड्डी</string>
+
+    <string name="mainmenu_game_tagline">सावधान रहें। अक्षर आपको हरा सकते हैं</string>
+    <string name="mainmenu_highest_score_header">सर्वाधिक स्कोर - %1$d</string>
+
+    <string name="mainmenu_cd_game_banner">हैंगमैन गेम बैनर</string>
+    <string name="mainmenu_cd_play_game_button">गेम खेलें</string>
+    <string name="mainmenu_cd_exit_game">गेम से बाहर निकलें</string>
+    <string name="mainmenu_cd_image_screen_bg">स्क्रीन की पृष्ठभूमि छवि।</string>
+    <string name="mainmenu_cd_open_instructions_dialog">गेम निर्देश डायलॉग खोलें।</string>
+    <string name="mainmenu_cd_report_issue">रिपॉजिटरी की इश्यू पेज खोलें।</string>
+</resources>

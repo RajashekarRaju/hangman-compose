@@ -225,7 +225,7 @@ class GameSessionEngine(
         val revealedIndex = unrevealedIndexes.first()
         val revealedCharacter = currentWord[revealedIndex].lowercaseChar().toString()
         playerGuesses[revealedIndex] = revealedCharacter
-        markAlphabetAsGuessedForLetter(revealedCharacter)
+        markAlphabetAsGuessedIfFullyRevealed(revealedCharacter)
         consumeHint(HintType.REVEAL_LETTER)
 
         val isLevelCompleted = !playerGuesses.contains(UNGUESSED_SLOT)
@@ -279,7 +279,16 @@ class GameSessionEngine(
         hintTypesUsed += type
     }
 
-    private fun markAlphabetAsGuessedForLetter(letter: String) {
+    private fun markAlphabetAsGuessedIfFullyRevealed(letter: String) {
+        val hasUnrevealedOccurrence = currentWord
+            .lowercase()
+            .withIndex()
+            .any { (index, character) ->
+                character.toString() == letter && playerGuesses[index] == UNGUESSED_SLOT
+            }
+        if (hasUnrevealedOccurrence) {
+            return
+        }
         val alphabetId = alphabets.firstOrNull { it.alphabet.lowercase() == letter }?.alphabetId ?: return
         markAlphabetAsGuessed(alphabetId)
     }

@@ -2,8 +2,10 @@ package com.developersbreach.hangman.repository
 
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
+import com.developersbreach.hangman.logging.runCatchingLogged
 import com.developersbreach.hangman.repository.database.dao.GameSettingsDao
 import com.developersbreach.hangman.repository.database.entity.GameSettingsEntity
+import com.developersbreach.hangman.repository.storage.toAppLanguage
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import com.developersbreach.hangman.ui.theme.toThemePaletteId
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +17,9 @@ class RoomGameSettingsRepository(
 ) : GameSettingsRepository {
 
     private val themePaletteIdState = MutableStateFlow(ThemePaletteId.INSANE_RED)
+    private val themeModeState = MutableStateFlow(ThemeMode.default)
+    private val appLanguageState = MutableStateFlow(AppLanguage.default)
+    private val cursorStyleState = MutableStateFlow(CursorStyle.default)
 
     override suspend fun getGameDifficulty(): GameDifficulty {
         return getOrDefaultSettings().gameDifficulty
@@ -28,8 +33,44 @@ class RoomGameSettingsRepository(
         return getOrDefaultSettings().themePaletteId.also { themePaletteIdState.value = it }
     }
 
+    override suspend fun getThemeMode(): ThemeMode {
+        return getOrDefaultSettings().themeMode.also { themeModeState.value = it }
+    }
+
+    override suspend fun getAppLanguage(): AppLanguage {
+        return getOrDefaultSettings().appLanguage.also { appLanguageState.value = it }
+    }
+
+    override suspend fun isBackgroundMusicEnabled(): Boolean {
+        return getOrDefaultSettings().isBackgroundMusicEnabled
+    }
+
+    override suspend fun isSoundEffectsEnabled(): Boolean {
+        return getOrDefaultSettings().isSoundEffectsEnabled
+    }
+
+    override suspend fun getCursorStyle(): CursorStyle {
+        return getOrDefaultSettings().cursorStyle.also { cursorStyleState.value = it }
+    }
+
+    override suspend fun getGameProgressVisualPreference(): GameProgressVisualPreference {
+        return getOrDefaultSettings().gameProgressVisualPreference
+    }
+
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> {
         return themePaletteIdState.asStateFlow()
+    }
+
+    override fun observeThemeMode(): StateFlow<ThemeMode> {
+        return themeModeState.asStateFlow()
+    }
+
+    override fun observeAppLanguage(): StateFlow<AppLanguage> {
+        return appLanguageState.asStateFlow()
+    }
+
+    override fun observeCursorStyle(): StateFlow<CursorStyle> {
+        return cursorStyleState.asStateFlow()
     }
 
     override suspend fun setGameDifficulty(gameDifficulty: GameDifficulty) {
@@ -39,6 +80,12 @@ class RoomGameSettingsRepository(
                 gameDifficulty = gameDifficulty.name,
                 gameCategoryOrdinal = current.gameCategory.ordinal,
                 themePaletteId = current.themePaletteId.name,
+                themeMode = current.themeMode.name,
+                appLanguageCode = current.appLanguage.languageTag,
+                isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
+                isSoundEffectsEnabled = current.isSoundEffectsEnabled,
+                cursorStyle = current.cursorStyle.name,
+                gameProgressVisualPreference = current.gameProgressVisualPreference.name,
             ),
         )
     }
@@ -50,6 +97,12 @@ class RoomGameSettingsRepository(
                 gameDifficulty = current.gameDifficulty.name,
                 gameCategoryOrdinal = gameCategory.ordinal,
                 themePaletteId = current.themePaletteId.name,
+                themeMode = current.themeMode.name,
+                appLanguageCode = current.appLanguage.languageTag,
+                isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
+                isSoundEffectsEnabled = current.isSoundEffectsEnabled,
+                cursorStyle = current.cursorStyle.name,
+                gameProgressVisualPreference = current.gameProgressVisualPreference.name,
             ),
         )
     }
@@ -61,9 +114,122 @@ class RoomGameSettingsRepository(
                 gameDifficulty = current.gameDifficulty.name,
                 gameCategoryOrdinal = current.gameCategory.ordinal,
                 themePaletteId = themePaletteId.name,
+                themeMode = current.themeMode.name,
+                appLanguageCode = current.appLanguage.languageTag,
+                isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
+                isSoundEffectsEnabled = current.isSoundEffectsEnabled,
+                cursorStyle = current.cursorStyle.name,
+                gameProgressVisualPreference = current.gameProgressVisualPreference.name,
             ),
         )
         themePaletteIdState.value = themePaletteId
+    }
+
+    override suspend fun setThemeMode(themeMode: ThemeMode) {
+        val current = getOrDefaultSettings()
+        gameSettingsDao.upsertSettings(
+            GameSettingsEntity(
+                gameDifficulty = current.gameDifficulty.name,
+                gameCategoryOrdinal = current.gameCategory.ordinal,
+                themePaletteId = current.themePaletteId.name,
+                themeMode = themeMode.name,
+                appLanguageCode = current.appLanguage.languageTag,
+                isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
+                isSoundEffectsEnabled = current.isSoundEffectsEnabled,
+                cursorStyle = current.cursorStyle.name,
+                gameProgressVisualPreference = current.gameProgressVisualPreference.name,
+            ),
+        )
+        themeModeState.value = themeMode
+    }
+
+    override suspend fun setAppLanguage(appLanguage: AppLanguage) {
+        val current = getOrDefaultSettings()
+        gameSettingsDao.upsertSettings(
+            GameSettingsEntity(
+                gameDifficulty = current.gameDifficulty.name,
+                gameCategoryOrdinal = current.gameCategory.ordinal,
+                themePaletteId = current.themePaletteId.name,
+                themeMode = current.themeMode.name,
+                appLanguageCode = appLanguage.languageTag,
+                isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
+                isSoundEffectsEnabled = current.isSoundEffectsEnabled,
+                cursorStyle = current.cursorStyle.name,
+                gameProgressVisualPreference = current.gameProgressVisualPreference.name,
+            ),
+        )
+        appLanguageState.value = appLanguage
+    }
+
+    override suspend fun setBackgroundMusicEnabled(isEnabled: Boolean) {
+        val current = getOrDefaultSettings()
+        gameSettingsDao.upsertSettings(
+            GameSettingsEntity(
+                gameDifficulty = current.gameDifficulty.name,
+                gameCategoryOrdinal = current.gameCategory.ordinal,
+                themePaletteId = current.themePaletteId.name,
+                themeMode = current.themeMode.name,
+                appLanguageCode = current.appLanguage.languageTag,
+                isBackgroundMusicEnabled = isEnabled,
+                isSoundEffectsEnabled = current.isSoundEffectsEnabled,
+                cursorStyle = current.cursorStyle.name,
+                gameProgressVisualPreference = current.gameProgressVisualPreference.name,
+            ),
+        )
+    }
+
+    override suspend fun setSoundEffectsEnabled(isEnabled: Boolean) {
+        val current = getOrDefaultSettings()
+        gameSettingsDao.upsertSettings(
+            GameSettingsEntity(
+                gameDifficulty = current.gameDifficulty.name,
+                gameCategoryOrdinal = current.gameCategory.ordinal,
+                themePaletteId = current.themePaletteId.name,
+                themeMode = current.themeMode.name,
+                appLanguageCode = current.appLanguage.languageTag,
+                isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
+                isSoundEffectsEnabled = isEnabled,
+                cursorStyle = current.cursorStyle.name,
+                gameProgressVisualPreference = current.gameProgressVisualPreference.name,
+            ),
+        )
+    }
+
+    override suspend fun setCursorStyle(cursorStyle: CursorStyle) {
+        val current = getOrDefaultSettings()
+        gameSettingsDao.upsertSettings(
+            GameSettingsEntity(
+                gameDifficulty = current.gameDifficulty.name,
+                gameCategoryOrdinal = current.gameCategory.ordinal,
+                themePaletteId = current.themePaletteId.name,
+                themeMode = current.themeMode.name,
+                appLanguageCode = current.appLanguage.languageTag,
+                isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
+                isSoundEffectsEnabled = current.isSoundEffectsEnabled,
+                cursorStyle = cursorStyle.name,
+                gameProgressVisualPreference = current.gameProgressVisualPreference.name,
+            ),
+        )
+        cursorStyleState.value = cursorStyle
+    }
+
+    override suspend fun setGameProgressVisualPreference(
+        gameProgressVisualPreference: GameProgressVisualPreference,
+    ) {
+        val current = getOrDefaultSettings()
+        gameSettingsDao.upsertSettings(
+            GameSettingsEntity(
+                gameDifficulty = current.gameDifficulty.name,
+                gameCategoryOrdinal = current.gameCategory.ordinal,
+                themePaletteId = current.themePaletteId.name,
+                themeMode = current.themeMode.name,
+                appLanguageCode = current.appLanguage.languageTag,
+                isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
+                isSoundEffectsEnabled = current.isSoundEffectsEnabled,
+                cursorStyle = current.cursorStyle.name,
+                gameProgressVisualPreference = gameProgressVisualPreference.name,
+            ),
+        )
     }
 
     private suspend fun getOrDefaultSettings(): PersistedGameSettings {
@@ -72,10 +238,20 @@ class RoomGameSettingsRepository(
                 gameDifficulty = GameDifficulty.EASY,
                 gameCategory = GameCategory.COUNTRIES,
                 themePaletteId = ThemePaletteId.INSANE_RED,
+                themeMode = ThemeMode.default,
+                appLanguage = AppLanguage.default,
+                isBackgroundMusicEnabled = true,
+                isSoundEffectsEnabled = true,
+                cursorStyle = CursorStyle.default,
+                gameProgressVisualPreference = GameProgressVisualPreference.default,
             )
 
-        val difficulty = runCatching { GameDifficulty.valueOf(settings.gameDifficulty) }
-            .getOrDefault(GameDifficulty.EASY)
+        val difficulty = runCatchingLogged(
+            tag = LOG_TAG,
+            message = { "Failed to parse stored difficulty '${settings.gameDifficulty}'." },
+        ) {
+            GameDifficulty.valueOf(settings.gameDifficulty)
+        }.getOrDefault(GameDifficulty.EASY)
         val category = GameCategory.entries
             .getOrNull(settings.gameCategoryOrdinal)
             ?: GameCategory.COUNTRIES
@@ -86,6 +262,16 @@ class RoomGameSettingsRepository(
             themePaletteId = settings.themePaletteId
                 .ifBlank { ThemePaletteId.INSANE_RED.name }
                 .toThemePaletteId(),
+            themeMode = ThemeMode.fromStorage(settings.themeMode),
+            appLanguage = settings.appLanguageCode.toAppLanguage(),
+            isBackgroundMusicEnabled = settings.isBackgroundMusicEnabled,
+            isSoundEffectsEnabled = settings.isSoundEffectsEnabled,
+            cursorStyle = CursorStyle.fromStorage(settings.cursorStyle),
+            gameProgressVisualPreference = GameProgressVisualPreference.fromStorage(
+                settings.gameProgressVisualPreference,
+            ),
         )
     }
 }
+
+private const val LOG_TAG = "RoomGameSettingsRepo"

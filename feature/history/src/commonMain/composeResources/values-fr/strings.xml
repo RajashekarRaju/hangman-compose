@@ -1,0 +1,13 @@
+<resources>
+    <string name="history_app_bar_title">Historique des parties</string>
+    <string name="history_cd_navigate_up">Naviguer vers le haut</string>
+    <string name="history_cd_delete_all">Supprimer l'historique</string>
+    <string name="history_cd_delete_item">Supprimer cet élément de l'historique</string>
+    <string name="history_summary_won">GAGNÉE</string>
+    <string name="history_summary_lost">PERDUE</string>
+    <string name="history_empty_state">Aucune partie jouée pour le moment</string>
+    <string name="history_hints_used">Indices utilisés : %1$d</string>
+    <string name="history_hint_types_used">Types d'indice : %1$s</string>
+    <string name="history_hint_type_reveal_letter">Révéler</string>
+    <string name="history_hint_type_eliminate_letters">Éliminer</string>
+</resources>

@@ -29,12 +29,14 @@ data class HistoryUiState(
 data class HistoryListItemUiState(
     val history: HistoryRecord,
     val levelProgress: Float,
+    val hintTypeLabelRes: List<StringResource>,
 )
 
 fun HistoryRecord.toHistoryListItemUiState(): HistoryListItemUiState {
     return HistoryListItemUiState(
         history = this,
         levelProgress = historyLevelProgress(gameLevel),
+        hintTypeLabelRes = hintTypesUsed.map { hintType -> hintType.labelRes() },
     )
 }
 

@@ -8,4 +8,10 @@ data class PersistedGameSettings(
     val gameDifficulty: GameDifficulty,
     val gameCategory: GameCategory,
     val themePaletteId: ThemePaletteId,
+    val themeMode: ThemeMode,
+    val appLanguage: AppLanguage,
+    val isBackgroundMusicEnabled: Boolean,
+    val isSoundEffectsEnabled: Boolean,
+    val cursorStyle: CursorStyle,
+    val gameProgressVisualPreference: GameProgressVisualPreference,
 )

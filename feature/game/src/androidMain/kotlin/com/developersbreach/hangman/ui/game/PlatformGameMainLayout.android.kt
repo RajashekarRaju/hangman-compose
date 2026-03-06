@@ -14,6 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.developersbreach.hangman.ui.game.alphabets.GamePhaseGuessesAndAlphabets
+import com.developersbreach.hangman.ui.game.alphabets.compactGameLayoutSizing
+import com.developersbreach.hangman.ui.game.alphabets.wideGameLayoutSizing
 
 @Composable
 internal actual fun PlatformGameMainLayout(
@@ -29,6 +32,12 @@ internal actual fun PlatformGameMainLayout(
             useWideLayout -> wideGameLayoutSizing(isShortHeight)
             else -> compactGameLayoutSizing(isShortHeight)
         }
+        val useLegacyProgressVisual =
+            uiState.progressVisualType == GameProgressVisualType.LevelPointsAttemptsInformation
+        val progressPaneMinWidth = if (useLegacyProgressVisual) 220.dp else 280.dp
+        val progressPaneMaxWidth = if (useLegacyProgressVisual) 360.dp else 460.dp
+        val guessesPaneMinWidth = if (useLegacyProgressVisual) 420.dp else 380.dp
+        val guessesPaneMaxWidth = if (useLegacyProgressVisual) 900.dp else 860.dp
         val horizontalPadding = when {
             maxWidth >= 1400.dp -> 52.dp
             maxWidth >= 1100.dp -> 36.dp
@@ -51,14 +60,20 @@ internal actual fun PlatformGameMainLayout(
                 GamePhaseProgress(
                     uiState = uiState,
                     progressScale = sizing.progressScale,
-                    modifier = Modifier.widthIn(min = 220.dp, max = 360.dp),
+                    modifier = Modifier.widthIn(
+                        min = progressPaneMinWidth,
+                        max = progressPaneMaxWidth,
+                    ),
                 )
 
                 GamePhaseGuessesAndAlphabets(
                     uiState = uiState,
                     onEvent = onEvent,
                     sizing = sizing,
-                    modifier = Modifier.widthIn(min = 420.dp, max = 900.dp),
+                    modifier = Modifier.widthIn(
+                        min = guessesPaneMinWidth,
+                        max = guessesPaneMaxWidth,
+                    ),
                 )
             }
         } else {

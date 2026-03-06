@@ -11,6 +11,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":game-core"))
+            implementation(project(":logging"))
             implementation(project(":core:designsystem"))
             implementation(project(":core:data"))
             implementation(project(":feature:common-ui"))
