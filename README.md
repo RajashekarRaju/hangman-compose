@@ -1,4 +1,4 @@
-# :video_game: Hangman - Built With Compose Multuplatform :paintbrush:
+# :video_game: Hangman - Built With Compose Multiplatform :paintbrush:
 
 [![Deploy Web (Production)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/pages-production.yml/badge.svg)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/pages-production.yml)
 [![Build Packages](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/packages.yml/badge.svg)](https://github.com/RajashekarRaju/hangman-compose/actions/workflows/packages.yml)
