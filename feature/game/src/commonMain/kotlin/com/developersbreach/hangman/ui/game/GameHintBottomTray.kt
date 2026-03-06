@@ -1,18 +1,30 @@
 package com.developersbreach.hangman.ui.game
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.developersbreach.game.core.HintType
+import com.developersbreach.hangman.core.designsystem.generated.resources.Res as DesignRes
+import com.developersbreach.hangman.core.designsystem.generated.resources.game_background
 import com.developersbreach.hangman.feature.game.generated.resources.Res
 import com.developersbreach.hangman.feature.game.generated.resources.game_hint_cooldown
 import com.developersbreach.hangman.feature.game.generated.resources.game_hint_counter
@@ -25,10 +37,11 @@ import com.developersbreach.hangman.ui.components.HangmanDivider
 import com.developersbreach.hangman.ui.components.HangmanTextActionButton
 import com.developersbreach.hangman.ui.components.creepyOutline
 import com.developersbreach.hangman.ui.theme.HangmanTheme
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-internal fun ColumnScope.HintBottomTray(
+internal fun HintBottomTray(
     uiState: GameUiState,
     onEvent: (GameEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -47,24 +60,65 @@ internal fun ColumnScope.HintBottomTray(
         stringResource(error.messageRes())
     }
 
-    HangmanDivider(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
-        seed = 801,
-        threshold = 0.45f,
-        thickness = 6.dp,
-        fillColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.25f),
-        outlineColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.05f),
-        color = HangmanTheme.colorScheme.primary.copy(alpha = 0f),
-    )
+    Column(
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        val density = LocalDensity.current
+        var trayContentHeightPx by remember { mutableIntStateOf(0) }
+        HangmanDivider(
+            modifier = Modifier.fillMaxWidth(),
+            seed = 801,
+            threshold = 0.45f,
+            thickness = 6.dp,
+            fillColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.25f),
+            outlineColor = HangmanTheme.colorScheme.primary.copy(alpha = 0.05f),
+            color = HangmanTheme.colorScheme.primary.copy(alpha = 0f),
+        )
 
+        Box(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            val backgroundImageAlpha = when {
+                HangmanTheme.colorScheme.background.luminance() > 0.6f -> 0.75f
+                else -> 0.1f
+            }
+            Image(
+                painter = painterResource(DesignRes.drawable.game_background),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(with(density) { trayContentHeightPx.toDp() }),
+                contentScale = ContentScale.Crop,
+                alpha = backgroundImageAlpha,
+            )
+
+            BottomTrayContent(
+                modifier = Modifier.onSizeChanged { trayContentHeightPx = it.height },
+                hintStatusText = hintStatusText,
+                canUseHints = canUseHints,
+                onEvent = onEvent,
+                uiState = uiState,
+                feedbackMessage = feedbackMessage
+            )
+        }
+    }
+}
+
+@Composable
+private fun BottomTrayContent(
+    modifier: Modifier,
+    hintStatusText: String,
+    canUseHints: Boolean,
+    onEvent: (GameEvent) -> Unit,
+    uiState: GameUiState,
+    feedbackMessage: String?
+) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 14.dp, vertical = 12.dp),
+            .padding(24.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -145,4 +199,3 @@ private fun HintActionButton(
         )
     }
 }
-

@@ -9,6 +9,7 @@ data class GameSettingsEntity(
     val gameDifficulty: String,
     val gameCategoryOrdinal: Int,
     val themePaletteId: String,
+    val themeMode: String,
     val appLanguageCode: String,
     val isBackgroundMusicEnabled: Boolean,
     val isSoundEffectsEnabled: Boolean,

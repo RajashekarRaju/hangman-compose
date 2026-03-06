@@ -3,6 +3,7 @@ package com.developersbreach.hangman.ui.mainmenu
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.developersbreach.hangman.audio.BackgroundAudioController
+import com.developersbreach.hangman.logging.Log
 import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
 import com.developersbreach.hangman.repository.HistoryRepository
@@ -35,6 +36,7 @@ class MainMenuViewModel(
     }
 
     fun onEvent(event: MainMenuEvent) {
+        event.auditSpec()?.let(Log::audit)
         when (event) {
             MainMenuEvent.NavigateToGameClicked -> {
                 stopBackgroundMusic()

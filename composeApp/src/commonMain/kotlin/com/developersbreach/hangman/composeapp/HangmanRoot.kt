@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.developersbreach.hangman.navigation.AppNavigation
+import com.developersbreach.hangman.repository.ThemeMode
 import com.developersbreach.hangman.ui.common.notification.AchievementUnlockBanner
 import com.developersbreach.hangman.ui.theme.HangmanTheme
 import com.developersbreach.hangman.ui.theme.ThemePalettes
@@ -35,6 +36,7 @@ fun HangmanRoot(closeApplication: () -> Unit) {
     val customCursorEnabled = isCustomCursorSupported(appState.cursorStyle)
 
     HangmanTheme(
+        darkTheme = appState.themeMode == ThemeMode.DARK,
         palette = ThemePalettes.byId(appState.themePaletteId)
     ) {
         key(appState.appLanguage) {

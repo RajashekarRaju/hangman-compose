@@ -4,9 +4,9 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 
 enum class ThemePaletteId {
-    ORIGINAL,
     GRAPHITE,
     EMERALD,
     NAVY,
@@ -17,74 +17,6 @@ enum class ThemePaletteId {
     BLOSSOM,
     INSANE_RED,
 }
-
-private val originalPalette = ThemePalette(
-    id = ThemePaletteId.ORIGINAL,
-    displayName = "Original",
-    light = PaletteTones(
-        primary = Color(0xFF9CF4FF),
-        onPrimary = Color(0xFF0C2B2F),
-        primaryContainer = Color(0xFFCBFBFF),
-        onPrimaryContainer = Color(0xFF001F23),
-        secondary = Color(0xFF6ABBC5),
-        onSecondary = Color(0xFF0D2A2E),
-        secondaryContainer = Color(0xFFBCEEF4),
-        onSecondaryContainer = Color(0xFF072125),
-        tertiary = Color(0xFF7FAFBE),
-        onTertiary = Color(0xFF102129),
-        tertiaryContainer = Color(0xFFD0EBF3),
-        onTertiaryContainer = Color(0xFF0D1D25),
-        background = Color(0xFF1B2425),
-        onBackground = Color(0xFFDDEBEC),
-        surface = Color(0xFF212C2E),
-        onSurface = Color(0xFFD2E5E7),
-        surfaceVariant = Color(0xFF2C3A3D),
-        onSurfaceVariant = Color(0xFFB1C7CB),
-        outline = Color(0xFF7E969A),
-        outlineVariant = Color(0xFF3A4A4E),
-        inverseSurface = Color(0xFFD2E5E7),
-        inverseOnSurface = Color(0xFF1C2A2D),
-        surfaceDim = Color(0xFF1A2526),
-        surfaceBright = Color(0xFF2D393C),
-        surfaceContainerLowest = Color(0xFF11191B),
-        surfaceContainerLow = Color(0xFF1A2527),
-        surfaceContainer = Color(0xFF212D2F),
-        surfaceContainerHigh = Color(0xFF283538),
-        surfaceContainerHighest = Color(0xFF2F3D41),
-    ),
-    dark = PaletteTones(
-        primary = Color(0xFFFFA29C),
-        onPrimary = Color(0xFF330A07),
-        primaryContainer = Color(0xFF5C1713),
-        onPrimaryContainer = Color(0xFFFFDAD6),
-        secondary = Color(0xFFF3ACA8),
-        onSecondary = Color(0xFF32100D),
-        secondaryContainer = Color(0xFF5A2320),
-        onSecondaryContainer = Color(0xFFFFDAD7),
-        tertiary = Color(0xFFE7B3A4),
-        onTertiary = Color(0xFF32150F),
-        tertiaryContainer = Color(0xFF5A2B21),
-        onTertiaryContainer = Color(0xFFFFDCCF),
-        background = Color(0xFF221918),
-        onBackground = Color(0xFFE9DAD9),
-        surface = Color(0xFF312423),
-        onSurface = Color(0xFFECD9D8),
-        surfaceVariant = Color(0xFF463534),
-        onSurfaceVariant = Color(0xFFCFB8B6),
-        outline = Color(0xFF9A7F7D),
-        outlineVariant = Color(0xFF5E4846),
-        inverseSurface = Color(0xFFECD9D8),
-        inverseOnSurface = Color(0xFF2A1E1D),
-        surfaceDim = Color(0xFF221918),
-        surfaceBright = Color(0xFF3B2D2C),
-        surfaceContainerLowest = Color(0xFF160F0F),
-        surfaceContainerLow = Color(0xFF231918),
-        surfaceContainer = Color(0xFF2B1F1E),
-        surfaceContainerHigh = Color(0xFF342726),
-        surfaceContainerHighest = Color(0xFF3C2F2E),
-    ),
-    previewColor = Color(0xFFFFA29C),
-)
 
 data class PaletteTones(
     val primary: Color,
@@ -686,23 +618,23 @@ private val insaneRedPalette = ThemePalette(
         onTertiary = Color(0xFFFFFFFF),
         tertiaryContainer = Color(0xFFFFDBCF),
         onTertiaryContainer = Color(0xFF321207),
-        background = Color(0xFF2A0F12),
-        onBackground = Color(0xFFFFEDEE),
-        surface = Color(0xFF38171A),
-        onSurface = Color(0xFFFFE9EA),
-        surfaceVariant = Color(0xFF5C3A3E),
-        onSurfaceVariant = Color(0xFFF4DADC),
-        outline = Color(0xFFC8979B),
-        outlineVariant = Color(0xFF6E4A4E),
-        inverseSurface = Color(0xFFFFE9EA),
-        inverseOnSurface = Color(0xFF3A191D),
-        surfaceDim = Color(0xFF2A0F12),
-        surfaceBright = Color(0xFF472327),
-        surfaceContainerLowest = Color(0xFF21090B),
-        surfaceContainerLow = Color(0xFF2B1013),
-        surfaceContainer = Color(0xFF341518),
-        surfaceContainerHigh = Color(0xFF3D1B1F),
-        surfaceContainerHighest = Color(0xFF472327),
+        background = Color(0xFFF7ECEE),
+        onBackground = Color(0xFF2D1317),
+        surface = Color(0xFFEFE1E3),
+        onSurface = Color(0xFF2D1317),
+        surfaceVariant = Color(0xFFE4C9CC),
+        onSurfaceVariant = Color(0xFF5A3439),
+        outline = Color(0xFF8A5E63),
+        outlineVariant = Color(0xFFD7B6BA),
+        inverseSurface = Color(0xFF3B1B20),
+        inverseOnSurface = Color(0xFFFFE9EA),
+        surfaceDim = Color(0xFFE7D8DB),
+        surfaceBright = Color(0xFFFDF2F3),
+        surfaceContainerLowest = Color(0xFFFFF9F9),
+        surfaceContainerLow = Color(0xFFF7EAEC),
+        surfaceContainer = Color(0xFFEFDDE0),
+        surfaceContainerHigh = Color(0xFFE7D3D6),
+        surfaceContainerHighest = Color(0xFFDEC9CD),
     ),
     dark = PaletteTones(
         primary = Color(0xFFFF6A6A),
@@ -740,7 +672,6 @@ private val insaneRedPalette = ThemePalette(
 
 object ThemePalettes {
     val all: List<ThemePalette> = listOf(
-        originalPalette,
         insaneRedPalette,
         coralPalette,
         blossomPalette,
@@ -836,5 +767,25 @@ internal fun ThemePalette.toDarkColorScheme(): ColorScheme = darkColorScheme(
 )
 
 internal fun ThemePalette.toColorScheme(isDark: Boolean): ColorScheme {
-    return if (isDark) toDarkColorScheme() else toLightColorScheme()
+    return when {
+        isDark -> toDarkColorScheme()
+        else -> toLightColorScheme().dullForHangmanLightMode()
+    }
+}
+
+private fun ColorScheme.dullForHangmanLightMode(): ColorScheme {
+    val tintTarget = primary
+    return copy(
+        background = lerp(background, tintTarget, 0.08f),
+        surface = lerp(surface, tintTarget, 0.10f),
+        surfaceDim = lerp(surfaceDim, tintTarget, 0.10f),
+        surfaceBright = lerp(surfaceBright, tintTarget, 0.08f),
+        surfaceContainerLowest = lerp(surfaceContainerLowest, tintTarget, 0.12f),
+        surfaceContainerLow = lerp(surfaceContainerLow, tintTarget, 0.12f),
+        surfaceContainer = lerp(surfaceContainer, tintTarget, 0.12f),
+        surfaceContainerHigh = lerp(surfaceContainerHigh, tintTarget, 0.12f),
+        surfaceContainerHighest = lerp(surfaceContainerHighest, tintTarget, 0.12f),
+        surfaceVariant = lerp(surfaceVariant, tintTarget, 0.08f),
+        outlineVariant = lerp(outlineVariant, tintTarget, 0.07f),
+    )
 }

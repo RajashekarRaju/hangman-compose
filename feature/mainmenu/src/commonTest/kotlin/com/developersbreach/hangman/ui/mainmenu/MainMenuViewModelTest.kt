@@ -13,6 +13,7 @@ import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
 import com.developersbreach.hangman.repository.GameProgressVisualPreference
 import com.developersbreach.hangman.repository.GameSettingsRepository
+import com.developersbreach.hangman.repository.ThemeMode
 import com.developersbreach.hangman.repository.HistoryRepository
 import com.developersbreach.hangman.repository.model.HistoryRecord
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
@@ -170,6 +171,7 @@ private class FakeSettingsRepository(
     private var difficulty: GameDifficulty = GameDifficulty.EASY,
     private var category: GameCategory = GameCategory.COUNTRIES,
     private var themePaletteId: ThemePaletteId = ThemePaletteId.EMERALD,
+    private var themeMode: ThemeMode = ThemeMode.default,
     private var appLanguage: AppLanguage = AppLanguage.default,
     private var isBackgroundMusicEnabled: Boolean = true,
     private var isSoundEffectsEnabled: Boolean = true,
@@ -177,6 +179,7 @@ private class FakeSettingsRepository(
         GameProgressVisualPreference.default,
 ) : GameSettingsRepository {
     private val themeState = MutableStateFlow(themePaletteId)
+    private val themeModeState = MutableStateFlow(themeMode)
     private val languageState = MutableStateFlow(appLanguage)
     private val cursorStyleState = MutableStateFlow(CursorStyle.default)
 
@@ -189,6 +192,8 @@ private class FakeSettingsRepository(
     override suspend fun getGameCategory(): GameCategory = category
 
     override suspend fun getThemePaletteId(): ThemePaletteId = themePaletteId
+
+    override suspend fun getThemeMode(): ThemeMode = themeMode
 
     override suspend fun getAppLanguage(): AppLanguage = appLanguage
 
@@ -203,6 +208,8 @@ private class FakeSettingsRepository(
     }
 
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themeState
+
+    override fun observeThemeMode(): StateFlow<ThemeMode> = themeModeState
 
     override fun observeAppLanguage(): StateFlow<AppLanguage> = languageState
 
@@ -221,6 +228,11 @@ private class FakeSettingsRepository(
     override suspend fun setThemePaletteId(themePaletteId: ThemePaletteId) {
         this.themePaletteId = themePaletteId
         themeState.value = themePaletteId
+    }
+
+    override suspend fun setThemeMode(themeMode: ThemeMode) {
+        this.themeMode = themeMode
+        themeModeState.value = themeMode
     }
 
     override suspend fun setAppLanguage(appLanguage: AppLanguage) {

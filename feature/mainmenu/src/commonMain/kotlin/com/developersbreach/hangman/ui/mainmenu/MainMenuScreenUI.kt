@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -60,6 +61,10 @@ import org.jetbrains.compose.resources.stringResource
 fun MainMenuUiState.MainMenuScreenUI(
     onEvent: (MainMenuEvent) -> Unit
 ) {
+    val backgroundImageAlpha = when {
+        HangmanTheme.colorScheme.background.luminance() > 0.6f -> 0.75f
+        else -> 0.1f
+    }
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val showBottomIssueAction = maxWidth >= 900.dp
 
@@ -68,7 +73,7 @@ fun MainMenuUiState.MainMenuScreenUI(
             contentDescription = stringResource(Res.string.mainmenu_cd_image_screen_bg),
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
-            alpha = 0.1f
+            alpha = backgroundImageAlpha
         )
 
         AnimatedEnter {

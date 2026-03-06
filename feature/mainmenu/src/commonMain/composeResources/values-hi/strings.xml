@@ -15,6 +15,9 @@
     <string name="mainmenu_language_dialog_title">भाषा</string>
     <string name="settings_title">सेटिंग्स</string>
     <string name="settings_button_theme_palette">थीम पैलेट</string>
+    <string name="settings_theme_mode_title">थीम मोड</string>
+    <string name="settings_theme_mode_dark">डार्क</string>
+    <string name="settings_theme_mode_light">लाइट</string>
     <string name="settings_button_game_visual">गेम विज़ुअल</string>
     <string name="settings_button_audio">ऑडियो</string>
     <string name="settings_button_cursor">कर्सर</string>

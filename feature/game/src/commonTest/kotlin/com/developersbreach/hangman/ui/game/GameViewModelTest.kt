@@ -16,6 +16,7 @@ import com.developersbreach.hangman.repository.CursorStyle
 import com.developersbreach.hangman.repository.GameProgressVisualPreference
 import com.developersbreach.hangman.repository.GameSessionRepository
 import com.developersbreach.hangman.repository.GameSettingsRepository
+import com.developersbreach.hangman.repository.ThemeMode
 import com.developersbreach.hangman.repository.model.GameHistoryWriteRequest
 import com.developersbreach.hangman.ui.common.notification.AchievementBannerUiState
 import com.developersbreach.hangman.ui.common.notification.AchievementNotificationCoordinator
@@ -411,6 +412,7 @@ private class FakeGameSettingsRepository(
     private var gameProgressVisualPreference: GameProgressVisualPreference,
 ) : GameSettingsRepository {
     private val themePaletteState = MutableStateFlow(ThemePaletteId.INSANE_RED)
+    private val themeModeState = MutableStateFlow(ThemeMode.default)
     private val languageState = MutableStateFlow(AppLanguage.default)
     private val cursorStyleState = MutableStateFlow(CursorStyle.default)
 
@@ -419,6 +421,8 @@ private class FakeGameSettingsRepository(
     override suspend fun getGameCategory(): GameCategory = category
 
     override suspend fun getThemePaletteId(): ThemePaletteId = ThemePaletteId.INSANE_RED
+
+    override suspend fun getThemeMode(): ThemeMode = themeModeState.value
 
     override suspend fun getAppLanguage(): AppLanguage = AppLanguage.default
 
@@ -434,6 +438,8 @@ private class FakeGameSettingsRepository(
 
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themePaletteState
 
+    override fun observeThemeMode(): StateFlow<ThemeMode> = themeModeState
+
     override fun observeAppLanguage(): StateFlow<AppLanguage> = languageState
 
     override fun observeCursorStyle(): StateFlow<CursorStyle> = cursorStyleState
@@ -448,6 +454,10 @@ private class FakeGameSettingsRepository(
 
     override suspend fun setThemePaletteId(themePaletteId: ThemePaletteId) {
         themePaletteState.value = themePaletteId
+    }
+
+    override suspend fun setThemeMode(themeMode: ThemeMode) {
+        themeModeState.value = themeMode
     }
 
     override suspend fun setAppLanguage(appLanguage: AppLanguage) {

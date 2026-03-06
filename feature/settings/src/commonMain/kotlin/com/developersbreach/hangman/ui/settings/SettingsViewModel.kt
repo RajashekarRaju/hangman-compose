@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
 import com.developersbreach.hangman.audio.BackgroundAudioController
+import com.developersbreach.hangman.logging.Log
 import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
 import com.developersbreach.hangman.repository.GameProgressVisualPreference
 import com.developersbreach.hangman.repository.GameSettingsRepository
+import com.developersbreach.hangman.repository.ThemeMode
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,11 +43,13 @@ class SettingsViewModel(
     init {
         hydrateFromPreferences()
         observeThemePalette()
+        observeThemeMode()
         observeAppLanguage()
         observeCursorStyle()
     }
 
     fun onEvent(event: SettingsEvent) {
+        event.auditSpec(_uiState.value)?.let(Log::audit)
         when (event) {
             SettingsEvent.NavigateUpClicked -> emitEffect(SettingsEffect.NavigateUp)
             is SettingsEvent.SettingsSectionSelected -> {
@@ -69,6 +73,7 @@ class SettingsViewModel(
             is SettingsEvent.CategoryChanged -> updatePlayerChosenCategory(event.category)
             is SettingsEvent.LanguageChanged -> updateAppLanguage(event.language)
             is SettingsEvent.ThemePaletteChanged -> updateThemePalette(event.paletteId)
+            is SettingsEvent.ThemeModeChanged -> updateThemeMode(event.mode)
             is SettingsEvent.BackgroundMusicToggled -> updateBackgroundMusic(event.isEnabled)
             is SettingsEvent.SoundEffectsToggled -> updateSoundEffects(event.isEnabled)
             is SettingsEvent.CursorStyleChanged -> updateCursorStyle(event.cursorStyle)
@@ -89,6 +94,7 @@ class SettingsViewModel(
             val difficulty = settingsRepository.getGameDifficulty()
             val category = settingsRepository.getGameCategory()
             val themePaletteId = settingsRepository.getThemePaletteId()
+            val themeMode = settingsRepository.getThemeMode()
             val appLanguage = settingsRepository.getAppLanguage()
             val isBackgroundMusicEnabled = settingsRepository.isBackgroundMusicEnabled()
             val isSoundEffectsEnabled = settingsRepository.isSoundEffectsEnabled()
@@ -101,6 +107,7 @@ class SettingsViewModel(
                     gameCategory = category,
                     selectedLanguage = appLanguage,
                     themePaletteId = themePaletteId,
+                    themeMode = themeMode,
                     isBackgroundMusicEnabled = isBackgroundMusicEnabled,
                     isSoundEffectsEnabled = isSoundEffectsEnabled,
                     selectedCursorStyle = cursorStyle,
@@ -136,6 +143,12 @@ class SettingsViewModel(
     private fun updateThemePalette(themePaletteId: ThemePaletteId) {
         viewModelScope.launch {
             settingsRepository.setThemePaletteId(themePaletteId)
+        }
+    }
+
+    private fun updateThemeMode(themeMode: ThemeMode) {
+        viewModelScope.launch {
+            settingsRepository.setThemeMode(themeMode)
         }
     }
 
@@ -194,6 +207,14 @@ class SettingsViewModel(
         viewModelScope.launch {
             settingsRepository.observeAppLanguage().collect { language ->
                 _uiState.update { current -> current.copy(selectedLanguage = language) }
+            }
+        }
+    }
+
+    private fun observeThemeMode() {
+        viewModelScope.launch {
+            settingsRepository.observeThemeMode().collect { themeMode ->
+                _uiState.update { current -> current.copy(themeMode = themeMode) }
             }
         }
     }

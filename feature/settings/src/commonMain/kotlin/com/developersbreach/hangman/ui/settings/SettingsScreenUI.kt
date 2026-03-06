@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
@@ -188,13 +189,17 @@ private fun SettingsNavigationPane(
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
+    val backgroundImageAlpha = when {
+        HangmanTheme.colorScheme.background.luminance() > 0.6f -> 0.75f
+        else -> 0.05f
+    }
     Box(modifier = modifier) {
         Image(
             painter = painterResource(DesignRes.drawable.game_background),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
-            alpha = 0.05f,
+            alpha = backgroundImageAlpha,
         )
 
         Column(
@@ -283,6 +288,8 @@ private fun SettingsDetailPane(
 
                 SettingsSection.Theme -> {
                     SettingsInlineThemeSection(
+                        selectedThemeMode = uiState.themeMode,
+                        onThemeModeChanged = { onEvent(SettingsEvent.ThemeModeChanged(it)) },
                         selectedPaletteId = uiState.themePaletteId,
                         onPaletteChanged = { onEvent(SettingsEvent.ThemePaletteChanged(it)) },
                         modifier = Modifier.width(contentWidth),

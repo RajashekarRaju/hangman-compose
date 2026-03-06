@@ -73,7 +73,7 @@ private fun GameScreenPreviewContent(
 ) {
     HangmanTheme(
         darkTheme = true,
-        palette = ThemePalettes.byId(ThemePaletteId.ORIGINAL),
+        palette = ThemePalettes.byId(ThemePaletteId.INSANE_RED),
     ) {
         GameUiState(
             currentPlayerLevel = 2,

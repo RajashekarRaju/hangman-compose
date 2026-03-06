@@ -15,6 +15,9 @@
     <string name="mainmenu_language_dialog_title">Langue</string>
     <string name="settings_title">Paramètres</string>
     <string name="settings_button_theme_palette">Palette de thème</string>
+    <string name="settings_theme_mode_title">Mode de thème</string>
+    <string name="settings_theme_mode_dark">Sombre</string>
+    <string name="settings_theme_mode_light">Clair</string>
     <string name="settings_button_game_visual">Visuel du jeu</string>
     <string name="settings_button_audio">Audio</string>
     <string name="settings_button_cursor">Curseur</string>

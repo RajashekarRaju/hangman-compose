@@ -68,6 +68,7 @@ class GameViewModel(
         if (_uiState.value.isInteractionLocked) {
             return
         }
+        event.auditSpec(_uiState.value)?.let(Log::audit)
         when (event) {
             is GameEvent.AlphabetClicked -> checkIfLetterMatches(event.alphabetId)
             GameEvent.BackPressed -> {

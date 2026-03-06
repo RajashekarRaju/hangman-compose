@@ -128,13 +128,10 @@ private fun shouldUseReadableTypography(
     text: String,
 ): Boolean {
     val normalizedLanguage = languageCode.lowercase()
-    if (normalizedLanguage == "en") {
-        return text.containsNonLatinLetters()
-    }
     if (normalizedLanguage == "und" || normalizedLanguage.isBlank()) {
         return text.containsNonLatinLetters()
     }
-    return true
+    return text.containsNonLatinLetters()
 }
 
 private fun String.containsNonLatinLetters(): Boolean {

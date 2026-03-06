@@ -28,7 +28,7 @@ fun GameUiState.GameScreenUI(
                 HintBottomTray(
                     uiState = this@GameScreenUI,
                     onEvent = onEvent,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                    modifier = Modifier,
                 )
             }
         },

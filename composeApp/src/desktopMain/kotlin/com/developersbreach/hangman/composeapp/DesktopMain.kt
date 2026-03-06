@@ -6,9 +6,11 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.developersbreach.hangman.composeapp.generated.resources.Res
 import com.developersbreach.hangman.composeapp.generated.resources.compose_app_window_title
+import com.developersbreach.hangman.logging.initializeDesktopLoggingFromRuntime
 import org.jetbrains.compose.resources.stringResource
 
 fun main() = application {
+    initializeDesktopLoggingFromRuntime()
     initKoinIfNeeded()
     Window(
         onCloseRequest = ::exitApplication,

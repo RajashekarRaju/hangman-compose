@@ -6,6 +6,7 @@ import com.developersbreach.game.core.achievements.AchievementCatalog
 import com.developersbreach.game.core.achievements.AchievementId
 import com.developersbreach.game.core.achievements.AchievementProgress
 import com.developersbreach.game.core.achievements.initialProgress
+import com.developersbreach.hangman.logging.Log
 import com.developersbreach.hangman.repository.AchievementsRepository
 import com.developersbreach.hangman.ui.common.achievement.descriptionRes
 import com.developersbreach.hangman.ui.common.achievement.titleRes
@@ -33,6 +34,7 @@ class AchievementsViewModel(
     }
 
     fun onEvent(event: AchievementsEvent) {
+        event.auditSpec(_uiState.value)?.let(Log::audit)
         when (event) {
             AchievementsEvent.NavigateUpClicked -> {
                 viewModelScope.launch {

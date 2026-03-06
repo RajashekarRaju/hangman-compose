@@ -7,6 +7,7 @@ import com.developersbreach.hangman.repository.AppLanguage
 import com.developersbreach.hangman.repository.CursorStyle
 import com.developersbreach.hangman.repository.GameProgressVisualPreference
 import com.developersbreach.hangman.repository.GameSettingsRepository
+import com.developersbreach.hangman.repository.ThemeMode
 import com.developersbreach.hangman.ui.theme.ThemePaletteId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -47,6 +48,7 @@ class SettingsViewModelTest {
             difficulty = GameDifficulty.VERY_HARD,
             category = GameCategory.ANIMALS,
             themePaletteId = ThemePaletteId.EMERALD,
+            themeMode = ThemeMode.LIGHT,
             appLanguage = AppLanguage.HINDI,
             isBackgroundMusicEnabled = false,
             isSoundEffectsEnabled = false,
@@ -60,6 +62,7 @@ class SettingsViewModelTest {
             assertEquals(GameDifficulty.VERY_HARD, gameDifficulty)
             assertEquals(GameCategory.ANIMALS, gameCategory)
             assertEquals(ThemePaletteId.EMERALD, themePaletteId)
+            assertEquals(ThemeMode.LIGHT, themeMode)
             assertEquals(AppLanguage.HINDI, selectedLanguage)
             assertEquals(false, isBackgroundMusicEnabled)
             assertEquals(false, isSoundEffectsEnabled)
@@ -87,6 +90,7 @@ class SettingsViewModelTest {
         viewModel.onEvent(SettingsEvent.LanguageChanged(AppLanguage.HINDI))
 
         viewModel.onEvent(SettingsEvent.ThemePaletteChanged(ThemePaletteId.EMERALD))
+        viewModel.onEvent(SettingsEvent.ThemeModeChanged(ThemeMode.LIGHT))
         viewModel.onEvent(SettingsEvent.BackgroundMusicToggled(false))
         viewModel.onEvent(SettingsEvent.SoundEffectsToggled(false))
         viewModel.onEvent(SettingsEvent.CursorStyleChanged(CursorStyle.SKULL))
@@ -106,6 +110,7 @@ class SettingsViewModelTest {
         assertEquals(GameCategory.ANIMALS, settingsRepo.lastSetCategory)
         assertEquals(AppLanguage.HINDI, settingsRepo.lastSetLanguage)
         assertEquals(ThemePaletteId.EMERALD, settingsRepo.lastSetPalette)
+        assertEquals(ThemeMode.LIGHT, settingsRepo.lastSetThemeMode)
         assertEquals(false, settingsRepo.lastSetBackgroundMusicEnabled)
         assertEquals(false, settingsRepo.lastSetSoundEffectsEnabled)
         assertEquals(CursorStyle.SKULL, settingsRepo.lastSetCursorStyle)
@@ -142,6 +147,7 @@ private class FakeSettingsRepository(
     private var difficulty: GameDifficulty = GameDifficulty.EASY,
     private var category: GameCategory = GameCategory.COUNTRIES,
     private var themePaletteId: ThemePaletteId = ThemePaletteId.INSANE_RED,
+    private var themeMode: ThemeMode = ThemeMode.default,
     private var appLanguage: AppLanguage = AppLanguage.default,
     private var isBackgroundMusicEnabled: Boolean = true,
     private var isSoundEffectsEnabled: Boolean = true,
@@ -151,6 +157,7 @@ private class FakeSettingsRepository(
 ) : GameSettingsRepository {
 
     private val themeState = MutableStateFlow(themePaletteId)
+    private val themeModeState = MutableStateFlow(themeMode)
     private val languageState = MutableStateFlow(appLanguage)
     private val cursorStyleState = MutableStateFlow(cursorStyle)
 
@@ -158,6 +165,7 @@ private class FakeSettingsRepository(
     var lastSetCategory: GameCategory? = null
     var lastSetLanguage: AppLanguage? = null
     var lastSetPalette: ThemePaletteId? = null
+    var lastSetThemeMode: ThemeMode? = null
     var lastSetBackgroundMusicEnabled: Boolean? = null
     var lastSetSoundEffectsEnabled: Boolean? = null
     var lastSetCursorStyle: CursorStyle? = null
@@ -168,6 +176,8 @@ private class FakeSettingsRepository(
     override suspend fun getGameCategory(): GameCategory = category
 
     override suspend fun getThemePaletteId(): ThemePaletteId = themePaletteId
+
+    override suspend fun getThemeMode(): ThemeMode = themeMode
 
     override suspend fun getAppLanguage(): AppLanguage = appLanguage
 
@@ -182,6 +192,8 @@ private class FakeSettingsRepository(
     }
 
     override fun observeThemePaletteId(): StateFlow<ThemePaletteId> = themeState
+
+    override fun observeThemeMode(): StateFlow<ThemeMode> = themeModeState
 
     override fun observeAppLanguage(): StateFlow<AppLanguage> = languageState
 
@@ -201,6 +213,12 @@ private class FakeSettingsRepository(
         this.themePaletteId = themePaletteId
         themeState.value = themePaletteId
         lastSetPalette = themePaletteId
+    }
+
+    override suspend fun setThemeMode(themeMode: ThemeMode) {
+        this.themeMode = themeMode
+        themeModeState.value = themeMode
+        lastSetThemeMode = themeMode
     }
 
     override suspend fun setAppLanguage(appLanguage: AppLanguage) {

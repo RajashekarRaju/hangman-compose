@@ -63,6 +63,56 @@
     <div class="loader-text">Preparing Hangman...</div>
   </div>
   <div id="compose-root"></div>
+  <script src="https://browser.sentry-cdn.com/8.24.0/bundle.tracing.min.js" crossorigin="anonymous"></script>
+  <script src="hangman-sentry-config.js"></script>
+  <script>
+    // Web/Wasm Sentry bridge consumed by `logging/src/wasmJsMain/.../SentryBridge.wasmJs.kt`.
+    // Native Android/Desktop use sentry-kotlin-multiplatform directly and do not call these hooks.
+    window.hangmanReadGlobalString = function(name) {
+      const value = window[name];
+      return typeof value === "string" ? value : null;
+    };
+
+    window.hangmanSentryInit = function(dsn) {
+      if (!window.Sentry || !dsn) return;
+      window.Sentry.init({ dsn });
+    };
+
+    window.hangmanSentryLog = function(level, message, attributesJson) {
+      if (!window.Sentry) return;
+      let attributes = {};
+      try {
+        attributes = attributesJson ? JSON.parse(attributesJson) : {};
+      } catch (e) {
+        attributes = {};
+      }
+      const logger = window.Sentry.logger;
+      const logMessage = message || "Unknown message";
+      if (logger && typeof logger[level] === "function") {
+        try {
+          logger[level](logMessage, { attributes });
+          return;
+        } catch (e) {
+          try {
+            logger[level](logMessage, attributes);
+            return;
+          } catch (ignored) {}
+        }
+      }
+      const sentryLevel = level === "warn" ? "warning" : level;
+      window.Sentry.captureMessage(logMessage, { level: sentryLevel });
+    };
+
+    window.hangmanSentryCaptureException = function(message) {
+      if (!window.Sentry) return;
+      window.Sentry.captureException(new Error(message || "Unknown error"));
+    };
+
+    window.hangmanSentryCaptureMessage = function(message) {
+      if (!window.Sentry) return;
+      window.Sentry.captureMessage(message || "Unknown message");
+    };
+  </script>
   <script src="composeApp.js"></script>
 </body>
 </html>

@@ -13,6 +13,8 @@ interface GameSettingsRepository {
 
     suspend fun getThemePaletteId(): ThemePaletteId
 
+    suspend fun getThemeMode(): ThemeMode
+
     suspend fun getAppLanguage(): AppLanguage
 
     suspend fun isBackgroundMusicEnabled(): Boolean
@@ -25,6 +27,8 @@ interface GameSettingsRepository {
 
     fun observeThemePaletteId(): StateFlow<ThemePaletteId>
 
+    fun observeThemeMode(): StateFlow<ThemeMode>
+
     fun observeAppLanguage(): StateFlow<AppLanguage>
 
     fun observeCursorStyle(): StateFlow<CursorStyle>
@@ -34,6 +38,8 @@ interface GameSettingsRepository {
     suspend fun setGameCategory(gameCategory: GameCategory)
 
     suspend fun setThemePaletteId(themePaletteId: ThemePaletteId)
+
+    suspend fun setThemeMode(themeMode: ThemeMode)
 
     suspend fun setAppLanguage(appLanguage: AppLanguage)
 

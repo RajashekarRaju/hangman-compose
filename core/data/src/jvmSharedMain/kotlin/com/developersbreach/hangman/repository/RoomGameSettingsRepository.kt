@@ -2,6 +2,7 @@ package com.developersbreach.hangman.repository
 
 import com.developersbreach.game.core.GameCategory
 import com.developersbreach.game.core.GameDifficulty
+import com.developersbreach.hangman.logging.runCatchingLogged
 import com.developersbreach.hangman.repository.database.dao.GameSettingsDao
 import com.developersbreach.hangman.repository.database.entity.GameSettingsEntity
 import com.developersbreach.hangman.repository.storage.toAppLanguage
@@ -16,6 +17,7 @@ class RoomGameSettingsRepository(
 ) : GameSettingsRepository {
 
     private val themePaletteIdState = MutableStateFlow(ThemePaletteId.INSANE_RED)
+    private val themeModeState = MutableStateFlow(ThemeMode.default)
     private val appLanguageState = MutableStateFlow(AppLanguage.default)
     private val cursorStyleState = MutableStateFlow(CursorStyle.default)
 
@@ -29,6 +31,10 @@ class RoomGameSettingsRepository(
 
     override suspend fun getThemePaletteId(): ThemePaletteId {
         return getOrDefaultSettings().themePaletteId.also { themePaletteIdState.value = it }
+    }
+
+    override suspend fun getThemeMode(): ThemeMode {
+        return getOrDefaultSettings().themeMode.also { themeModeState.value = it }
     }
 
     override suspend fun getAppLanguage(): AppLanguage {
@@ -55,6 +61,10 @@ class RoomGameSettingsRepository(
         return themePaletteIdState.asStateFlow()
     }
 
+    override fun observeThemeMode(): StateFlow<ThemeMode> {
+        return themeModeState.asStateFlow()
+    }
+
     override fun observeAppLanguage(): StateFlow<AppLanguage> {
         return appLanguageState.asStateFlow()
     }
@@ -70,6 +80,7 @@ class RoomGameSettingsRepository(
                 gameDifficulty = gameDifficulty.name,
                 gameCategoryOrdinal = current.gameCategory.ordinal,
                 themePaletteId = current.themePaletteId.name,
+                themeMode = current.themeMode.name,
                 appLanguageCode = current.appLanguage.languageTag,
                 isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
                 isSoundEffectsEnabled = current.isSoundEffectsEnabled,
@@ -86,6 +97,7 @@ class RoomGameSettingsRepository(
                 gameDifficulty = current.gameDifficulty.name,
                 gameCategoryOrdinal = gameCategory.ordinal,
                 themePaletteId = current.themePaletteId.name,
+                themeMode = current.themeMode.name,
                 appLanguageCode = current.appLanguage.languageTag,
                 isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
                 isSoundEffectsEnabled = current.isSoundEffectsEnabled,
@@ -102,6 +114,7 @@ class RoomGameSettingsRepository(
                 gameDifficulty = current.gameDifficulty.name,
                 gameCategoryOrdinal = current.gameCategory.ordinal,
                 themePaletteId = themePaletteId.name,
+                themeMode = current.themeMode.name,
                 appLanguageCode = current.appLanguage.languageTag,
                 isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
                 isSoundEffectsEnabled = current.isSoundEffectsEnabled,
@@ -112,6 +125,24 @@ class RoomGameSettingsRepository(
         themePaletteIdState.value = themePaletteId
     }
 
+    override suspend fun setThemeMode(themeMode: ThemeMode) {
+        val current = getOrDefaultSettings()
+        gameSettingsDao.upsertSettings(
+            GameSettingsEntity(
+                gameDifficulty = current.gameDifficulty.name,
+                gameCategoryOrdinal = current.gameCategory.ordinal,
+                themePaletteId = current.themePaletteId.name,
+                themeMode = themeMode.name,
+                appLanguageCode = current.appLanguage.languageTag,
+                isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
+                isSoundEffectsEnabled = current.isSoundEffectsEnabled,
+                cursorStyle = current.cursorStyle.name,
+                gameProgressVisualPreference = current.gameProgressVisualPreference.name,
+            ),
+        )
+        themeModeState.value = themeMode
+    }
+
     override suspend fun setAppLanguage(appLanguage: AppLanguage) {
         val current = getOrDefaultSettings()
         gameSettingsDao.upsertSettings(
@@ -119,6 +150,7 @@ class RoomGameSettingsRepository(
                 gameDifficulty = current.gameDifficulty.name,
                 gameCategoryOrdinal = current.gameCategory.ordinal,
                 themePaletteId = current.themePaletteId.name,
+                themeMode = current.themeMode.name,
                 appLanguageCode = appLanguage.languageTag,
                 isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
                 isSoundEffectsEnabled = current.isSoundEffectsEnabled,
@@ -136,6 +168,7 @@ class RoomGameSettingsRepository(
                 gameDifficulty = current.gameDifficulty.name,
                 gameCategoryOrdinal = current.gameCategory.ordinal,
                 themePaletteId = current.themePaletteId.name,
+                themeMode = current.themeMode.name,
                 appLanguageCode = current.appLanguage.languageTag,
                 isBackgroundMusicEnabled = isEnabled,
                 isSoundEffectsEnabled = current.isSoundEffectsEnabled,
@@ -152,6 +185,7 @@ class RoomGameSettingsRepository(
                 gameDifficulty = current.gameDifficulty.name,
                 gameCategoryOrdinal = current.gameCategory.ordinal,
                 themePaletteId = current.themePaletteId.name,
+                themeMode = current.themeMode.name,
                 appLanguageCode = current.appLanguage.languageTag,
                 isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
                 isSoundEffectsEnabled = isEnabled,
@@ -168,6 +202,7 @@ class RoomGameSettingsRepository(
                 gameDifficulty = current.gameDifficulty.name,
                 gameCategoryOrdinal = current.gameCategory.ordinal,
                 themePaletteId = current.themePaletteId.name,
+                themeMode = current.themeMode.name,
                 appLanguageCode = current.appLanguage.languageTag,
                 isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
                 isSoundEffectsEnabled = current.isSoundEffectsEnabled,
@@ -187,6 +222,7 @@ class RoomGameSettingsRepository(
                 gameDifficulty = current.gameDifficulty.name,
                 gameCategoryOrdinal = current.gameCategory.ordinal,
                 themePaletteId = current.themePaletteId.name,
+                themeMode = current.themeMode.name,
                 appLanguageCode = current.appLanguage.languageTag,
                 isBackgroundMusicEnabled = current.isBackgroundMusicEnabled,
                 isSoundEffectsEnabled = current.isSoundEffectsEnabled,
@@ -202,6 +238,7 @@ class RoomGameSettingsRepository(
                 gameDifficulty = GameDifficulty.EASY,
                 gameCategory = GameCategory.COUNTRIES,
                 themePaletteId = ThemePaletteId.INSANE_RED,
+                themeMode = ThemeMode.default,
                 appLanguage = AppLanguage.default,
                 isBackgroundMusicEnabled = true,
                 isSoundEffectsEnabled = true,
@@ -209,8 +246,12 @@ class RoomGameSettingsRepository(
                 gameProgressVisualPreference = GameProgressVisualPreference.default,
             )
 
-        val difficulty = runCatching { GameDifficulty.valueOf(settings.gameDifficulty) }
-            .getOrDefault(GameDifficulty.EASY)
+        val difficulty = runCatchingLogged(
+            tag = LOG_TAG,
+            message = { "Failed to parse stored difficulty '${settings.gameDifficulty}'." },
+        ) {
+            GameDifficulty.valueOf(settings.gameDifficulty)
+        }.getOrDefault(GameDifficulty.EASY)
         val category = GameCategory.entries
             .getOrNull(settings.gameCategoryOrdinal)
             ?: GameCategory.COUNTRIES
@@ -221,6 +262,7 @@ class RoomGameSettingsRepository(
             themePaletteId = settings.themePaletteId
                 .ifBlank { ThemePaletteId.INSANE_RED.name }
                 .toThemePaletteId(),
+            themeMode = ThemeMode.fromStorage(settings.themeMode),
             appLanguage = settings.appLanguageCode.toAppLanguage(),
             isBackgroundMusicEnabled = settings.isBackgroundMusicEnabled,
             isSoundEffectsEnabled = settings.isSoundEffectsEnabled,
@@ -231,3 +273,5 @@ class RoomGameSettingsRepository(
         )
     }
 }
+
+private const val LOG_TAG = "RoomGameSettingsRepo"
