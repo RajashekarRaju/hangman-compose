@@ -42,49 +42,53 @@
 
 #### Foldable
 
-| Main Menu | History | Achievements |
-| --- | --- | --- |
+| Main Menu                                                 | History                                               | Achievements                                                    |
+|-----------------------------------------------------------|-------------------------------------------------------|-----------------------------------------------------------------|
 | ![Fold Main Menu](/assets/screenshots/fold/main_menu.png) | ![Fold History](/assets/screenshots/fold/history.png) | ![Fold Achievements](/assets/screenshots/fold/achievements.png) |
 
-| Settings | Game | Game Loss |
-| --- | --- | --- |
+| Settings                                                | Game                                                | Game Loss                                                     |
+|---------------------------------------------------------|-----------------------------------------------------|---------------------------------------------------------------|
 | ![Fold Settings](/assets/screenshots/fold/settings.png) | ![Fold Game](/assets/screenshots/fold/gameplay.png) | ![Fold Game Loss](/assets/screenshots/fold/gameplay_loss.png) |
 
-| Game Over Dialog |
-| --- |
-| ![Fold Game Over Dialog](/assets/screenshots/fold/game_over_dialog.png) |
+| Gameplay Progress                                                        |
+|--------------------------------------------------------------------------|
+| ![Fold Game Over Dialog](/assets/screenshots/fold/gameplay_progress.png) |
 
 #### Pixel Mobile
 
-| Main Menu | History | Achievements |
-| --- | --- | --- |
+| Main Menu                                                                 | History                                                               | Achievements                                                                    |
+|---------------------------------------------------------------------------|-----------------------------------------------------------------------|---------------------------------------------------------------------------------|
 | ![Pixel Mobile Main Menu](/assets/screenshots/pixel-mobile/main_menu.png) | ![Pixel Mobile History](/assets/screenshots/pixel-mobile/history.png) | ![Pixel Mobile Achievements](/assets/screenshots/pixel-mobile/achievements.png) |
 
-| Settings Difficulty | Settings Category | Settings Language |
-| --- | --- | --- |
+| Settings Difficulty                                                                           | Settings Category                                                                         | Settings Language                                                                         |
+|-----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
 | ![Pixel Mobile Settings Difficulty](/assets/screenshots/pixel-mobile/settings_difficulty.png) | ![Pixel Mobile Settings Category](/assets/screenshots/pixel-mobile/settings_category.png) | ![Pixel Mobile Settings Language](/assets/screenshots/pixel-mobile/settings_language.png) |
 
-| Settings Theme Palette | Settings Game Visual | Settings Audio |
-| --- | --- | --- |
+| Settings Theme Palette                                                                              | Settings Game Visual                                                                            | Settings Audio                                                                      |
+|-----------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|
 | ![Pixel Mobile Settings Theme Palette](/assets/screenshots/pixel-mobile/settings_theme_palette.png) | ![Pixel Mobile Settings Game Visual](/assets/screenshots/pixel-mobile/settings_game_visual.png) | ![Pixel Mobile Settings Audio](/assets/screenshots/pixel-mobile/settings_audio.png) |
 
-| Game | Game Loss | Game Over Dialog |
-| --- | --- | --- |
+| Game                                                                | Game Loss                                                                     | Game Over Dialog                                                                        |
+|---------------------------------------------------------------------|-------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
 | ![Pixel Mobile Game](/assets/screenshots/pixel-mobile/gameplay.png) | ![Pixel Mobile Game Loss](/assets/screenshots/pixel-mobile/gameplay_loss.png) | ![Pixel Mobile Game Over Dialog](/assets/screenshots/pixel-mobile/game_over_dialog.png) |
 
 #### Desktop
 
-| Main Menu | History | Achievements |
-| --- | --- | --- |
-| ![Desktop Main Menu](/assets/screenshots/desktop/main_menu.png) | ![Desktop History](/assets/screenshots/desktop/history.png) | ![Desktop Achievements](/assets/screenshots/desktop/achievements.png) |
+| Main Menu                                                       | History                                                     |
+|-----------------------------------------------------------------|-------------------------------------------------------------|
+| ![Desktop Main Menu](/assets/screenshots/desktop/main_menu.png) | ![Desktop History](/assets/screenshots/desktop/history.png) |
 
-| Settings | Game | Game Loss |
-| --- | --- | --- |
-| ![Desktop Settings](/assets/screenshots/desktop/settings.png) | ![Desktop Game](/assets/screenshots/desktop/gameplay.png) | ![Desktop Game Loss](/assets/screenshots/desktop/gameplay_loss.png) |
+| Achievements                                                          | Settings                                                      |
+|-----------------------------------------------------------------------|---------------------------------------------------------------|
+| ![Desktop Achievements](/assets/screenshots/desktop/achievements.png) | ![Desktop Settings](/assets/screenshots/desktop/settings.png) |
 
-| Game Over Dialog |
-| --- |
-| ![Desktop Game Over Dialog](/assets/screenshots/desktop/game_over_dialog.png) |
+| Game                                                      | Game Loss                                                           |
+|-----------------------------------------------------------|---------------------------------------------------------------------|
+| ![Desktop Game](/assets/screenshots/desktop/gameplay.png) | ![Desktop Game Loss](/assets/screenshots/desktop/gameplay_loss.png) |
+
+| Gameplay Progress                                                               |
+|---------------------------------------------------------------------------------|
+| ![Desktop GamePlay Progress](/assets/screenshots/desktop/gameplay_progress.png) |
 
 ## :sparkler: What's New: v0.2.0
 
